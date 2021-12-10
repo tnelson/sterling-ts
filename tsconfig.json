@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es6",
+    "strict": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "moduleResolution": "node",
+    "baseUrl": "./packages",
+    "paths": {
+      "@/alloy-graph": [
+        "alloy-graph/index.ts"
+      ],
+      "@/alloy-instance": [
+        "alloy-instance/index.ts"
+      ],
+      "@/sterling-connection": [
+        "sterling-connection/index.ts"
+      ],
+      "@/sterling-theme": [
+        "sterling-theme/index.ts"
+      ],
+      "@/sterling-ui": [
+        "sterling-ui/index.ts"
+      ],
+      "@/test-data/*": [
+        "test-data/*"
+      ]
+    }
+  },
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
