@@ -1,6 +1,6 @@
 import { SideBar, SideBarButton } from '@/sterling-ui';
 import { Divider } from '@chakra-ui/react';
-import { FiTerminal } from 'react-icons/fi';
+import { GoTerminal } from 'react-icons/go';
 import { MdFolderOpen } from 'react-icons/md';
 import { useSterlingSelector } from '../../state/hooks';
 import { selectMainView } from '../../state/store';
@@ -12,8 +12,8 @@ const AppSideBar = () => {
   const view = useSterlingSelector(selectMainView);
   return (
     <SideBar>
-      <SideBarButton text='Traces' rightIcon={<MdFolderOpen />} />
-      <SideBarButton text='Evaluator' rightIcon={<FiTerminal />} />
+      <SideBarButton text='Data' rightIcon={<MdFolderOpen />} />
+      <SideBarButton text='Evaluator' rightIcon={<GoTerminal />} />
       <Divider borderBottomWidth={4} />
       {view === 'GraphView' && <GraphViewButtons />}
       {view === 'TableView' && <TableViewButtons />}

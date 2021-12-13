@@ -1,47 +1,44 @@
-import { SterlingTheme } from '@/sterling-theme';
-
-type MessageType =
-  | 'action-button-click'
-  | 'action-buttons'
-  | 'ping'
-  | 'pong'
-  | 'provider-name'
-  | 'trace';
-
-export interface Message {
-  type: MessageType;
-  version: number;
-  payload?: any;
-}
-
-export interface ActionButtonClickMessage extends Message {
-  type: 'action-button-click';
-  payload: string;
-}
-
-export interface ActionButtonsMessage extends Message {
-  type: 'action-buttons';
-}
-
-export interface PingMessage extends Message {
-  type: 'ping';
-}
-
-export interface ProviderNameMessage extends Message {
-  type: 'provider-name';
-}
-
-export interface TraceMessage extends Message {
-  type: 'trace';
-}
-
+/**
+ * A button that can be displayed in the Sterling user interface.
+ */
 export interface Button {
+  /**
+   * The text to display in the button.
+   */
   text: string;
+  /**
+   * A string that will be sent to the provider when the button is clicked.
+   */
   onClick: string;
 }
 
-export interface Trace {
+/**
+ * An individual datum that can be displayed in Sterling.
+ */
+export interface Datum {
+  /**
+   * A unique identifier
+   */
   id: string;
-  xml: string;
-  theme?: SterlingTheme;
+  /**
+   * The format of the data.
+   */
+  format: string;
+  /**
+   * The raw data.
+   */
+  data: string;
+  /**
+   * An array of buttons to be displayed with this datum in the Sterling interface.
+   */
+  buttons?: Button[];
+  /**
+   * A boolean indicating whether REPL functionality is available for this datum.
+   */
+  evaluator?: boolean;
 }
+
+/**
+ * The metadata associated with a Datum.
+ */
+export type DatumMeta = Omit<Datum, 'data' | 'format'>;

@@ -1,8 +1,6 @@
-import { buildTraceGraphs, generateStyles } from '@/alloy-graph';
-import { AlloyTrace } from '@/alloy-instance';
-import { receivedState } from '@/sterling-connection';
+import { dataReceived } from '@/sterling-connection';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { castDraft } from 'immer';
+import { DataJoin } from '@/sterling-connection';
 import { GraphViewState, newGraphViewState } from './graphView';
 
 const initialState: GraphViewState = newGraphViewState();
@@ -12,17 +10,15 @@ const graphViewSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(
-      receivedState,
-      (state, action: PayloadAction<AlloyTrace>) => {
-        const trace = action.payload;
-        const graphs = buildTraceGraphs(trace);
-        const styles = graphs.map(([graph, _]) => generateStyles(graph));
-        state.graphs = graphs.map(([g, _]) => g);
-        state.paths = graphs.map(([_, p]) => p);
-        state.styles = castDraft(styles);
-      }
-    );
+    builder.addCase(dataReceived, (state, action: PayloadAction<DataJoin>) => {
+      // TODO: Handle data joins
+      // const trace = action.payload;
+      // const graphs = buildTraceGraphs(trace);
+      // const styles = graphs.map(([graph, _]) => generateStyles(graph));
+      // state.graphs = graphs.map(([g, _]) => g);
+      // state.paths = graphs.map(([_, p]) => p);
+      // state.styles = castDraft(styles);
+    });
   }
 });
 

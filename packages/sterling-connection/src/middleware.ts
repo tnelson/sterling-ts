@@ -1,16 +1,20 @@
 import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
 import {
+  buttonClicked,
   connectSterling,
+  dataRequested,
   disconnectSterling,
-  requestedProviderName,
-  requestedState,
+  evalRequested,
+  metaRequested,
   sterlingConnected,
   sterlingConnectionError,
   sterlingDisconnected
 } from './actions';
-import { onMessage } from './handlers/onMessage';
-import { onRequestedProviderName } from './handlers/onRequestedProviderName';
-import { onRequestedState } from './handlers/onRequestedState';
+import { onMessage } from './receive/onMessage';
+import { sendClick } from './send/sendClick';
+import { sendData } from './send/sendData';
+import { sendEval } from './send/sendEval';
+import { sendMeta } from './send/sendMeta';
 
 const PING_INTERVAL = 3000;
 const RECONNECT_INTERVAL = 1000;
@@ -103,10 +107,14 @@ function sterlingConnectionMiddleware<S, D extends Dispatch>(): Middleware<
       connect(api, action.payload);
     } else if (disconnectSterling.match(action)) {
       disconnect();
-    } else if (requestedProviderName.match(action)) {
-      onRequestedProviderName(ws, api);
-    } else if (requestedState.match(action)) {
-      onRequestedState(ws, api);
+    } else if (buttonClicked.match(action)) {
+      sendClick(ws, api, action.payload);
+    } else if (dataRequested.match(action)) {
+      sendData(ws, api);
+    } else if (evalRequested.match(action)) {
+      sendEval(ws, api, action.payload);
+    } else if (metaRequested.match(action)) {
+      sendMeta(ws, api);
     }
     return next(action);
   };

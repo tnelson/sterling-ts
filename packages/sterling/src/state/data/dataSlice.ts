@@ -1,5 +1,4 @@
-import { AlloyTrace } from '@/alloy-instance';
-import { receivedState } from '@/sterling-connection';
+import { DataJoin, dataReceived } from '@/sterling-connection';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DataState, newDataState } from './data';
 
@@ -14,13 +13,10 @@ const dataSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(
-      receivedState,
-      (state, action: PayloadAction<AlloyTrace>) => {
-        state.trace = action.payload;
-        state.selectedInstances = [];
-      }
-    );
+    builder.addCase(dataReceived, (state, action: PayloadAction<DataJoin>) => {
+      // TODO: Handle data joins
+      console.log('TODO: Handle data joins');
+    });
   }
 });
 

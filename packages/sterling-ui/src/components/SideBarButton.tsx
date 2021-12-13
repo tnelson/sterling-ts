@@ -8,7 +8,7 @@ const SideBarButton = (props: ButtonProps & SideBarButtonProps) => {
   const { text, ...rest } = props;
   const styles = useStyleConfig('SideBarButton');
   return (
-    <Button as='div' __css={styles} {...rest}>
+    <Button as='div' __css={styles} iconSpacing='0.25rem' {...rest}>
       <Text transform='rotate(180deg)' userSelect='none' cursor='pointer'>
         {text}
       </Text>
