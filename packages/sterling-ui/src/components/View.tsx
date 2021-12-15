@@ -7,12 +7,8 @@ const View = (props: BoxProps) => {
 
 const ViewTheme = {
   baseStyle: {
-    position: 'fixed',
-    top: '50px',
-    right: 0,
-    bottom: '20px',
-    left: '27px',
-    display: 'flex'
+    w: 'full',
+    h: 'full'
   }
 };
 

@@ -1,6 +1,9 @@
 /**
  * A button that can be displayed in the Sterling user interface.
  */
+import { AlloyTrace } from '@/alloy-instance';
+import { DataJoin } from './payload';
+
 export interface Button {
   /**
    * The text to display in the button.

@@ -1,8 +1,7 @@
-import { AlloyTrace } from '@/alloy-instance';
+import { DatumParsed } from '@/sterling-connection';
 
 export interface DataState {
-  trace: AlloyTrace | undefined;
-  selectedInstances: number[];
+  data: Record<string, DatumParsed<any>>;
 }
 
 /**
@@ -10,7 +9,6 @@ export interface DataState {
  */
 export const newDataState = (): DataState => {
   return {
-    trace: undefined,
-    selectedInstances: []
+    data: {}
   };
 };

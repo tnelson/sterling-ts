@@ -7,11 +7,11 @@ const SideBar = (props: FlexProps) => {
 
 const SideBarTheme = {
   baseStyle: {
-    w: '27px',
+    w: '30px',
     position: 'fixed',
     top: '50px',
     left: 0,
-    bottom: 0,
+    bottom: '20px',
     display: 'flex',
     flexDir: 'column',
     alignItems: 'stretch',

@@ -1,4 +1,4 @@
-import { MessageType, Msg } from '../message';
+import { Msg } from '../message';
 
 /**
  * Send a message to the data provider.
@@ -7,6 +7,5 @@ import { MessageType, Msg } from '../message';
  * @param message The message to send.
  */
 export function sendMessage(ws: WebSocket, message: Msg) {
-  console.log(`SEND: ${message}`);
   ws.send(JSON.stringify(message));
 }

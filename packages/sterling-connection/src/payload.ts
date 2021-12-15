@@ -68,7 +68,16 @@ export interface EvalResult {
  * A payload containing a data provider's metadata.
  */
 export interface ProviderMeta {
+  /**
+   * The name of the data provider.
+   */
   name?: string;
+  /**
+   * Whether the provider supports a REPL.
+   */
   evaluator?: string;
+  /**
+   * The Sterling views the provider wants available to the user.
+   */
   views?: ('graph' | 'table' | 'script')[];
 }

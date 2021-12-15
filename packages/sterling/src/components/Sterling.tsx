@@ -2,12 +2,11 @@ import { connectSterling, disconnectSterling } from '@/sterling-connection';
 import { useEffect } from 'react';
 import { useSterlingDispatch, useSterlingSelector } from '../state/hooks';
 import { selectMainView } from '../state/store';
+import { AppDrawer } from './AppDrawer/AppDrawer';
 import { AppNavBar } from './AppNavBar/AppNavBar';
 import { AppSideBar } from './AppSideBar/AppSideBar';
+import { AppStage } from './AppStage/AppStage';
 import { AppStatusBar } from './AppStatusBar/AppStatusBar';
-import { GraphView } from './GraphView/GraphView';
-import { ScriptView } from './ScriptView/ScriptView';
-import { TableView } from './TableView/TableView';
 
 interface SterlingProps {
   url?: string;
@@ -27,9 +26,8 @@ const Sterling = (props: SterlingProps) => {
 
   return (
     <>
-      {mainView === 'GraphView' && <GraphView />}
-      {mainView === 'TableView' && <TableView />}
-      {mainView === 'ScriptView' && <ScriptView />}
+      <AppStage />
+      <AppDrawer />
       <AppSideBar />
       <AppNavBar />
       <AppStatusBar />

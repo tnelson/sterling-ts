@@ -1,11 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
-import {
-  Click,
-  DataJoin,
-  EvalExpression,
-  EvalResult,
-  ProviderMeta
-} from './payload';
+import { DataJoinParsed } from './parse/parse';
+import { Click, EvalExpression, EvalResult, ProviderMeta } from './payload';
 
 // actions to be dispatched by the store
 const buttonClicked = createAction<Click>('sterling/buttonClicked');
@@ -14,7 +9,7 @@ const evalRequested = createAction<EvalExpression>('sterling/evalRequested');
 const metaRequested = createAction('sterling/metaRequested');
 
 // actions dispatched by the middleware
-const dataReceived = createAction<DataJoin>('sterling/dataReceived');
+const dataReceived = createAction<DataJoinParsed>('sterling/dataReceived');
 const evalReceived = createAction<EvalResult>('sterling/evalReceived');
 const metaReceived = createAction<ProviderMeta>('sterling/metaReceived');
 
