@@ -16,6 +16,7 @@ export function onMessage<D extends Dispatch, S>(
   message: string,
   api: MiddlewareAPI<D, S>
 ) {
+  console.log(`Receive: ${message}`);
   const msg = parseMessage(message);
   if (isRecvDataMsg(msg)) api.dispatch(dataReceived(msg.payload));
   else if (isRecvEvalMsg(msg)) api.dispatch(evalReceived(msg.payload));
