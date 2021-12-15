@@ -1,8 +1,14 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin');
+
+const envs = {
+  alloy: 'env/alloy.env',
+  forge: 'env/forge.env'
+};
 
 const favIconPath = path.resolve(
   __dirname,
@@ -10,9 +16,10 @@ const favIconPath = path.resolve(
   'favicon.png'
 );
 
-module.exports = (_, argv) => {
+module.exports = (env, argv) => {
   const mode = argv.mode;
   const isDev = mode === 'development';
+  const envPath = envs[env.provider];
 
   return {
     mode: isDev ? 'development' : 'production',
@@ -64,6 +71,9 @@ module.exports = (_, argv) => {
     },
     plugins: [
       isDev && new ReactRefreshWebpackPlugin(),
+      new Dotenv({
+        path: envPath
+      }),
       new FaviconsWebpackPlugin({
         mode: 'auto',
         logo: favIconPath,

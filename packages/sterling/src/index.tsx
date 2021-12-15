@@ -10,9 +10,14 @@ ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={sterlingTheme}>
       <Provider store={store}>
-        <Sterling />
+        <Sterling url={getProviderURL()} />
       </Provider>
     </ChakraProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
+
+function getProviderURL(): string | undefined {
+  const url = process.env.WS;
+  return url === 'query' ? undefined : url;
+}
