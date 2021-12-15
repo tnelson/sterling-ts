@@ -19,7 +19,7 @@ const Sterling = (props: SterlingProps) => {
   const mainView = useSterlingSelector(selectMainView);
 
   useEffect(() => {
-    if (url) dispatch(connectSterling(url));
+    dispatch(connectSterling(url));
     return () => {
       dispatch(disconnectSterling());
     };

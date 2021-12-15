@@ -1,14 +1,25 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin');
 
-const favIconPath = path.resolve(__dirname, 'packages/sterling/src/public', 'favicon.png');
+const envs = {
+  alloy: 'env/alloy.env',
+  forge: 'env/forge.env'
+};
 
-module.exports = (_, argv) => {
+const favIconPath = path.resolve(
+  __dirname,
+  'packages/sterling/src/public',
+  'favicon.png'
+);
+
+module.exports = (env, argv) => {
   const mode = argv.mode;
   const isDev = mode === 'development';
+  const envPath = envs[env.provider];
 
   return {
     mode: isDev ? 'development' : 'production',
@@ -60,20 +71,27 @@ module.exports = (_, argv) => {
     },
     plugins: [
       isDev && new ReactRefreshWebpackPlugin(),
+      new Dotenv({
+        path: envPath
+      }),
       new FaviconsWebpackPlugin({
         mode: 'auto',
         logo: favIconPath,
         inject: true
       }),
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, 'packages/sterling/src/public', 'index.html'),
+        template: path.resolve(
+          __dirname,
+          'packages/sterling/src/public',
+          'index.html'
+        ),
         filename: path.resolve(__dirname, 'dist', 'index.html'),
         inject: true,
         title: 'Sterling',
         meta: {
-          'viewport': 'width=device-width, initial-scale=1',
+          viewport: 'width=device-width, initial-scale=1',
           'theme-color': '#ffffff',
-          'description': 'Web-based visualization of relational models.'
+          description: 'Web-based visualization of relational models.'
         }
       })
     ].filter(Boolean)

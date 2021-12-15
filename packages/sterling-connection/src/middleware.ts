@@ -60,10 +60,12 @@ function sterlingConnectionMiddleware<S, D extends Dispatch>(): Middleware<
    * @param api A Redux Middleware API.
    * @param url The URL to connect to.
    */
-  const connect = (api: MiddlewareAPI<D, S>, url: string) => {
+  const connect = (api: MiddlewareAPI<D, S>, url: string | undefined) => {
     const dispatch = api.dispatch;
 
     if (ws) disconnect();
+    url = url || getWebSocketURLFromLocation();
+    console.log(url);
     ws = new WebSocket(url);
 
     // a function that initializes the reconnect attempt
@@ -118,6 +120,17 @@ function sterlingConnectionMiddleware<S, D extends Dispatch>(): Middleware<
     }
     return next(action);
   };
+}
+
+/**
+ * Use the search param of the current URL to generate a WebSocket URL string.
+ *
+ * For example, if Sterling is loaded from http://localhost:4000?1234 then this
+ * function will return a URL that can be used to establish a WebSocket
+ * connection over port 1234.
+ */
+function getWebSocketURLFromLocation() {
+  return `ws://localhost:${window.location.search.slice(1)}`;
 }
 
 export { sterlingConnectionMiddleware };
