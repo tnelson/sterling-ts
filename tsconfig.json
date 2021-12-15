@@ -23,6 +23,9 @@
       "@/alloy-instance": [
         "alloy-instance/index.ts"
       ],
+      "@/graph-lib": [
+        "graph-lib/index.ts"
+      ],
       "@/sterling-connection": [
         "sterling-connection/index.ts"
       ],
@@ -34,6 +37,9 @@
       ],
       "@/test-data/*": [
         "test-data/*"
+      ],
+      "@/vector2": [
+        "vector2/index.ts"
       ]
     }
   },

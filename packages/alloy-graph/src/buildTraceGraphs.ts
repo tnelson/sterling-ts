@@ -1,8 +1,8 @@
 import { AlloyEdge, AlloyGraph, AlloyNode } from '@/alloy-graph';
 import { AlloyTrace } from '@/alloy-instance';
 import { SterlingTheme } from '@/sterling-theme';
-import { newGraph } from '@graph-ts/graph-lib';
-import { Dict, PathDef } from '@graph-ts/graph-svg';
+import { newGraph } from '@/graph-lib';
+import { Dict, PathDef } from '@/graph-svg';
 import _ from 'lodash';
 import {
   AtomNode,

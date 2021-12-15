@@ -11,9 +11,9 @@ import {
   isBuiltin
 } from '@/alloy-instance';
 import { getHiddenTypes, SterlingTheme } from '@/sterling-theme';
-import { Node } from '@graph-ts/graph-lib';
+import { Node } from '@/graph-lib';
 
-export type AtomNode = Node<{ atom: AlloyAtom }>;
+export type AtomNode = Node & { atom: AlloyAtom };
 export type GraphComponents = {
   nodes: AtomNode[];
   edges: AlloyEdge[];

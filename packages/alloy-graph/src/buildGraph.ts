@@ -17,7 +17,7 @@ import {
   getProjectedTypes,
   SterlingTheme
 } from '@/sterling-theme';
-import { newGraph, Node } from '@graph-ts/graph-lib';
+import { newGraph, Node } from '@/graph-lib';
 import {
   getVisibleGraphComponents,
   GraphComponents

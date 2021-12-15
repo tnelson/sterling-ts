@@ -1,6 +1,6 @@
 import { sterlingConnectionMiddleware } from '@/sterling-connection';
 import { StyleSet } from '@/sterling-theme';
-import { Graph } from '@graph-ts/graph-lib';
+import { Graph } from '@/graph-lib';
 import { Dict, PathDef } from '@graph-ts/graph-svg';
 import { configureStore, createSelector } from '@reduxjs/toolkit';
 import { sterlingMiddleware } from '../middleware/sterlingMiddleware';
