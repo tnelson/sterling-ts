@@ -19,7 +19,7 @@ const evalReceived = createAction<EvalResult>('sterling/evalReceived');
 const metaReceived = createAction<ProviderMeta>('sterling/metaReceived');
 
 // connection actions (to be dispatched by the store)
-const connectSterling = createAction<string>('sterling/connect');
+const connectSterling = createAction<string | undefined>('sterling/connect');
 const disconnectSterling = createAction('sterling/disconnect');
 
 // connection actions (dispatched by the middleware)

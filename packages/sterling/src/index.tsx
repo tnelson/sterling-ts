@@ -10,7 +10,7 @@ ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={sterlingTheme}>
       <Provider store={store}>
-        <Sterling url='ws://localhost:4000/alloy' />
+        <Sterling />
       </Provider>
     </ChakraProvider>
   </React.StrictMode>,

@@ -4,7 +4,11 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin');
 
-const favIconPath = path.resolve(__dirname, 'packages/sterling/src/public', 'favicon.png');
+const favIconPath = path.resolve(
+  __dirname,
+  'packages/sterling/src/public',
+  'favicon.png'
+);
 
 module.exports = (_, argv) => {
   const mode = argv.mode;
@@ -66,14 +70,18 @@ module.exports = (_, argv) => {
         inject: true
       }),
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, 'packages/sterling/src/public', 'index.html'),
+        template: path.resolve(
+          __dirname,
+          'packages/sterling/src/public',
+          'index.html'
+        ),
         filename: path.resolve(__dirname, 'dist', 'index.html'),
         inject: true,
         title: 'Sterling',
         meta: {
-          'viewport': 'width=device-width, initial-scale=1',
+          viewport: 'width=device-width, initial-scale=1',
           'theme-color': '#ffffff',
-          'description': 'Web-based visualization of relational models.'
+          description: 'Web-based visualization of relational models.'
         }
       })
     ].filter(Boolean)
