@@ -1,10 +1,14 @@
 import { Drawer } from '@/sterling-ui';
-import { useSterlingSelector } from '../../state/hooks';
-import { selectDrawerState } from '../../state/store';
+import { Box, BoxProps } from '@chakra-ui/react';
 
-const AppDrawer = () => {
-  const variant = useSterlingSelector(selectDrawerState);
-  return <Drawer variant={variant}>Drawer!</Drawer>;
+const AppDrawer = (props: BoxProps) => {
+  const { children, ...rest } = props;
+  return (
+    <Drawer {...rest}>
+      <Box width='full'>Some content!</Box>
+      {children}
+    </Drawer>
+  );
 };
 
 export { AppDrawer };

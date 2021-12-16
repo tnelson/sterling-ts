@@ -1,4 +1,5 @@
 export * from './src/theme';
+export { DragHandle } from './src/components/DragHandle';
 export { Drawer } from './src/components/Drawer';
 export { Logo } from './src/components/Logo';
 export { MiniMap } from './src/components/MiniMap/MiniMap';

@@ -43,18 +43,18 @@ const selectCommonDrawer = createSelector(
 /**
  * Get a string indicating if the drawer is open or closed.
  */
-const selectDrawerState = createSelector(
+const selectDrawerIsCollapsed = createSelector(
   [selectMainView, selectGraphDrawer, selectTableDrawer, selectScriptDrawer],
   (main, graph, table, script) => {
     switch (main) {
       case 'GraphView':
-        return graph !== null ? 'open' : 'closed';
+        return graph === null;
       case 'TableView':
-        return table !== null ? 'open' : 'closed';
+        return table === null;
       case 'ScriptView':
-        return script !== null ? 'open' : 'closed';
+        return script === null;
       default:
-        return 'closed';
+        return true;
     }
   }
 );
@@ -65,5 +65,5 @@ export default {
   selectTableDrawer,
   selectScriptDrawer,
   selectCommonDrawer,
-  selectDrawerState
+  selectDrawerIsCollapsed
 };

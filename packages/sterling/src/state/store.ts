@@ -110,8 +110,8 @@ export const selectCommonDrawer = (state: SterlingState) =>
 /**
  * Get a string indicating if the drawer is open or closed.
  */
-export const selectDrawerState = (state: SterlingState) =>
-  uiSelectors.selectDrawerState(state.ui);
+export const selectDrawerIsCollapsed = (state: SterlingState) =>
+  uiSelectors.selectDrawerIsCollapsed(state.ui);
 
 /**
  * Get the drawer that's open for the graph view.

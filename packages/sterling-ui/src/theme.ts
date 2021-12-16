@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
+import { DragHandleTheme } from './components/DragHandle';
 import { DrawerTheme } from './components/Drawer';
 import { LogoTheme } from './components/Logo';
 import { NavBarTheme } from './components/NavBar';
@@ -20,6 +21,7 @@ const sterlingTheme = extendTheme({
     }
   },
   components: {
+    DragHandle: DragHandleTheme,
     Drawer: DrawerTheme,
     Logo: LogoTheme,
     NavBar: NavBarTheme,

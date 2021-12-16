@@ -1,7 +1,7 @@
 import { View } from '@/sterling-ui';
 
 const GraphView = () => {
-  return <View border='1px solid red'>Graph View</View>;
+  return <View>Graph View</View>;
 };
 
 export { GraphView };
