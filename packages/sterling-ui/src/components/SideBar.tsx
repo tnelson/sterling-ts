@@ -10,13 +10,13 @@ const SideBarTheme = {
     w: '30px',
     position: 'fixed',
     top: '50px',
-    left: 0,
+    right: 0,
     bottom: '20px',
     display: 'flex',
     flexDir: 'column',
     alignItems: 'stretch',
     fontSize: 'xs',
-    borderRight: '1px',
+    borderLeft: '1px',
     borderColor: 'gray.300',
     bg: 'gray.100'
   }

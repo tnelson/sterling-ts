@@ -1,14 +1,11 @@
-import { Drawer } from '@/sterling-ui';
-import { Box, BoxProps } from '@chakra-ui/react';
+import { Pane } from '@/sterling-ui';
+import { useSterlingSelector } from '../../state/hooks';
+import { selectCommonDrawer } from '../../state/store';
+import { LogDrawer } from './common/LogDrawer';
 
-const AppDrawer = (props: BoxProps) => {
-  const { children, ...rest } = props;
-  return (
-    <Drawer {...rest}>
-      <Box width='full'>Some content!</Box>
-      {children}
-    </Drawer>
-  );
+const AppDrawer = () => {
+  const commonDrawer = useSterlingSelector(selectCommonDrawer);
+  return <Pane>{commonDrawer === 'log' && <LogDrawer />}</Pane>;
 };
 
 export { AppDrawer };

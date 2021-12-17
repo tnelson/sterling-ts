@@ -8,6 +8,8 @@ import dataSlice from './data/dataSlice';
 import dataSelectors from './data/dataSelectors';
 import graphViewSlice from './graphView/graphViewSlice';
 import graphViewSelectors from './graphView/graphViewSelectors';
+import logSlice from './log/logSlice';
+import logSelectors from './log/logSelectors';
 import providerSlice from './provider/providerSlice';
 import providerSelectors from './provider/providerSelectors';
 import uiSlice from './ui/uiSlice';
@@ -17,6 +19,7 @@ const store = configureStore({
   reducer: {
     data: dataSlice,
     graphView: graphViewSlice,
+    log: logSlice,
     provider: providerSlice,
     ui: uiSlice
   },
@@ -77,6 +80,11 @@ export const selectTraceLoopBack = (state: SterlingState) =>
 //  */
 // export const selectStyles = (state: SterlingState) =>
 //   graphViewSelectors.selectStyles(state.graphView);
+
+// ---------- log slice selectors ---------- //
+
+export const selectLogItems = (state: SterlingState) =>
+  logSelectors.selectLogItems(state.log);
 
 // ---------- provider slice selectors ---------- //
 

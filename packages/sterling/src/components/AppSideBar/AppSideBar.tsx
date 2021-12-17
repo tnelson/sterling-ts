@@ -15,24 +15,16 @@ const AppSideBar = () => {
   const common = useSterlingSelector(selectCommonDrawer);
   return (
     <SideBar>
-      <SideBarButton
-        text='Data'
-        rightIcon={<MdFolderOpen />}
-        isActive={common === 'data'}
-        onClick={() => dispatch(commonDrawerViewChanged('data'))}
-      />
+      {view === 'GraphView' && <GraphViewButtons />}
+      {view === 'TableView' && <TableViewButtons />}
+      {view === 'ScriptView' && <ScriptViewButtons />}
+      <Spacer />
       <SideBarButton
         text='Evaluator'
         rightIcon={<GoTerminal />}
         isActive={common === 'evaluator'}
         onClick={() => dispatch(commonDrawerViewChanged('evaluator'))}
       />
-      <Divider borderBottomWidth={4} />
-      {view === 'GraphView' && <GraphViewButtons />}
-      {view === 'TableView' && <TableViewButtons />}
-      {view === 'ScriptView' && <ScriptViewButtons />}
-      <Spacer />
-      <Divider borderBottomWidth={4} />
       <SideBarButton
         text='Log'
         rightIcon={<MdNotes />}

@@ -1,7 +1,9 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import '@fontsource/fira-code/variable.css';
+import '@fontsource/inter/variable-full.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { ChakraProvider } from '@chakra-ui/react';
 import { sterlingTheme } from '@/sterling-ui';
 import { Sterling } from './components/Sterling';
 import store from './state/store';

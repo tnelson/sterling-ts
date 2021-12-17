@@ -1,7 +1,7 @@
 import { View } from '@/sterling-ui';
 
 const TableView = () => {
-  return <View border='1px solid red'>Table View</View>;
+  return <View>Table View</View>;
 };
 
 export { TableView };

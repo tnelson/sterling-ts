@@ -1,13 +1,13 @@
 import { connectSterling, disconnectSterling } from '@/sterling-connection';
+import { Dashboard } from '@/sterling-ui';
 import { useEffect } from 'react';
 import { useSterlingDispatch, useSterlingSelector } from '../state/hooks';
-import { selectDrawerIsCollapsed, selectMainView } from '../state/store';
+import { selectDrawerIsCollapsed } from '../state/store';
 import { AppDrawer } from './AppDrawer/AppDrawer';
 import { AppNavBar } from './AppNavBar/AppNavBar';
 import { AppSideBar } from './AppSideBar/AppSideBar';
 import { AppStage } from './AppStage/AppStage';
 import { AppStatusBar } from './AppStatusBar/AppStatusBar';
-import { SplitPane } from './SplitPane';
 
 interface SterlingProps {
   url?: string;
@@ -16,8 +16,7 @@ interface SterlingProps {
 const Sterling = (props: SterlingProps) => {
   const { url } = props;
   const dispatch = useSterlingDispatch();
-  const mainView = useSterlingSelector(selectMainView);
-  const isCollapsed = useSterlingSelector(selectDrawerIsCollapsed);
+  const drawerCollapsed = useSterlingSelector(selectDrawerIsCollapsed);
 
   useEffect(() => {
     dispatch(connectSterling(url));
@@ -28,13 +27,18 @@ const Sterling = (props: SterlingProps) => {
 
   return (
     <>
-      <SplitPane
-        initialWidth={250}
-        isCollapsed={isCollapsed}
-        leftComponent={AppDrawer}
-        leftPad={30}
-        rightComponent={AppStage}
-      />
+      <Dashboard
+        leftPaneCollapsed={false}
+        leftPaneInitialWidth={100}
+        leftPaneMinWidth={50}
+        rightPaneCollapsed={drawerCollapsed}
+        rightPaneInitialWidth={350}
+        rightPaneMinWidth={50}
+      >
+        <div>Left</div>
+        <AppStage />
+        <AppDrawer />
+      </Dashboard>
       <AppSideBar />
       <AppNavBar />
       <AppStatusBar />

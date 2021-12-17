@@ -62,10 +62,10 @@ function sterlingConnectionMiddleware<S, D extends Dispatch>(): Middleware<
    */
   const connect = (api: MiddlewareAPI<D, S>, url: string | undefined) => {
     const dispatch = api.dispatch;
+    let connected = false;
 
     if (ws) disconnect();
     url = url || getWebSocketURLFromLocation();
-    console.log(url);
     ws = new WebSocket(url);
 
     // a function that initializes the reconnect attempt
@@ -79,17 +79,19 @@ function sterlingConnectionMiddleware<S, D extends Dispatch>(): Middleware<
 
     // respond to websocket connection events by dispatching actions
     ws.onopen = () => {
+      connected = true;
       window.setTimeout(() => sendPing(), PING_INTERVAL);
       dispatch(sterlingConnected());
       clearReconnectInterval();
     };
     ws.onclose = () => {
-      dispatch(sterlingDisconnected());
-      startReconnect();
-    };
-    ws.onerror = (event: Event) => {
-      dispatch(sterlingConnectionError(event.type));
-      if (ws && ws.readyState === WebSocket.CLOSED) startReconnect();
+      if (connected) {
+        connected = false;
+        dispatch(sterlingDisconnected());
+      }
+      if (ws && ws.readyState === WebSocket.CLOSED) {
+        startReconnect();
+      }
     };
 
     // respond to received messages by parsing data and dispatching actions
