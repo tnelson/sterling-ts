@@ -1,4 +1,10 @@
 import {
+  DataJoinParsed,
+  dataReceived,
+  dataRequested,
+  metaReceived,
+  metaRequested,
+  ProviderMeta,
   sterlingConnected,
   sterlingConnectionError,
   sterlingDisconnected
@@ -29,6 +35,31 @@ const logSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
+    builder.addCase(
+      dataReceived,
+      (state, action: PayloadAction<DataJoinParsed>) => {
+        const { enter, update, exit } = action.payload;
+        const en = enter?.length || 0;
+        const up = update?.length || 0;
+        const ex = exit?.length || 0;
+        state.items.push(
+          newMessage(`Receive data: ${en} enter, ${up} update, ${ex} exit.`)
+        );
+      }
+    );
+    builder.addCase(dataRequested, (state) => {
+      state.items.push(newMessage('Request data.'));
+    });
+    builder.addCase(
+      metaReceived,
+      (state, action: PayloadAction<ProviderMeta>) => {
+        const { name } = action.payload;
+        state.items.push(newMessage(`Receive metadata from ${name}.`));
+      }
+    );
+    builder.addCase(metaRequested, (state) => {
+      state.items.push(newMessage('Request provider metadata.'));
+    });
     builder.addCase(sterlingConnected, (state) => {
       state.items.push(newMessage('Connection established.'));
     });

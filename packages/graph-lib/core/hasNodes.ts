@@ -1,4 +1,4 @@
-import { every } from 'lodash-es';
+import { every } from 'lodash';
 import { hasNode } from './hasNode';
 import { Graph } from '../types';
 

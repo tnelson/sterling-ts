@@ -1,4 +1,5 @@
 import { Flex, FlexProps, useStyleConfig } from '@chakra-ui/react';
+import sizes from '../sizes';
 
 const StatusBar = (props: FlexProps) => {
   const styles = useStyleConfig('StatusBar');
@@ -7,7 +8,7 @@ const StatusBar = (props: FlexProps) => {
 
 const StatusBarTheme = {
   baseStyle: {
-    h: '20px',
+    h: `${sizes.statusBarSize}px`,
     position: 'fixed',
     right: 0,
     bottom: 0,

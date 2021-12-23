@@ -1,22 +1,18 @@
-import { GraphViewState } from './graphView';
+import { DatumGraphs, GraphViewState } from './graphView';
 
-/**
- * Get the graphs of the current trace.
- */
-// const selectGraphs = (state: GraphViewState) => state.graphs;
+const selectDatumActiveGraph = (state: GraphViewState, datumId: string) => {
+  const { active, graphs } = state.byDatumId[datumId];
+  return graphs[active];
+};
 
-/**
- * Get the edge paths of the current trace.
- */
-// const selectPaths = (state: GraphViewState) => state.paths;
-
-/**
- * Get the graph styles of the current trace.
- */
-// const selectStyles = (state: GraphViewState) => state.styles;
+const selectDatumGraphState = (
+  state: GraphViewState,
+  datumId: string
+): DatumGraphs => {
+  return state.byDatumId[datumId];
+};
 
 export default {
-  // selectGraphs,
-  // selectPaths,
-  // selectStyles
+  selectDatumActiveGraph,
+  selectDatumGraphState
 };

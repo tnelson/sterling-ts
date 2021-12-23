@@ -8,9 +8,11 @@ const LogList = (props: GridProps) => {
 const LogListTheme = {
   baseStyle: {
     display: 'grid',
+    backgroundColor: 'gray.50',
     gridTemplateColumns: 'fit-content(300px) 1fr',
     gridColumnGap: '0.35rem',
-    gridAutoRows: 'min-content'
+    gridAutoRows: 'min-content',
+    userSelect: 'text'
   }
 };
 

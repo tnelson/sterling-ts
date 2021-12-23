@@ -60,4 +60,14 @@ export type Graph<N extends Node = Node, E extends Edge = Edge> = {
 /**
  * A graph node with x- and y- coordinates
  */
-export type PositionedNode = Vector2 & Node;
+export type PositionedNode = Node & Vector2;
+
+/**
+ * An edge with specified waypoints
+ */
+export type RoutedEdge = Edge & { waypoints?: Vector2[] };
+
+/**
+ * A graph with positioned nodes and routed edges
+ */
+export type PositionedGraph = Graph<PositionedNode, RoutedEdge>;

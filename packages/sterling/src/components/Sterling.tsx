@@ -8,6 +8,8 @@ import { AppNavBar } from './AppNavBar/AppNavBar';
 import { AppSideBar } from './AppSideBar/AppSideBar';
 import { AppStage } from './AppStage/AppStage';
 import { AppStatusBar } from './AppStatusBar/AppStatusBar';
+import { defaultPreferences } from '../preferences';
+import { DataExplorer } from './DataExplorer/DataExplorer';
 
 interface SterlingProps {
   url?: string;
@@ -15,6 +17,7 @@ interface SterlingProps {
 
 const Sterling = (props: SterlingProps) => {
   const { url } = props;
+  const { layout } = defaultPreferences;
   const dispatch = useSterlingDispatch();
   const drawerCollapsed = useSterlingSelector(selectDrawerIsCollapsed);
 
@@ -29,13 +32,15 @@ const Sterling = (props: SterlingProps) => {
     <>
       <Dashboard
         leftPaneCollapsed={false}
-        leftPaneInitialWidth={100}
-        leftPaneMinWidth={50}
+        leftPaneInitialWidth={layout.explorerWidth}
+        leftPaneMinWidth={layout.explorerMinWidth}
+        leftPaneMaxWidth={layout.explorerMaxWidth}
         rightPaneCollapsed={drawerCollapsed}
-        rightPaneInitialWidth={350}
-        rightPaneMinWidth={50}
+        rightPaneInitialWidth={layout.drawerWidth}
+        rightPaneMinWidth={layout.drawerMinWidth}
+        rightPaneMaxWidth={layout.drawerMaxWidth}
       >
-        <div>Left</div>
+        <DataExplorer />
         <AppStage />
         <AppDrawer />
       </Dashboard>

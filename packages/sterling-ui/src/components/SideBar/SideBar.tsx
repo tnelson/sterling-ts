@@ -1,4 +1,5 @@
 import { Flex, FlexProps, useStyleConfig } from '@chakra-ui/react';
+import sizes from '../../sizes';
 
 const SideBar = (props: FlexProps) => {
   const styles = useStyleConfig('SideBar');
@@ -7,11 +8,11 @@ const SideBar = (props: FlexProps) => {
 
 const SideBarTheme = {
   baseStyle: {
-    w: '30px',
+    w: `${sizes.sideBarSize}px`,
     position: 'fixed',
-    top: '50px',
+    top: `${sizes.navBarSize}px`,
     right: 0,
-    bottom: '20px',
+    bottom: `${sizes.statusBarSize}px`,
     display: 'flex',
     flexDir: 'column',
     alignItems: 'stretch',

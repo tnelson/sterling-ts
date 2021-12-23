@@ -1,4 +1,4 @@
-import { values } from 'lodash-es';
+import { values } from 'lodash';
 import { getNode } from './getNode';
 import { Edge, Graph, Node } from '../types';
 

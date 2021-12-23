@@ -1,8 +1,12 @@
 // import { GraphSVGDiv } from '@graph-ts/graph-svg';
+import { GraphGroup, GraphSVGDiv } from '@/graph-svg';
 import { useMemo } from 'react';
-// import { buildGraph } from './buildGraph';
-// import { buildNodeLabels } from './buildNodeLabels';
-import { edgeStyle, nodeShape, nodeStyle, selectedNodeStyle } from './styles';
+import { buildEdgeCurves } from './buildEdgeCurves';
+import { buildEdgeStyles } from './buildEdgeStyles';
+import { buildGraph } from './buildGraph';
+import { buildNodeLabels } from './buildNodeLabels';
+import { buildNodeShapes } from './buildNodeShapes';
+import { buildNodeStyles } from './buildNodeStyles';
 
 export interface MiniMapProps {
   numStates: number;
@@ -14,37 +18,27 @@ export interface MiniMapProps {
 const MiniMap = (props: MiniMapProps) => {
   const { numStates, loopBack, selectedIndices, onSelectedIndicesDidChange } =
     props;
-  //
-  // const { graph, edgePaths } = useMemo(
-  //   () => buildGraph(numStates, loopBack),
-  //   [numStates, loopBack]
-  // );
-  //
-  // const nodeLabels = useMemo(
-  //   () => buildNodeLabels(graph, selectedIndices),
-  //   [graph, selectedIndices]
-  // );
 
-  return null;
-  // return (
-  //   <GraphSVGDiv
-  //     // @ts-ignore
-  //     graph={graph}
-  //     nodeLabels={nodeLabels}
-  //     defaultEdgeStyle={edgeStyle}
-  //     defaultEdgeStyleHovered={{}}
-  //     defaultNodeStyle={nodeStyle}
-  //     defaultNodeStyleSelected={selectedNodeStyle}
-  //     defaultShape={nodeShape}
-  //     edgePaths={edgePaths}
-  //     onSelectionDidUpdate={(nodeIds) => {
-  //       if (onSelectedIndicesDidChange) {
-  //         onSelectedIndicesDidChange(nodeIds.map((nodeId) => +nodeId));
-  //       }
-  //     }}
-  //     interactions={true}
-  //   />
-  // );
+  const graph = buildGraph(numStates, loopBack);
+  const nodeShapes = buildNodeShapes(graph);
+  const nodeStyles = buildNodeStyles(graph);
+  const nodeLabels = buildNodeLabels(graph, selectedIndices);
+  const edgeCurves = buildEdgeCurves(graph);
+  const edgeStyles = buildEdgeStyles(graph);
+
+  return (
+    <GraphSVGDiv style={{ height: '100%' }}>
+      <GraphGroup
+        graph={graph}
+        id='minimap'
+        nodeShapes={nodeShapes}
+        nodeStyles={nodeStyles}
+        nodeLabels={nodeLabels}
+        edgeCurves={edgeCurves}
+        edgeStyles={edgeStyles}
+      />
+    </GraphSVGDiv>
+  );
 };
 
 export { MiniMap };

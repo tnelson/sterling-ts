@@ -30,7 +30,7 @@ const LogTextTheme = {
     timestamp: {
       display: 'flex',
       alignItems: 'center',
-      color: 'gray.400'
+      color: 'gray.500'
     }
   },
   defaultProps: {

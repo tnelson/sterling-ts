@@ -1,4 +1,5 @@
 import '@fontsource/fira-code/variable.css';
+import '@fontsource/fira-code/400.css';
 import '@fontsource/inter/variable-full.css';
 import React from 'react';
 import ReactDOM from 'react-dom';

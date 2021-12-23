@@ -1,15 +1,15 @@
-import { LabelDef, ShapeDef } from '@graph-ts/graph-svg';
+import { LabelDef, ShapeDef } from '@/graph-svg';
 import { CSSProperties } from 'react';
 
 export const edgeStyle: CSSProperties = {
-  stroke: '#333',
+  stroke: '#4A5568',
   strokeWidth: 1,
   fill: 'none'
 };
 
 export const nodeLabel: Omit<LabelDef, 'text'> = {
   style: {
-    fill: '#777',
+    fill: '#4A5568',
     fontFamily: 'monospace',
     fontSize: '10px',
     textAnchor: 'middle',
@@ -27,9 +27,9 @@ export const nodeShape: ShapeDef = {
 };
 
 export const nodeStyle: CSSProperties = {
-  stroke: '#ddd',
+  stroke: '#4A5568',
   strokeWidth: 1,
-  fill: '#ddd',
+  fill: 'white',
   cursor: 'pointer'
 };
 

@@ -1,4 +1,4 @@
-import { compact, keys } from 'lodash-es';
+import { compact, keys } from 'lodash';
 import { Edge, Graph, Node } from '../types';
 import { getNode } from './getNode';
 

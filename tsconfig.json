@@ -26,6 +26,9 @@
       "@/graph-lib": [
         "graph-lib/index.ts"
       ],
+      "@/graph-svg": [
+        "graph-svg-custom/index.ts"
+      ],
       "@/sterling-connection": [
         "sterling-connection/index.ts"
       ],

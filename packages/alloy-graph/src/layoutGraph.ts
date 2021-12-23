@@ -1,17 +1,17 @@
 import { AlloyNode } from '@/alloy-graph';
-import { Dict, PathDef } from '@graph-ts/graph-svg';
+import { Vector2 } from '@/vector2';
 import dagre from 'dagre';
 import { GraphComponents } from './getVisibleGraphComponents';
 
 export function layoutGraph(components: GraphComponents): {
   nodes: AlloyNode[];
-  edgePaths: Dict<PathDef>;
+  edgePaths: Record<string, Vector2[]>;
 } {
   const g = new dagre.graphlib.Graph({ multigraph: true });
-  g.setGraph({ nodesep: 50, ranksep: 100, rankdir: 'TB' });
+  g.setGraph({ nodesep: 25, ranksep: 50, rankdir: 'TB' });
 
   components.nodes.forEach((node) => {
-    g.setNode(node.id, { label: node.id, width: 120, height: 65 });
+    g.setNode(node.id, { label: node.id, width: 100, height: 60 });
   });
 
   components.edges.forEach((edge) => {
@@ -19,10 +19,10 @@ export function layoutGraph(components: GraphComponents): {
   });
 
   dagre.layout(g);
-  const { dx, dy } = centerOffset(g, 120, 65);
+  const { dx, dy } = centerOffset(g, 100, 60);
 
   const nodes: AlloyNode[] = [];
-  const edgePaths: Dict<PathDef> = {};
+  const edgePaths: Record<string, Vector2[]> = {};
   components.nodes.forEach((node) => {
     nodes.push({
       ...node,
@@ -32,12 +32,9 @@ export function layoutGraph(components: GraphComponents): {
   });
   g.edges().forEach((e) => {
     const edge = g.edge(e);
-    edgePaths[edge.id] = {
-      type: 'line',
-      waypoints: edge.points.slice(1, -1).map((point) => {
-        return { x: point.x - dx, y: point.y - dy };
-      })
-    };
+    edgePaths[edge.id] = edge.points.slice(1, -1).map((point) => {
+      return { x: point.x - dx, y: point.y - dy };
+    });
   });
 
   return {

@@ -8,7 +8,11 @@ const initialState: DataState = newDataState();
 const dataSlice = createSlice({
   name: 'data',
   initialState,
-  reducers: {},
+  reducers: {
+    dataSelected(state, action: PayloadAction<string[]>) {
+      state.activeDatumIds = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(
       dataReceived,
@@ -18,32 +22,28 @@ const dataSlice = createSlice({
           enter.forEach((datum) => {
             // Check that the datum id does not already exist before adding it to the state.
             const id = datum.id;
-            if (state.data[id] !== undefined)
-              return console.error(
-                `Cannot add datum. Datum with id ${id} already exists.`
-              );
-            state.data[id] = datum;
+            if (!state.datumById[id]) {
+              state.datumById[id] = datum;
+            }
           });
+          state.datumIds.push(...enter.map((datum) => datum.id));
+          state.activeDatumIds = [state.datumIds[state.datumIds.length - 1]];
         }
         if (update) {
           update.forEach((meta) => {
             // Check that the datum does exist in the state before updating it.
             const id = meta.id;
-            if (state.data[id] === undefined)
-              return console.error(
-                `Cannot update datum. Datum with id ${id} does not exist`
-              );
-            Object.assign(state.data[id], meta);
+            if (state.datumById[id]) {
+              Object.assign(state.datumById[id], meta);
+            }
           });
         }
         if (exit) {
           exit.forEach((id) => {
             // Check that the datum exists before removing it from the state.
-            if (state.data[id] === undefined)
-              return console.error(
-                `Cannot remove datum. Datum with id ${id} does not exist`
-              );
-            delete state.data[id];
+            if (state.datumById[id]) {
+              delete state.datumById[id];
+            }
           });
         }
       }
@@ -51,5 +51,5 @@ const dataSlice = createSlice({
   }
 });
 
-export const {} = dataSlice.actions;
+export const { dataSelected } = dataSlice.actions;
 export default dataSlice.reducer;

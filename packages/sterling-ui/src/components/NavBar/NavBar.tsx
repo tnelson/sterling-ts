@@ -1,4 +1,5 @@
 import { Flex, FlexProps, useStyleConfig } from '@chakra-ui/react';
+import sizes from '../../sizes';
 
 const NavBar = (props: FlexProps) => {
   const styles = useStyleConfig('NavBar');
@@ -7,18 +8,17 @@ const NavBar = (props: FlexProps) => {
 
 const NavBarTheme = {
   baseStyle: {
-    h: '50px',
+    h: `${sizes.navBarSize}px`,
     position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
     display: 'flex',
     alignItems: 'stretch',
-    borderBottom: '1px',
-    borderColor: 'gray.200',
-    shadow: 'base',
+    // borderBottom: '1px',
+    // borderColor: 'gray.300',
     p: 2,
-    bg: 'gray.50'
+    bg: 'gray.600'
   }
 };
 

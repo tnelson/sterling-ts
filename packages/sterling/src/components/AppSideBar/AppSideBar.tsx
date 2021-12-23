@@ -1,7 +1,7 @@
 import { SideBar, SideBarButton } from '@/sterling-ui';
-import { Divider, Spacer } from '@chakra-ui/react';
+import { Spacer } from '@chakra-ui/react';
 import { GoTerminal } from 'react-icons/go';
-import { MdFolderOpen, MdNotes } from 'react-icons/md';
+import { MdNotes } from 'react-icons/md';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { selectCommonDrawer, selectMainView } from '../../state/store';
 import { commonDrawerViewChanged } from '../../state/ui/uiSlice';

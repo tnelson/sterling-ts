@@ -12,6 +12,9 @@ const PaneTheme = {
     right: 0,
     bottom: 0,
     left: 0
+    // display: 'flex',
+    // flexDir: 'column',
+    // overflow: 'hidden'
   }
 };
 

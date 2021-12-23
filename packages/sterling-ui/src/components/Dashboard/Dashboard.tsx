@@ -1,5 +1,5 @@
 import { Box, useStyleConfig } from '@chakra-ui/react';
-import { throttle } from 'lodash';
+import { clamp, throttle } from 'lodash';
 import {
   Children,
   CSSProperties,
@@ -10,6 +10,7 @@ import {
   useRef,
   useState
 } from 'react';
+import sizes from '../../sizes';
 import { HANDLE_PAD } from './constants';
 import { DragHandle } from './DragHandle';
 
@@ -17,9 +18,11 @@ interface DashboardProps {
   leftPaneCollapsed: boolean;
   leftPaneInitialWidth: number;
   leftPaneMinWidth: number;
+  leftPaneMaxWidth: number;
   rightPaneCollapsed: boolean;
   rightPaneInitialWidth: number;
   rightPaneMinWidth: number;
+  rightPaneMaxWidth: number;
 }
 
 const Dashboard = (props: PropsWithChildren<DashboardProps>) => {
@@ -28,9 +31,11 @@ const Dashboard = (props: PropsWithChildren<DashboardProps>) => {
     leftPaneCollapsed,
     leftPaneInitialWidth,
     leftPaneMinWidth,
+    leftPaneMaxWidth,
     rightPaneCollapsed,
     rightPaneInitialWidth,
-    rightPaneMinWidth
+    rightPaneMinWidth,
+    rightPaneMaxWidth
   } = props;
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -104,7 +109,7 @@ const Dashboard = (props: PropsWithChildren<DashboardProps>) => {
       if (leftDragging) {
         window.getSelection()?.empty();
         const w = event.clientX - leftClickOffset + HANDLE_PAD;
-        setLeftWidth(w < leftPaneMinWidth ? leftPaneMinWidth : w);
+        setLeftWidth(clamp(w, leftPaneMinWidth, leftPaneMaxWidth));
       }
       if (rightDragging) {
         const current = ref.current;
@@ -112,7 +117,7 @@ const Dashboard = (props: PropsWithChildren<DashboardProps>) => {
           window.getSelection()?.empty();
           const bbox = current.getBoundingClientRect();
           const w = bbox.width - event.clientX + rightClickOffset - HANDLE_PAD;
-          setRightWidth(w < rightPaneMinWidth ? rightPaneMinWidth : w);
+          setRightWidth(clamp(w, rightPaneMinWidth, rightPaneMaxWidth));
         }
       }
     }, 16),
@@ -122,7 +127,9 @@ const Dashboard = (props: PropsWithChildren<DashboardProps>) => {
       leftDragging,
       rightDragging,
       leftPaneMinWidth,
-      rightPaneMinWidth
+      rightPaneMinWidth,
+      leftPaneMaxWidth,
+      rightPaneMaxWidth
     ]
   );
 
@@ -166,9 +173,9 @@ const Dashboard = (props: PropsWithChildren<DashboardProps>) => {
 const DashboardTheme = {
   baseStyle: {
     position: 'fixed',
-    top: '50px',
-    right: '30px',
-    bottom: '20px',
+    top: `${sizes.navBarSize}px`,
+    right: `${sizes.sideBarSize}px`,
+    bottom: `${sizes.statusBarSize}px`,
     left: '0'
   }
 };

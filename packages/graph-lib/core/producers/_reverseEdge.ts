@@ -1,4 +1,4 @@
-import { assign, cloneDeep } from 'lodash-es';
+import { assign, cloneDeep } from 'lodash';
 import { Edge, Graph, Node } from '../../types';
 import { _addEdge } from './_addEdge';
 import { _removeEdge } from './_removeEdge';

@@ -1,30 +1,29 @@
+import { DatumParsed } from '@/sterling-connection';
 import { DataState } from './data';
 
 /**
- * Get the selected instances of the current trace.
+ * Get the active datum.
  */
-const selectSelectedInstances = (state: DataState) => state.selectedInstances;
+const selectActiveData = (state: DataState): DatumParsed<any>[] => {
+  return state.activeDatumIds.map((id) => state.datumById[id]);
+};
 
 /**
- * Get the current trace.
+ * Get the ID of the active datum.
  */
-const selectTrace = (state: DataState) => state.trace;
+const selectActiveDatumIds = (state: DataState): string[] => {
+  return state.activeDatumIds;
+};
 
 /**
- * Get the length of the current trace.
+ * Get an ordered list of all datum IDs.
  */
-const selectTraceLength = (state: DataState) =>
-  state.trace ? state.trace.instances.length : 0;
-
-/**
- * Get the loopback index of the trace.
- */
-const selectTraceLoopBack = (state: DataState) =>
-  state.trace ? state.trace.loopBack : 0;
+const selectDatumIds = (state: DataState) => {
+  return state.datumIds;
+};
 
 export default {
-  selectSelectedInstances,
-  selectTrace,
-  selectTraceLength,
-  selectTraceLoopBack
+  selectActiveData,
+  selectActiveDatumIds,
+  selectDatumIds
 };

@@ -1,19 +1,17 @@
+import { GraphProps } from '@/graph-svg';
 import { sterlingConnectionMiddleware } from '@/sterling-connection';
-import { StyleSet } from '@/sterling-theme';
-import { Graph } from '@/graph-lib';
-// import { Dict, PathDef } from '@graph-ts/graph-svg';
-import { configureStore, createSelector } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import { sterlingMiddleware } from '../middleware/sterlingMiddleware';
-import dataSlice from './data/dataSlice';
 import dataSelectors from './data/dataSelectors';
-import graphViewSlice from './graphView/graphViewSlice';
+import dataSlice from './data/dataSlice';
 import graphViewSelectors from './graphView/graphViewSelectors';
-import logSlice from './log/logSlice';
+import graphViewSlice from './graphView/graphViewSlice';
 import logSelectors from './log/logSelectors';
-import providerSlice from './provider/providerSlice';
+import logSlice from './log/logSlice';
 import providerSelectors from './provider/providerSelectors';
-import uiSlice from './ui/uiSlice';
+import providerSlice from './provider/providerSlice';
 import uiSelectors from './ui/uiSelectors';
+import uiSlice from './ui/uiSlice';
 
 const store = configureStore({
   reducer: {
@@ -36,32 +34,21 @@ export default store;
 
 // ---------- data slice selectors ---------- //
 
-/**
- * Get the selected instances of the current trace.
- */
-export const selectSelectedInstances = (state: SterlingState) =>
-  dataSelectors.selectSelectedInstances(state.data);
-
-/**
- * Get the current trace.
- */
-export const selectTrace = (state: SterlingState) =>
-  dataSelectors.selectTrace(state.data);
-
-/**
- * Get the length of the current trace.
- * @param state
- */
-export const selectTraceLength = (state: SterlingState) =>
-  dataSelectors.selectTraceLength(state.data);
-
-/**
- * Get the loopback index of the trace.
- */
-export const selectTraceLoopBack = (state: SterlingState) =>
-  dataSelectors.selectTraceLoopBack(state.data);
+export const selectActiveData = (state: SterlingState) =>
+  dataSelectors.selectActiveData(state.data);
+export const selectActiveDatumIds = (state: SterlingState) =>
+  dataSelectors.selectActiveDatumIds(state.data);
+export const selectDatumIds = (state: SterlingState) =>
+  dataSelectors.selectDatumIds(state.data);
 
 // ---------- graph view slice selectors ---------- //
+
+export const selectActiveGraphStates = (state: SterlingState): GraphProps[] => {
+  const activeDatumIds = selectActiveDatumIds(state);
+  return activeDatumIds.map((datumId) => {
+    return graphViewSelectors.selectDatumActiveGraph(state.graphView, datumId);
+  });
+};
 
 // /**
 //  * Get the graphs of the current trace.

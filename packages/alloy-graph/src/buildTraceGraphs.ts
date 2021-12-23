@@ -1,15 +1,13 @@
 import { AlloyEdge, AlloyGraph, AlloyNode } from '@/alloy-graph';
 import { AlloyTrace } from '@/alloy-instance';
-import { SterlingTheme } from '@/sterling-theme';
 import { newGraph } from '@/graph-lib';
-import { Dict, PathDef } from '@/graph-svg';
+import { SterlingTheme } from '@/sterling-theme';
 import _ from 'lodash';
 import {
   AtomNode,
   getVisibleGraphComponents
 } from './getVisibleGraphComponents';
 import { layoutGraph } from './layoutGraph';
-import { layoutNodes } from './layoutNodes';
 import { projectInstances } from './projectInstances';
 
 /**
@@ -22,7 +20,7 @@ import { projectInstances } from './projectInstances';
 export function buildTraceGraphs(
   trace: AlloyTrace,
   theme?: SterlingTheme
-): [AlloyGraph, Dict<PathDef>][] {
+): AlloyGraph[] {
   // Apply projections to all instances
   const instances = projectInstances(trace.instances, theme);
 
@@ -55,7 +53,9 @@ export function buildTraceGraphs(
     const graphNodes = components.nodes.map(
       (atomNode) => nodeDict[atomNode.id]
     );
-    const graphEdges = components.edges;
-    return [newGraph(graphNodes, graphEdges), edgePaths];
+    const graphEdges = components.edges.map((edge) => {
+      return { ...edge, waypoints: edgePaths[edge.id] };
+    });
+    return newGraph(graphNodes, graphEdges);
   });
 }
