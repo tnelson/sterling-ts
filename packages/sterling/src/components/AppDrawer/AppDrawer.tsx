@@ -1,11 +1,18 @@
-import { Pane } from '@/sterling-ui';
+import { Pane, PaneBody, PaneHeader, PaneTitle } from '@/sterling-ui';
 import { useSterlingSelector } from '../../state/hooks';
 import { selectCommonDrawer } from '../../state/store';
-import { LogDrawer } from './common/LogDrawer';
+import { LogDrawer, LogDrawerHeader } from './common/LogDrawer';
 
 const AppDrawer = () => {
   const commonDrawer = useSterlingSelector(selectCommonDrawer);
-  return <Pane>{commonDrawer === 'log' && <LogDrawer />}</Pane>;
+  return (
+    <Pane>
+      <PaneHeader className='border-b'>
+        <LogDrawerHeader />
+      </PaneHeader>
+      <PaneBody>{commonDrawer === 'log' && <LogDrawer />}</PaneBody>
+    </Pane>
+  );
 };
 
 export { AppDrawer };

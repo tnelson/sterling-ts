@@ -1,4 +1,6 @@
 import {
+  buttonClicked,
+  Click,
   DataJoinParsed,
   dataReceived,
   dataRequested,
@@ -36,6 +38,12 @@ const logSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
+    builder.addCase(buttonClicked, (state, action: PayloadAction<Click>) => {
+      const { id, onClick } = action.payload;
+      state.items.push(
+        newMessage(`Click button - Datum ID: ${id} - Button: ${onClick}`)
+      );
+    });
     builder.addCase(
       dataReceived,
       (state, action: PayloadAction<DataJoinParsed>) => {
@@ -49,10 +57,14 @@ const logSlice = createSlice({
       }
     );
     builder.addCase(datumSelected, (state, action: PayloadAction<string>) => {
-      state.items.push(newMessage(`Datum selected: [${action.payload}]`));
+      state.items.push(
+        newMessage(`Datum selected - Datum ID: ${action.payload}`)
+      );
     });
     builder.addCase(datumToggled, (state, action: PayloadAction<string>) => {
-      state.items.push(newMessage(`Datum toggled: [${action.payload}]`));
+      state.items.push(
+        newMessage(`Datum toggled - Datum ID: ${action.payload}`)
+      );
     });
     builder.addCase(dataRequested, (state) => {
       state.items.push(newMessage('Request data.'));

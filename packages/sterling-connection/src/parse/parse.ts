@@ -1,10 +1,8 @@
-import { DataJoin, Datum, sterlingError } from '@/sterling-connection';
 import { Dispatch, MiddlewareAPI } from 'redux';
+import { sterlingError } from '../actions';
+import { DataJoin } from '../payload';
+import { Datum, DatumParsed } from '../types';
 import { parseAlloyDatum } from './alloy';
-
-export type DatumParsed<T> = Datum & {
-  parsed: T;
-};
 
 export type DataJoinParsed = Omit<DataJoin, 'enter'> & {
   enter?: DatumParsed<any>[];

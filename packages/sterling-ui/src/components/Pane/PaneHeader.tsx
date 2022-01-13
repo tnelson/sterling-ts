@@ -7,7 +7,11 @@ const PaneHeader = (props: BoxProps) => {
 
 const PaneHeaderTheme = {
   baseStyle: {
-    height: '30px',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '35px',
     bg: 'gray.100',
     display: 'flex',
     alignItems: 'center'

@@ -1,10 +1,26 @@
-import { Pane, PaneHeader, PaneTitle } from '@/sterling-ui';
+import { Pane, PaneBody, PaneHeader, PaneTitle } from '@/sterling-ui';
 import { Box, Icon } from '@chakra-ui/react';
 import { FaFilm } from 'react-icons/fa';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { selectActiveById, selectData } from '../../state/store';
 import { GraphPreview } from '../GraphPreview/GraphPreview';
 import { ListView } from './ListView/ListView';
+
+const DataExplorer = () => {
+  const dispatch = useSterlingDispatch();
+  const activeById = useSterlingSelector(selectActiveById);
+  const data = useSterlingSelector(selectData).slice().reverse();
+  return (
+    <Pane>
+      <PaneHeader className='px-2 border-b'>
+        <PaneTitle>Explorer</PaneTitle>
+      </PaneHeader>
+      <PaneBody className='flex flex-col overflow-x-hidden overflow-y-auto'>
+        <ListView data={data} activeById={activeById} />
+      </PaneBody>
+    </Pane>
+  );
+};
 
 const TestDatumBox = ({
   active,
@@ -50,45 +66,6 @@ const TestDatumBox = ({
         <Icon as={FaFilm} />
       </Box>
     </Box>
-  );
-};
-
-const DataExplorer = () => {
-  const dispatch = useSterlingDispatch();
-  const activeById = useSterlingSelector(selectActiveById);
-  const data = useSterlingSelector(selectData).slice().reverse();
-  return (
-    <Pane>
-      <PaneHeader>
-        <PaneTitle>Explorer</PaneTitle>
-      </PaneHeader>
-      <Box
-        position='absolute'
-        top='30px'
-        right='0'
-        bottom='0'
-        left='0'
-        display='flex'
-        flexDir='column'
-        overflowX='hidden'
-        overflowY='auto'
-      >
-        <ListView data={data} activeById={activeById} />
-        {/*{data.map((datum, index) => {*/}
-        {/*  const id = datum.id;*/}
-        {/*  const isActive = activeById[id];*/}
-        {/*  return (*/}
-        {/*    <TestDatumBox*/}
-        {/*      key={index}*/}
-        {/*      active={isActive}*/}
-        {/*      onClick={() => {*/}
-        {/*        dispatch(dataSelected([id]));*/}
-        {/*      }}*/}
-        {/*    />*/}
-        {/*  );*/}
-        {/*})}*/}
-      </Box>
-    </Pane>
   );
 };
 

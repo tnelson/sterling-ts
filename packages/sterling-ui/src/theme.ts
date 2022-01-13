@@ -8,6 +8,7 @@ import { LogTextTheme } from './components/Log/LogText';
 import { LogoTheme } from './components/Logo';
 import { NavBarTheme } from './components/NavBar/NavBar';
 import { NavButtonTheme } from './components/NavBar/NavButton';
+import { PaneBodyTheme } from './components/Pane/PaneBody';
 import { PaneHeaderTheme } from './components/Pane/PaneHeader';
 import { PaneTitleTheme } from './components/Pane/PaneTitle';
 import { SideBarTheme } from './components/SideBar/SideBar';
@@ -41,6 +42,7 @@ const sterlingTheme = extendTheme({
     NavBar: NavBarTheme,
     NavButton: NavButtonTheme,
     Pane: PaneTheme,
+    PaneBody: PaneBodyTheme,
     PaneHeader: PaneHeaderTheme,
     PaneTitle: PaneTitleTheme,
     SideBar: SideBarTheme,

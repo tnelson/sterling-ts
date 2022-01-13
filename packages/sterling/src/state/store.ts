@@ -1,5 +1,8 @@
 import { GraphProps } from '@/graph-svg';
-import { sterlingConnectionMiddleware } from '@/sterling-connection';
+import {
+  DatumParsed,
+  sterlingConnectionMiddleware
+} from '@/sterling-connection';
 import { configureStore } from '@reduxjs/toolkit';
 import { sterlingMiddleware } from '../middleware/sterlingMiddleware';
 import dataSelectors from './data/dataSelectors';
@@ -44,8 +47,9 @@ export const selectDataActive = (state: SterlingState) =>
 
 // ---------- graph view slice selectors ---------- //
 
-interface ActiveGraphData {
+export interface ActiveGraphData {
   datumId: string;
+  datum: DatumParsed<any>;
   graphProps: GraphProps;
   graphMatrices: GraphMatrices;
 }
@@ -57,6 +61,7 @@ export const selectActiveGraphData = (
   return activeData.map((datum) => {
     const id = datum.id;
     return {
+      datum,
       datumId: id,
       graphProps: graphViewSelectors.selectDatumActiveGraph(
         state.graphView,

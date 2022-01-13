@@ -1,9 +1,6 @@
 /**
  * A button that can be displayed in the Sterling user interface.
  */
-import { AlloyTrace } from '@/alloy-instance';
-import { DataJoin } from './payload';
-
 export interface Button {
   /**
    * The text to display in the button.
@@ -39,6 +36,16 @@ export interface Datum {
    * A boolean indicating whether REPL functionality is available for this datum.
    */
   evaluator?: boolean;
+}
+
+/**
+ * An indivdual datum that has been parsed and can be displayed in Sterling
+ */
+export interface DatumParsed<T> extends Datum {
+  /**
+   * The parsed datum
+   */
+  parsed: T;
 }
 
 /**
