@@ -1,5 +1,5 @@
 import { dataReceived } from '@/sterling-connection';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { DataJoinParsed } from '@/sterling-connection';
 import { DataState, newDataState } from './data';
 
@@ -16,6 +16,9 @@ const dataSlice = createSlice({
     datumToggled(state, action: PayloadAction<string>) {
       const id = action.payload;
       state.activeById[id] = !state.activeById[id];
+    },
+    dumpClicked(state) {
+      console.log(current(state));
     }
   },
   extraReducers: (builder) => {
@@ -59,5 +62,5 @@ const dataSlice = createSlice({
   }
 });
 
-export const { datumSelected, datumToggled } = dataSlice.actions;
+export const { datumSelected, datumToggled, dumpClicked } = dataSlice.actions;
 export default dataSlice.reducer;
