@@ -8,11 +8,11 @@ export function parseTraceXML(xml: string): AlloyTrace {
   if (!instances.length) throw new Error('No instance in trace.');
 
   const loopBack = instances[0].getAttribute('backloop');
-  if (!loopBack) throw new Error('Trace has no backloop attribute');
+  // if (!loopBack) throw new Error('Trace has no backloop attribute');
 
   return {
     instances: instances.map(instanceFromElement),
-    loopBack: +loopBack
+    loopBack: loopBack ? +loopBack : -1
   };
 }
 
