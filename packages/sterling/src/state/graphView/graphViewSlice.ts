@@ -6,14 +6,29 @@ import {
 } from '@/sterling-connection';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { GraphViewState, newDatumGraphs, newGraphViewState } from './graphView';
+import { Matrix } from 'transformation-matrix';
+import {
+  GraphViewState,
+  newDatumGraphs,
+  newDatumMatrices,
+  newGraphViewState
+} from './graphView';
 
 const initialState: GraphViewState = newGraphViewState();
 
 const graphViewSlice = createSlice({
   name: 'graphView',
   initialState,
-  reducers: {},
+  reducers: {
+    graphSpread(state, action: PayloadAction<{ id: string; matrix: Matrix }>) {
+      const { id, matrix } = action.payload;
+      state.matricesByDatumId[id].spreadMatrix = matrix;
+    },
+    graphZoomed(state, action: PayloadAction<{ id: string; matrix: Matrix }>) {
+      const { id, matrix } = action.payload;
+      state.matricesByDatumId[id].zoomMatrix = matrix;
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(
       dataReceived,
@@ -28,7 +43,8 @@ const graphViewSlice = createSlice({
               const props = graphs.map((graph, index) => {
                 return buildProps(`${index}`, graph);
               });
-              state.byDatumId[id] = castDraft(newDatumGraphs(id, props));
+              state.graphsByDatumId[id] = castDraft(newDatumGraphs(id, props));
+              state.matricesByDatumId[id] = newDatumMatrices(id);
             }
           });
         }
@@ -37,5 +53,5 @@ const graphViewSlice = createSlice({
   }
 });
 
-export const {} = graphViewSlice.actions;
+export const { graphSpread, graphZoomed } = graphViewSlice.actions;
 export default graphViewSlice.reducer;

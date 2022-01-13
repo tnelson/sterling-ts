@@ -13,6 +13,7 @@ import { NodesGroup } from './components/NodesGroup/NodesGroup';
 import { GraphGroupProps } from './GraphGroupProps';
 import { buildPath } from './paths/buildPath';
 import { InteractionProvider } from './providers/InteractionProvider';
+import { useZoom } from './providers/zoom/ZoomProvider';
 import { ArrowDef, EdgeDef, NodeDef } from './types';
 import { isDefined } from './util';
 
@@ -31,6 +32,8 @@ const GraphGroup = <N extends PositionedNode, E extends RoutedEdge>(
     targetSpread,
     ...rest
   } = props;
+
+  const { spreadMatrix } = useZoom();
 
   const nodes: NodeDef[] = getNodes(graph).map((node) => {
     const position = { x: node.x, y: node.y };
@@ -53,7 +56,14 @@ const GraphGroup = <N extends PositionedNode, E extends RoutedEdge>(
       if (!source || !target) return undefined;
       const sourceShape = nodeShapes[source.id];
       const targetShape = nodeShapes[target.id];
-      const path = buildPath(edge, source, sourceShape, target, targetShape);
+      const path = buildPath(
+        edge,
+        source,
+        sourceShape,
+        target,
+        targetShape,
+        spreadMatrix
+      );
       const curve = edgeCurves[edge.id];
       const style = edgeStyles[edge.id];
       const labels = edgeLabels ? edgeLabels[edge.id] : undefined;

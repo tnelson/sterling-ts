@@ -1,10 +1,25 @@
 import { PropsWithChildren, useMemo, useRef, HTMLAttributes } from 'react';
+import { GraphSVG } from './GraphSVG';
 import { useDimensions } from './hooks/useDimensions';
+import { ZoomProviderProps } from './providers/zoom/ZoomProvider';
 
-const GraphSVGDiv = (
-  props: PropsWithChildren<HTMLAttributes<HTMLDivElement>>
-) => {
-  const { children, ...rest } = props;
+export type GraphSVGDivProps = PropsWithChildren<
+  HTMLAttributes<HTMLDivElement>
+> &
+  Pick<
+    ZoomProviderProps,
+    'spreadMatrix' | 'zoomMatrix' | 'onSpreadMatrix' | 'onZoomMatrix'
+  >;
+
+const GraphSVGDiv = (props: GraphSVGDivProps) => {
+  const {
+    children,
+    spreadMatrix,
+    zoomMatrix,
+    onSpreadMatrix,
+    onZoomMatrix,
+    ...rest
+  } = props;
   const ref = useRef<HTMLDivElement>(null);
   const dimensions = useDimensions(ref);
   const width = useMemo(() => dimensions?.width, [dimensions]);
@@ -17,9 +32,15 @@ const GraphSVGDiv = (
 
   return (
     <div ref={ref} {...rest}>
-      <svg viewBox={viewBox} preserveAspectRatio='xMidYMid slice'>
+      <GraphSVG
+        viewBox={viewBox}
+        spreadMatrix={spreadMatrix}
+        onSpreadMatrix={onSpreadMatrix}
+        zoomMatrix={zoomMatrix}
+        onZoomMatrix={onZoomMatrix}
+      >
         {children}
-      </svg>
+      </GraphSVG>
     </div>
   );
 };

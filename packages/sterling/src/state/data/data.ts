@@ -1,7 +1,7 @@
 import { DatumParsed } from '@/sterling-connection';
 
 export interface DataState {
-  activeDatumIds: string[];
+  activeById: Record<string, boolean>;
   datumById: Record<string, DatumParsed<any>>;
   datumIds: string[];
 }
@@ -11,7 +11,7 @@ export interface DataState {
  */
 export const newDataState = (): DataState => {
   return {
-    activeDatumIds: [],
+    activeById: {},
     datumById: {},
     datumIds: []
   };

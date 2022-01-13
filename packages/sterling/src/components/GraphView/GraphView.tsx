@@ -1,13 +1,18 @@
 import { GraphGroup, GraphSVGDiv } from '@/graph-svg';
 import { View } from '@/sterling-ui';
-import { useSterlingSelector } from '../../state/hooks';
-import { selectActiveGraphStates } from '../../state/store';
+import { Matrix } from 'transformation-matrix';
+import { graphSpread, graphZoomed } from '../../state/graphView/graphViewSlice';
+import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
+import { selectActiveGraphData } from '../../state/store';
 
 const GraphView = () => {
-  const graphStates = useSterlingSelector(selectActiveGraphStates);
+  const dispatch = useSterlingDispatch();
+  const graphData = useSterlingSelector(selectActiveGraphData);
   return (
-    <View>
-      {graphStates.map((graphState) => {
+    <View className='grid grid-flow-col divide-x divide-dashed'>
+      {/*<div className='w-full h-full grid grid-flow-col divide-x divide-dashed'>*/}
+      {graphData.map((graphData, index) => {
+        const { datumId, graphProps, graphMatrices } = graphData;
         const {
           id,
           graph,
@@ -17,11 +22,22 @@ const GraphView = () => {
           edgeCurves,
           edgeLabels,
           edgeStyles
-        } = graphState;
+        } = graphProps;
+        const { spreadMatrix, zoomMatrix } = graphMatrices;
+        const onSpreadMatrix = (matrix: Matrix) => {
+          dispatch(graphSpread({ id: datumId, matrix }));
+        };
+        const onZoomMatrix = (matrix: Matrix) => {
+          dispatch(graphZoomed({ id: datumId, matrix }));
+        };
         return (
           <GraphSVGDiv
-            key={id}
+            key={index}
             style={{ width: '100%', height: '100%', overflow: 'hidden' }}
+            spreadMatrix={spreadMatrix}
+            onSpreadMatrix={onSpreadMatrix}
+            zoomMatrix={zoomMatrix}
+            onZoomMatrix={onZoomMatrix}
           >
             <GraphGroup
               id={id}
@@ -36,6 +52,7 @@ const GraphView = () => {
           </GraphSVGDiv>
         );
       })}
+      {/*</div>*/}
     </View>
   );
 };

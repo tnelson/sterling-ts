@@ -2,28 +2,30 @@ import { DatumParsed } from '@/sterling-connection';
 import { DataState } from './data';
 
 /**
- * Get the active datum.
+ * Get a record of active data by id
  */
-const selectActiveData = (state: DataState): DatumParsed<any>[] => {
-  return state.activeDatumIds.map((id) => state.datumById[id]);
+const selectActiveById = (state: DataState): Record<string, boolean> => {
+  return state.activeById;
 };
 
 /**
- * Get the ID of the active datum.
+ * Get an ordered list of all data.
  */
-const selectActiveDatumIds = (state: DataState): string[] => {
-  return state.activeDatumIds;
+const selectData = (state: DataState): DatumParsed<any>[] => {
+  const data = state.datumById;
+  return state.datumIds.map((id) => data[id]);
 };
 
 /**
- * Get an ordered list of all datum IDs.
+ * Get an ordered list of all active data.
  */
-const selectDatumIds = (state: DataState) => {
-  return state.datumIds;
+const selectDataActive = (state: DataState): DatumParsed<any>[] => {
+  const activeById = selectActiveById(state);
+  return selectData(state).filter((datum) => activeById[datum.id]);
 };
 
 export default {
-  selectActiveData,
-  selectActiveDatumIds,
-  selectDatumIds
+  selectActiveById,
+  selectData,
+  selectDataActive
 };

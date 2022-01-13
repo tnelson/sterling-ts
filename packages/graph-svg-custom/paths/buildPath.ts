@@ -2,6 +2,7 @@ import { PositionedNode, RoutedEdge } from '@/graph-lib';
 import { ShapeDef } from '@/graph-svg';
 import { subtract, Vector2 } from '@/vector2';
 import { defaultTo } from 'lodash';
+import { applyToPoint, Matrix } from 'transformation-matrix';
 import { edgePoint } from './edgePoint';
 
 export function buildPath<N extends PositionedNode, E extends RoutedEdge>(
@@ -9,16 +10,21 @@ export function buildPath<N extends PositionedNode, E extends RoutedEdge>(
   source: N,
   sourceShape: ShapeDef,
   target: N,
-  targetShape: ShapeDef
+  targetShape: ShapeDef,
+  spreadMatrix: Matrix
 ): Vector2[] {
   const waypoints = edge.waypoints || [];
 
-  const sourceAdj = defaultTo(waypoints[0], target);
-  const sourceDir = subtract(sourceAdj, source);
-  const sourcePoint = edgePoint(source, sourceShape, sourceDir, 0);
+  const src = applyToPoint(spreadMatrix, source);
+  const trg = applyToPoint(spreadMatrix, target);
+  const wps = waypoints.map((pt) => applyToPoint(spreadMatrix, pt));
 
-  const targetAdj = defaultTo(waypoints[waypoints.length - 1], source);
-  const targetDir = subtract(targetAdj, target);
-  const targetPoint = edgePoint(target, targetShape, targetDir, 0);
-  return [sourcePoint, ...waypoints, targetPoint];
+  const sourceAdj = defaultTo(wps[0], trg);
+  const sourceDir = subtract(sourceAdj, src);
+  const sourcePoint = edgePoint(src, sourceShape, sourceDir, 0);
+
+  const targetAdj = defaultTo(wps[wps.length - 1], src);
+  const targetDir = subtract(targetAdj, trg);
+  const targetPoint = edgePoint(trg, targetShape, targetDir, 0);
+  return [sourcePoint, ...wps, targetPoint];
 }

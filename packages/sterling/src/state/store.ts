@@ -4,6 +4,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { sterlingMiddleware } from '../middleware/sterlingMiddleware';
 import dataSelectors from './data/dataSelectors';
 import dataSlice from './data/dataSlice';
+import { GraphMatrices } from './graphView/graphView';
 import graphViewSelectors from './graphView/graphViewSelectors';
 import graphViewSlice from './graphView/graphViewSlice';
 import logSelectors from './log/logSelectors';
@@ -34,39 +35,37 @@ export default store;
 
 // ---------- data slice selectors ---------- //
 
-export const selectActiveData = (state: SterlingState) =>
-  dataSelectors.selectActiveData(state.data);
-export const selectActiveDatumIds = (state: SterlingState) =>
-  dataSelectors.selectActiveDatumIds(state.data);
-export const selectDatumIds = (state: SterlingState) =>
-  dataSelectors.selectDatumIds(state.data);
+export const selectActiveById = (state: SterlingState) =>
+  dataSelectors.selectActiveById(state.data);
+export const selectData = (state: SterlingState) =>
+  dataSelectors.selectData(state.data);
+export const selectDataActive = (state: SterlingState) =>
+  dataSelectors.selectDataActive(state.data);
 
 // ---------- graph view slice selectors ---------- //
 
-export const selectActiveGraphStates = (state: SterlingState): GraphProps[] => {
-  const activeDatumIds = selectActiveDatumIds(state);
-  return activeDatumIds.map((datumId) => {
-    return graphViewSelectors.selectDatumActiveGraph(state.graphView, datumId);
+interface ActiveGraphData {
+  datumId: string;
+  graphProps: GraphProps;
+  graphMatrices: GraphMatrices;
+}
+
+export const selectActiveGraphData = (
+  state: SterlingState
+): ActiveGraphData[] => {
+  const activeData = selectDataActive(state);
+  return activeData.map((datum) => {
+    const id = datum.id;
+    return {
+      datumId: id,
+      graphProps: graphViewSelectors.selectDatumActiveGraph(
+        state.graphView,
+        id
+      ),
+      graphMatrices: graphViewSelectors.selectDatumMatrices(state.graphView, id)
+    };
   });
 };
-
-// /**
-//  * Get the graphs of the current trace.
-//  */
-// export const selectGraphs = (state: SterlingState) =>
-//   graphViewSelectors.selectGraphs(state.graphView);
-//
-// /**
-//  * Get the edge paths of the current trace.
-//  */
-// export const selectPaths = (state: SterlingState) =>
-//   graphViewSelectors.selectPaths(state.graphView);
-//
-// /**
-//  * Get the graph styles of the current trace.
-//  */
-// export const selectStyles = (state: SterlingState) =>
-//   graphViewSelectors.selectStyles(state.graphView);
 
 // ---------- log slice selectors ---------- //
 

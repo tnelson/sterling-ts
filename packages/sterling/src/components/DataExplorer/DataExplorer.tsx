@@ -1,10 +1,10 @@
 import { Pane, PaneHeader, PaneTitle } from '@/sterling-ui';
 import { Box, Icon } from '@chakra-ui/react';
 import { FaFilm } from 'react-icons/fa';
-import { dataSelected } from '../../state/data/dataSlice';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
-import { selectActiveDatumIds, selectDatumIds } from '../../state/store';
+import { selectActiveById, selectData } from '../../state/store';
 import { GraphPreview } from '../GraphPreview/GraphPreview';
+import { ListView } from './ListView/ListView';
 
 const TestDatumBox = ({
   active,
@@ -55,8 +55,8 @@ const TestDatumBox = ({
 
 const DataExplorer = () => {
   const dispatch = useSterlingDispatch();
-  const datumIds = useSterlingSelector(selectDatumIds).slice().reverse();
-  const activeDatumIds = useSterlingSelector(selectActiveDatumIds);
+  const activeById = useSterlingSelector(selectActiveById);
+  const data = useSterlingSelector(selectData).slice().reverse();
   return (
     <Pane>
       <PaneHeader>
@@ -73,18 +73,20 @@ const DataExplorer = () => {
         overflowX='hidden'
         overflowY='auto'
       >
-        {datumIds.map((datumId, index) => {
-          const isActive = activeDatumIds.includes(datumId);
-          return (
-            <TestDatumBox
-              key={index}
-              active={isActive}
-              onClick={() => {
-                dispatch(dataSelected([datumId]));
-              }}
-            />
-          );
-        })}
+        <ListView data={data} activeById={activeById} />
+        {/*{data.map((datum, index) => {*/}
+        {/*  const id = datum.id;*/}
+        {/*  const isActive = activeById[id];*/}
+        {/*  return (*/}
+        {/*    <TestDatumBox*/}
+        {/*      key={index}*/}
+        {/*      active={isActive}*/}
+        {/*      onClick={() => {*/}
+        {/*        dispatch(dataSelected([id]));*/}
+        {/*      }}*/}
+        {/*    />*/}
+        {/*  );*/}
+        {/*})}*/}
       </Box>
     </Pane>
   );

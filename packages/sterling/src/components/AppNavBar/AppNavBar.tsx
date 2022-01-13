@@ -3,7 +3,7 @@ import { Divider, Spacer } from '@chakra-ui/react';
 
 const AppNavBar = () => {
   return (
-    <NavBar>
+    <NavBar className='shadow'>
       <Logo />
       <Divider orientation='vertical' mx={2} />
       <Spacer />

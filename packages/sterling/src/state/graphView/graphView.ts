@@ -1,5 +1,6 @@
 import { GraphProps } from '@/graph-svg';
 import { keyBy } from 'lodash';
+import { identity, Matrix } from 'transformation-matrix';
 
 export interface DatumGraphs {
   // the datum id
@@ -12,13 +13,24 @@ export interface DatumGraphs {
   graphIds: string[];
 }
 
+export interface GraphMatrices {
+  // the datum id
+  id: string;
+  // the spread matrix
+  spreadMatrix: Matrix;
+  // the zoom matrix
+  zoomMatrix: Matrix;
+}
+
 export interface GraphViewState {
-  byDatumId: Record<string, DatumGraphs>;
+  graphsByDatumId: Record<string, DatumGraphs>;
+  matricesByDatumId: Record<string, GraphMatrices>;
 }
 
 export const newGraphViewState = (): GraphViewState => {
   return {
-    byDatumId: {}
+    graphsByDatumId: {},
+    matricesByDatumId: {}
   };
 };
 
@@ -31,5 +43,13 @@ export function newDatumGraphs(
     active: graphs[0].id,
     graphs: keyBy(graphs, (graph) => graph.id),
     graphIds: graphs.map((graph) => graph.id)
+  };
+}
+
+export function newDatumMatrices(datumId: string): GraphMatrices {
+  return {
+    id: datumId,
+    spreadMatrix: identity(),
+    zoomMatrix: identity()
   };
 }

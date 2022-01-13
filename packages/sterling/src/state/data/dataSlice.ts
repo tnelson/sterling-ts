@@ -9,8 +9,13 @@ const dataSlice = createSlice({
   name: 'data',
   initialState,
   reducers: {
-    dataSelected(state, action: PayloadAction<string[]>) {
-      state.activeDatumIds = action.payload;
+    datumSelected(state, action: PayloadAction<string>) {
+      state.datumIds.forEach((id) => (state.activeById[id] = false));
+      state.activeById[action.payload] = true;
+    },
+    datumToggled(state, action: PayloadAction<string>) {
+      const id = action.payload;
+      state.activeById[id] = !state.activeById[id];
     }
   },
   extraReducers: (builder) => {
@@ -24,10 +29,12 @@ const dataSlice = createSlice({
             const id = datum.id;
             if (!state.datumById[id]) {
               state.datumById[id] = datum;
+              state.activeById[id] = false;
             }
           });
           state.datumIds.push(...enter.map((datum) => datum.id));
-          state.activeDatumIds = [state.datumIds[state.datumIds.length - 1]];
+          const lastDatumId = state.datumIds[state.datumIds.length - 1];
+          state.activeById[lastDatumId] = true;
         }
         if (update) {
           update.forEach((meta) => {
@@ -43,6 +50,7 @@ const dataSlice = createSlice({
             // Check that the datum exists before removing it from the state.
             if (state.datumById[id]) {
               delete state.datumById[id];
+              delete state.activeById[id];
             }
           });
         }
@@ -51,5 +59,5 @@ const dataSlice = createSlice({
   }
 });
 
-export const { dataSelected } = dataSlice.actions;
+export const { datumSelected, datumToggled } = dataSlice.actions;
 export default dataSlice.reducer;
