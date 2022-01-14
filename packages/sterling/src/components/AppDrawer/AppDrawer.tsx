@@ -1,6 +1,10 @@
 import { Pane, PaneBody, PaneHeader, PaneTitle } from '@/sterling-ui';
 import { useSterlingSelector } from '../../state/hooks';
 import { selectCommonDrawer } from '../../state/store';
+import {
+  EvaluatorDrawer,
+  EvaluatorDrawerHeader
+} from './common/EvaluatorDrawer/EvaluatorDrawer';
 import { LogDrawer, LogDrawerHeader } from './common/LogDrawer';
 
 const AppDrawer = () => {
@@ -8,9 +12,13 @@ const AppDrawer = () => {
   return (
     <Pane>
       <PaneHeader className='border-b'>
-        <LogDrawerHeader />
+        {commonDrawer === 'evaluator' && <EvaluatorDrawerHeader />}
+        {commonDrawer === 'log' && <LogDrawerHeader />}
       </PaneHeader>
-      <PaneBody>{commonDrawer === 'log' && <LogDrawer />}</PaneBody>
+      <PaneBody>
+        {commonDrawer === 'evaluator' && <EvaluatorDrawer />}
+        {commonDrawer === 'log' && <LogDrawer />}
+      </PaneBody>
     </Pane>
   );
 };

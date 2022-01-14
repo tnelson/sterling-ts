@@ -27,8 +27,19 @@ const dataSlice = createSlice({
       (state, action: PayloadAction<DataJoinParsed>) => {
         const { enter, update, exit } = action.payload;
         if (enter) {
+          /**
+           * Since we're adding new data, deselect any that are currently
+           * selected as we'll be selecting the newest one.
+           */
+          state.datumIds.forEach((datumId) => {
+            state.activeById[datumId] = false;
+          });
+
+          /**
+           * Add all entering data, first checking that the datum id does not
+           * already exist before adding it to the state.
+           */
           enter.forEach((datum) => {
-            // Check that the datum id does not already exist before adding it to the state.
             const id = datum.id;
             if (!state.datumById[id]) {
               state.datumById[id] = datum;
@@ -39,6 +50,7 @@ const dataSlice = createSlice({
           const lastDatumId = state.datumIds[state.datumIds.length - 1];
           state.activeById[lastDatumId] = true;
         }
+
         if (update) {
           update.forEach((meta) => {
             // Check that the datum does exist in the state before updating it.

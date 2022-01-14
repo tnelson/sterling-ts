@@ -2,7 +2,7 @@ import { LogList, LogEntry, PaneTitle } from '@/sterling-ui';
 import { Icon } from '@chakra-ui/react';
 import { useSterlingSelector } from '../../../state/hooks';
 import { selectLogItems } from '../../../state/store';
-import { MdNotes } from 'react-icons/md';
+import { GoNote } from 'react-icons/go';
 
 const LogDrawer = () => {
   const items = useSterlingSelector(selectLogItems);
@@ -24,8 +24,8 @@ const LogDrawer = () => {
 
 const LogDrawerHeader = () => {
   return (
-    <div className='flex items-center px-2 space-x-1'>
-      <Icon as={MdNotes} />
+    <div className='flex items-center px-2 space-x-2'>
+      <Icon className='mt-0.5' as={GoNote} />
       <PaneTitle>Log</PaneTitle>
     </div>
   );

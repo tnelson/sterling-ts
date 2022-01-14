@@ -1,7 +1,6 @@
 import { SideBar, SideBarButton } from '@/sterling-ui';
 import { Spacer } from '@chakra-ui/react';
-import { GoTerminal } from 'react-icons/go';
-import { MdNotes } from 'react-icons/md';
+import { GoNote, GoTerminal } from 'react-icons/go';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { selectCommonDrawer, selectMainView } from '../../state/store';
 import { commonDrawerViewChanged } from '../../state/ui/uiSlice';
@@ -27,7 +26,7 @@ const AppSideBar = () => {
       />
       <SideBarButton
         text='Log'
-        rightIcon={<MdNotes />}
+        rightIcon={<GoNote />}
         isActive={common === 'log'}
         onClick={() => dispatch(commonDrawerViewChanged('log'))}
       />

@@ -7,7 +7,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { sterlingMiddleware } from '../middleware/sterlingMiddleware';
 import dataSelectors from './data/dataSelectors';
 import dataSlice from './data/dataSlice';
-import { GraphMatrices } from './graphView/graphView';
+import evaluatorSelectors from './evaluator/evaluatorSelectors';
+import evaluatorSlice from './evaluator/evaluatorSlice';
 import graphViewSelectors from './graphView/graphViewSelectors';
 import graphViewSlice from './graphView/graphViewSlice';
 import logSelectors from './log/logSelectors';
@@ -16,10 +17,12 @@ import providerSelectors from './provider/providerSelectors';
 import providerSlice from './provider/providerSlice';
 import uiSelectors from './ui/uiSelectors';
 import uiSlice from './ui/uiSlice';
+import { GraphMatrices } from './graphView/graphView';
 
 const store = configureStore({
   reducer: {
     data: dataSlice,
+    evaluator: evaluatorSlice,
     graphView: graphViewSlice,
     log: logSlice,
     provider: providerSlice,
@@ -44,6 +47,27 @@ export const selectData = (state: SterlingState) =>
   dataSelectors.selectData(state.data);
 export const selectDataActive = (state: SterlingState) =>
   dataSelectors.selectDataActive(state.data);
+
+// ---------- evaluator slice selectors ---------- //
+
+export const selectActiveDatumExpressions = (state: SterlingState) => {
+  const activeData = selectDataActive(state);
+  if (activeData.length === 1) {
+    const datumId = activeData[0].id;
+    return evaluatorSelectors.selectDatumExpressions(state.evaluator, datumId);
+  }
+  return [];
+};
+export const selectEvaluatorActive = (state: SterlingState) => {
+  const activeData = selectDataActive(state);
+  return (
+    activeData.length === 1 &&
+    activeData[0].evaluator &&
+    evaluatorSelectors.selectEvaluatorActive(state.evaluator)
+  );
+};
+export const selectNextExpressionId = (state: SterlingState) =>
+  evaluatorSelectors.selectNextExpressionId(state.evaluator);
 
 // ---------- graph view slice selectors ---------- //
 
