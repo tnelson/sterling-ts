@@ -1,3 +1,4 @@
+import { isAlloyDatum, isAlloyDatumTrace } from '@/alloy-instance';
 import { MouseEvent } from 'react';
 import { DatumParsed } from '@/sterling-connection';
 import { Icon } from '@chakra-ui/react';
@@ -17,12 +18,14 @@ const ListViewItem = (props: ListViewItemProps) => {
 
   return (
     <Row onClick={(event) => onClickItem(event, datum)}>
-      <RowItem className={cn}>Id: {datum.id}</RowItem>
+      <RowItem className={cn}>Datum ID: {datum.id}</RowItem>
       <RowItem className={cn}>
         {datum.evaluator && <Icon as={GoTerminal} />}
       </RowItem>
       <RowItem className={cn}>
-        <Icon as={FaFilm} />
+        {isAlloyDatum(datum.parsed) && isAlloyDatumTrace(datum.parsed) && (
+          <Icon as={FaFilm} />
+        )}
       </RowItem>
     </Row>
   );

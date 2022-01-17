@@ -1,5 +1,5 @@
-import { AlloyInstance, getInstanceAtom } from './instance';
-import { AlloyType } from './type';
+import { AlloyInstance, getInstanceAtom, getInstanceType } from './instance';
+import { AlloyType, isBuiltin } from './type';
 
 export interface AlloyAtom {
   // identify as an atom
@@ -43,6 +43,24 @@ export function atomsFromElements(
   elements: NodeListOf<Element>
 ): AlloyAtom[] {
   return Array.from(elements).map((element) => atomFromElement(type, element));
+}
+
+/**
+ * Determine if an atom is of a builtin type.
+ *
+ * @param instance The instance the atom is part of
+ * @param atom The atom or atom id
+ */
+export function atomIsBuiltin(
+  instance: AlloyInstance,
+  atom: AlloyAtom | string
+): boolean {
+  if (typeof atom === 'string') atom = getInstanceAtom(instance, atom);
+  const atomType = getAtomType(instance, atom);
+  const atomTypeHierarchy = atomType.types;
+  return atomTypeHierarchy
+    .map((typeId) => getInstanceType(instance, typeId))
+    .some(isBuiltin);
 }
 
 export function atomIsOfType(

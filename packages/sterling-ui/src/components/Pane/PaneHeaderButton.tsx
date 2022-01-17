@@ -1,7 +1,9 @@
-import { Button, ButtonProps } from '@chakra-ui/react';
+import { Button, ButtonProps, forwardRef } from '@chakra-ui/react';
 
-const PaneHeaderButton = (props: ButtonProps) => {
-  return <Button colorScheme='green' size='xs' {...props} />;
-};
+const PaneHeaderButton = forwardRef<ButtonProps, 'button'>(
+  (props: ButtonProps, ref) => {
+    return <Button colorScheme='green' size='xs' ref={ref} {...props} />;
+  }
+);
 
 export { PaneHeaderButton };

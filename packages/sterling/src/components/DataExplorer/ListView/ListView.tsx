@@ -1,25 +1,21 @@
 import { DatumParsed } from '@/sterling-connection';
 import { useCallback, MouseEvent } from 'react';
-import { datumSelected, datumToggled } from '../../../state/data/dataSlice';
-import { useSterlingDispatch } from '../../../state/hooks';
+import { activeDatumSet } from '../../../statenew/data/dataSlice';
+import { useSterlingDispatch } from '../../../statenew/hooks';
 import { ListViewItem } from './ListViewItem';
 
 interface ListViewProps {
   data: DatumParsed<any>[];
-  activeById: Record<string, boolean>;
+  activeDatumId: string | null;
 }
 
 const ListView = (props: ListViewProps) => {
-  const { data, activeById } = props;
+  const { data, activeDatumId } = props;
   const dispatch = useSterlingDispatch();
 
   const onClickRow = useCallback(
     (event: MouseEvent, datum: DatumParsed<any>) => {
-      if (event.shiftKey) {
-        dispatch(datumToggled(datum.id));
-      } else {
-        dispatch(datumSelected(datum.id));
-      }
+      dispatch(activeDatumSet(datum.id));
     },
     []
   );
@@ -32,7 +28,7 @@ const ListView = (props: ListViewProps) => {
           <ListViewItem
             key={id}
             datum={datum}
-            active={activeById[id]}
+            active={activeDatumId === id}
             onClickItem={onClickRow}
           />
         );

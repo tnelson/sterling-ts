@@ -1,6 +1,6 @@
-import { SterlingTheme } from './theme';
+import { SterlingThemeOld } from './theme';
 
-export function defaultTheme(): SterlingTheme {
+export function defaultTheme(): SterlingThemeOld {
   return {
     sterling: 'v0',
     nodes: [

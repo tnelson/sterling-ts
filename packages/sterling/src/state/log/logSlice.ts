@@ -12,7 +12,7 @@ import {
   sterlingDisconnected
 } from '@/sterling-connection';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { datumSelected, datumToggled } from '../data/dataSlice';
+import { datumSelected } from '../data/dataSlice';
 import {
   LogItemType,
   LogSortOrder,
@@ -59,11 +59,6 @@ const logSlice = createSlice({
     builder.addCase(datumSelected, (state, action: PayloadAction<string>) => {
       state.items.push(
         newMessage(`Datum selected - Datum ID: ${action.payload}`)
-      );
-    });
-    builder.addCase(datumToggled, (state, action: PayloadAction<string>) => {
-      state.items.push(
-        newMessage(`Datum toggled - Datum ID: ${action.payload}`)
       );
     });
     builder.addCase(dataRequested, (state) => {

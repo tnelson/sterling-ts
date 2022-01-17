@@ -1,12 +1,5 @@
 import { DatumParsed } from '@/sterling-connection';
-import { DataState } from './data';
-
-/**
- * Get a record of active data by id
- */
-const selectActiveById = (state: DataState): Record<string, boolean> => {
-  return state.activeById;
-};
+import { DataState, DatumProjections } from './data';
 
 /**
  * Get an ordered list of all data.
@@ -19,13 +12,30 @@ const selectData = (state: DataState): DatumParsed<any>[] => {
 /**
  * Get an ordered list of all active data.
  */
-const selectDataActive = (state: DataState): DatumParsed<any>[] => {
-  const activeById = selectActiveById(state);
-  return selectData(state).filter((datum) => activeById[datum.id]);
+const selectActiveDatum = (state: DataState): DatumParsed<any> | null => {
+  const active = state.active;
+  return active ? state.datumById[active] : null;
+};
+
+/**
+ * Get an ordered list of all active data projections.
+ * @param state
+ */
+const selectActiveDatumProjections = (
+  state: DataState
+): DatumProjections | null => {
+  const active = state.active;
+  return active ? state.projectionsById[active] : null;
+};
+
+const selectStateProjections = (state: DataState, datumId: string) => {
+  const projections = state.projectionsById[datumId];
+  return projections ? projections.stateProjections || {} : {};
 };
 
 export default {
-  selectActiveById,
   selectData,
-  selectDataActive
+  selectActiveDatum,
+  selectActiveDatumProjections,
+  selectStateProjections
 };

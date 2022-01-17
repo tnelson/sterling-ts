@@ -1,5 +1,5 @@
-import { SterlingTheme } from '@/sterling-theme';
+import { SterlingThemeOld } from '@/sterling-theme';
 
-export function getProjectedTypes(theme: SterlingTheme): string[] {
+export function getProjectedTypes(theme: SterlingThemeOld): string[] {
   return theme.projections?.map((projection) => projection.type) || [];
 }

@@ -6,11 +6,11 @@ export type StyleSet = Pick<
   'nodeLabels' | 'nodeStyles' | 'nodeShapes' | 'edgeLabels' | 'edgeStyles'
 >;
 
-export interface SterlingTheme {
+export interface SterlingThemeOld {
   sterling: 'v0';
   nodes?: NodeStyleSpec[];
   edges?: EdgeStyleSpec[];
-  projections?: Projection[];
+  projections?: ProjectionOld[];
 }
 
 export interface NodeStyleSpec {
@@ -35,7 +35,7 @@ export interface EdgeStyleSpec {
   collapse?: boolean;
 }
 
-export interface Projection {
+export interface ProjectionOld {
   type: string;
 }
 

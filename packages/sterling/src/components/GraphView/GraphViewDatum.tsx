@@ -1,18 +1,27 @@
-import { GraphGroup, GraphSVGDiv } from '@/graph-svg';
+import { GraphGroup, GraphProps, GraphSVGDiv } from '@/graph-svg';
+import { DatumParsed } from '@/sterling-connection';
+import { throttle } from 'lodash';
 import { useCallback } from 'react';
 import { Matrix } from 'transformation-matrix';
-import { graphSpread, graphZoomed } from '../../state/graphView/graphViewSlice';
-import { useSterlingDispatch } from '../../state/hooks';
-import { ActiveGraphData } from '../../state/store';
+import { GraphData } from '../../statenew/graphs/graphs';
+import { graphSpread, graphZoomed } from '../../statenew/graphs/graphsSlice';
+import { useSterlingDispatch, useSterlingSelector } from '../../statenew/hooks';
+import { selectSpreadMatrix, selectZoomMatrix } from '../../statenew/selectors';
 
 interface GraphViewDatumProps {
-  graphData: ActiveGraphData;
+  datum: DatumParsed<any>;
+  graphProps: GraphProps;
 }
 
 const GraphViewDatum = (props: GraphViewDatumProps) => {
-  const { graphData } = props;
-  const { datumId, graphProps, graphMatrices } = graphData;
-  const { spreadMatrix, zoomMatrix } = graphMatrices;
+  const { datum, graphProps } = props;
+  const datumId = datum.id;
+  const spreadMatrix = useSterlingSelector((state) =>
+    selectSpreadMatrix(state, datumId)
+  );
+  const zoomMatrix = useSterlingSelector((state) =>
+    selectZoomMatrix(state, datumId)
+  );
   const {
     id,
     graph,
@@ -31,15 +40,23 @@ const GraphViewDatum = (props: GraphViewDatumProps) => {
    * entire graph.
    */
   const onSpreadMatrix = useCallback(
-    (matrix: Matrix) => {
-      dispatch(graphSpread({ id: datumId, matrix }));
-    },
+    throttle(
+      (matrix: Matrix) => {
+        dispatch(graphSpread({ datumId, matrix }));
+      },
+      16,
+      { trailing: false }
+    ),
     [datumId]
   );
   const onZoomMatrix = useCallback(
-    (matrix: Matrix) => {
-      dispatch(graphZoomed({ id: datumId, matrix }));
-    },
+    throttle(
+      (matrix: Matrix) => {
+        dispatch(graphZoomed({ datumId, matrix }));
+      },
+      16,
+      { trailing: false }
+    ),
     [datumId]
   );
 

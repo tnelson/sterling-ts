@@ -1,4 +1,4 @@
-import { defaultTheme, SterlingTheme, StyleSet } from '@/sterling-theme';
+import { defaultTheme, SterlingThemeOld, StyleSet } from '@/sterling-theme';
 import { getEdges, getNodes } from '@/graph-lib';
 import {
   Dict,
@@ -12,7 +12,7 @@ import { AlloyGraph } from './types';
 
 export function generateStyles(
   graph: AlloyGraph,
-  theme?: SterlingTheme
+  theme?: SterlingThemeOld
 ): StyleSet {
   const nodeLabels: Dict<LabelDef[]> = {};
   const nodeStyles: Dict<CSSProperties> = {};

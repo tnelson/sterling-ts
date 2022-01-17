@@ -1,8 +1,8 @@
-import { AlloyTrace, parseTraceXML } from '@/alloy-instance';
+import { AlloyDatum, parseAlloyXML } from '@/alloy-instance';
 import { Datum } from '@/sterling-connection';
-import { DatumParsed } from './parse';
+import { DatumParsed } from '../types';
 
-export type DatumAlloy = DatumParsed<AlloyTrace>;
+export type DatumAlloy = DatumParsed<AlloyDatum>;
 
 /**
  * Determine if a datum contains parsed data in Alloy format.
@@ -22,6 +22,6 @@ export function isDatumAlloy(datum: DatumParsed<any>): datum is DatumAlloy {
 export function parseAlloyDatum(datum: Datum): DatumAlloy {
   return {
     ...datum,
-    parsed: parseTraceXML(datum.data)
+    parsed: parseAlloyXML(datum.data)
   };
 }

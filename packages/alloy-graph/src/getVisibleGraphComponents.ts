@@ -10,7 +10,7 @@ import {
   getRelationTuples,
   isBuiltin
 } from '@/alloy-instance';
-import { getHiddenTypes, SterlingTheme } from '@/sterling-theme';
+import { getHiddenTypes, SterlingThemeOld } from '@/sterling-theme';
 import { Node } from '@/graph-lib';
 
 export type AtomNode = Node & { atom: AlloyAtom };
@@ -21,7 +21,7 @@ export type GraphComponents = {
 
 export function getVisibleGraphComponents(
   instance: AlloyInstance,
-  theme?: SterlingTheme
+  theme?: SterlingThemeOld
 ): GraphComponents {
   const visibleAtoms = new Set<string>();
   const visibleEdges: AlloyEdge[] = [];

@@ -1,9 +1,10 @@
 import { SideBarButton } from '@/sterling-ui';
+import { FaFilm } from 'react-icons/fa';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { MdOutlinePalette, MdWorkspacesOutline } from 'react-icons/md';
-import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
-import { selectGraphDrawer, selectMainView } from '../../state/store';
-import { graphDrawerViewChanged } from '../../state/ui/uiSlice';
+import { useSterlingDispatch, useSterlingSelector } from '../../statenew/hooks';
+import { selectGraphDrawer, selectMainView } from '../../statenew/selectors';
+import { graphDrawerViewChanged } from '../../statenew/ui/uiSlice';
 
 const GraphViewButtons = () => {
   const dispatch = useSterlingDispatch();
@@ -11,6 +12,12 @@ const GraphViewButtons = () => {
   const drawer = useSterlingSelector(selectGraphDrawer);
   return (
     <>
+      <SideBarButton
+        text='Time'
+        rightIcon={<FaFilm />}
+        isActive={view === 'GraphView' && drawer === 'state'}
+        onClick={() => dispatch(graphDrawerViewChanged('state'))}
+      />
       <SideBarButton
         text='Theme'
         rightIcon={<MdOutlinePalette />}

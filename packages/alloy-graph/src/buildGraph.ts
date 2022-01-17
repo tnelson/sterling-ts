@@ -15,7 +15,7 @@ import {
 import {
   getHiddenTypes,
   getProjectedTypes,
-  SterlingTheme
+  SterlingThemeOld
 } from '@/sterling-theme';
 import { newGraph, Node } from '@/graph-lib';
 import {
@@ -29,7 +29,7 @@ import dagre from 'dagre';
 
 export function buildGraph(
   instance: AlloyInstance,
-  theme?: SterlingTheme
+  theme?: SterlingThemeOld
 ): AlloyGraph {
   // Apply projections
   instance = projectInstance(instance, theme);

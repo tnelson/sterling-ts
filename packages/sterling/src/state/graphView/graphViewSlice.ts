@@ -1,4 +1,10 @@
-import { buildProps, buildTraceGraphs } from '@/alloy-graph';
+import { buildAlloyDatumGraphs, buildProps } from '@/alloy-graph';
+import {
+  AlloyInstance,
+  applyProjections,
+  getInstanceType,
+  getTypeAtoms
+} from '@/alloy-instance';
 import {
   DataJoinParsed,
   dataReceived,
@@ -7,6 +13,8 @@ import {
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { Matrix } from 'transformation-matrix';
+import { StateProject } from '../data/data';
+import { stateProjectionAdded } from '../data/dataSlice';
 import {
   GraphViewState,
   newDatumGraphs,
@@ -39,7 +47,7 @@ const graphViewSlice = createSlice({
             if (isDatumAlloy(enter)) {
               const id = enter.id;
               const trace = enter.parsed;
-              const graphs = buildTraceGraphs(trace);
+              const graphs = buildAlloyDatumGraphs(trace);
               const props = graphs.map((graph, index) => {
                 return buildProps(`${index}`, graph);
               });
@@ -50,6 +58,75 @@ const graphViewSlice = createSlice({
         }
       }
     );
+
+    builder.addCase(
+      stateProjectionAdded,
+      (
+        state,
+        action: PayloadAction<{
+          datumId: string;
+          instance: AlloyInstance;
+          type: string;
+          atom: string;
+        }>
+      ) => {
+        const { datumId, instance, type } = action.payload;
+        const atoms = getTypeAtoms(getInstanceType(instance, type));
+        console.log(atoms);
+
+        const projectedInstances = atoms.map((atom) =>
+          applyProjections(instance, [atom.id])
+        );
+
+        const graphs = buildAlloyDatumGraphs({ instances: projectedInstances });
+
+        atoms.forEach((atom, index) => {
+          const graph = graphs[index];
+          const graphId = atom.id;
+          console.log(datumId, graphId, graph);
+          const graphProps = buildProps(graphId, graph);
+          state.graphsByDatumId[datumId].graphsById[graphId] =
+            castDraft(graphProps);
+        });
+        // state.graphsByDatumId[datumId].projectionGraphIds[type] = atoms.map(
+        //   (atom) => {
+        //     const projected = applyProjections(instance, [atom.id]);
+        //     const graph = buildAlloyDatumGraphs({ instances})
+        //   }
+        // )
+      }
+    );
+
+    // builder.addCase(
+    //   stateProjectionAdded,
+    //   (
+    //     state,
+    //     action: PayloadAction<{
+    //       datumId: string;
+    //       projection: StateProject;
+    //       instance: AlloyInstance;
+    //     }>
+    //   ) => {
+    //     const { datumId, projection, instance } = action.payload;
+    //
+    //     // get all atoms in signature
+    //     const type = getInstanceType(instance, projection.type);
+    //     const atoms = getTypeAtoms(type);
+    //
+    //     // loop over each atom, project over that atom, generate graph, add graph to state
+    //     state.graphsByDatumId[datumId].projectionGraphIds[type.id] = atoms.map(
+    //       (atom) => {
+    //         const projected = applyProjections(instance, [atom.id]);
+    //         const graph = buildAlloyDatumGraphs({ instances: [projected] })[0];
+    //         const graphId = `${atom.id}`;
+    //         const graphProps = buildProps(graphId, graph);
+    //         state.graphsByDatumId[datumId].graphsById[graphId] =
+    //           castDraft(graphProps);
+    //         return graphId;
+    //       }
+    //     );
+    //   }
+    // );
   }
 });
 

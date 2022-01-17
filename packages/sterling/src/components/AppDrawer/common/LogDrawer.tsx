@@ -1,8 +1,8 @@
 import { LogList, LogEntry, PaneTitle } from '@/sterling-ui';
 import { Icon } from '@chakra-ui/react';
-import { useSterlingSelector } from '../../../state/hooks';
-import { selectLogItems } from '../../../state/store';
 import { GoNote } from 'react-icons/go';
+import { useSterlingSelector } from '../../../statenew/hooks';
+import { selectLogItems } from '../../../statenew/selectors';
 
 const LogDrawer = () => {
   const items = useSterlingSelector(selectLogItems);

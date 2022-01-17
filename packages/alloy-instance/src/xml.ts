@@ -1,19 +1,38 @@
+import { AlloyDatum } from './datum';
 import { instanceFromElement } from './instance';
-import { AlloyTrace } from './trace';
 
-export function parseTraceXML(xml: string): AlloyTrace {
+export function parseAlloyXML(xml: string): AlloyDatum {
   const parser = new DOMParser();
   const document = parser.parseFromString(xml, 'application/xml');
   const instances = Array.from(document.querySelectorAll('instance'));
-  if (!instances.length) throw new Error('No instance in trace.');
-
-  const loopBack = instances[0].getAttribute('backloop');
-  // if (!loopBack) throw new Error('Trace has no backloop attribute');
+  if (!instances.length) throw new Error('No instance in Alloy data');
 
   return {
     instances: instances.map(instanceFromElement),
-    loopBack: loopBack ? +loopBack : -1
+    bitwidth: parseNumericAttribute(instances[0], 'bitwidth'),
+    command: parseStringAttribute(instances[0], 'command'),
+    loopBack: parseNumericAttribute(instances[0], 'backloop'),
+    maxSeq: parseNumericAttribute(instances[0], 'maxseq'),
+    maxTrace: parseNumericAttribute(instances[0], 'maxtrace'),
+    minTrace: parseNumericAttribute(instances[0], 'mintrace'),
+    traceLength: parseNumericAttribute(instances[0], 'tracelength')
   };
+}
+
+function parseNumericAttribute(
+  element: Element,
+  attribute: string
+): number | undefined {
+  const value = element.getAttribute(attribute);
+  return value ? +value : undefined;
+}
+
+function parseStringAttribute(
+  element: Element,
+  attribute: string
+): string | undefined {
+  const value = element.getAttribute(attribute);
+  return value ? `${value}` : undefined;
 }
 
 export function sigElementIsSet(sigElement: Element): boolean {

@@ -6,34 +6,35 @@ import { GoTerminal } from 'react-icons/go';
 import {
   useSterlingDispatch,
   useSterlingSelector
-} from '../../../../state/hooks';
+} from '../../../../statenew/hooks';
 import {
+  selectActiveDatum,
   selectActiveDatumExpressions,
-  selectDataActive,
   selectEvaluatorActive,
   selectNextExpressionId
-} from '../../../../state/store';
+} from '../../../../statenew/selectors';
 import { EvaluatorExpressions } from './EvaluatorExpressions';
 import { EvaluatorInput } from './EvaluatorInput';
 
 const EvaluatorDrawer = () => {
   const dispatch = useSterlingDispatch();
   const active = useSterlingSelector(selectEvaluatorActive);
-  const activeData = useSterlingSelector(selectDataActive);
+  const activeDatum = useSterlingSelector(selectActiveDatum);
   const expressions = useSterlingSelector(selectActiveDatumExpressions);
   const nextExpressionId = useSterlingSelector(selectNextExpressionId);
 
   const handleSubmit = useCallback(
     (value: string) => {
-      dispatch(
-        evalRequested({
-          id: `${nextExpressionId}`,
-          datumId: activeData[0].id,
-          expression: value
-        })
-      );
+      if (activeDatum)
+        dispatch(
+          evalRequested({
+            id: `${nextExpressionId}`,
+            datumId: activeDatum.id,
+            expression: value
+          })
+        );
     },
-    [dispatch, nextExpressionId, activeData]
+    [dispatch, nextExpressionId, activeDatum]
   );
 
   return (

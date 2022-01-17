@@ -1,5 +1,10 @@
 export * from './src/buildGraph';
-export * from './src/buildTraceGraphs';
+export * from './src/buildAlloyDatumGraphs';
 export * from './src/buildProps';
 export * from './src/generateStyles';
-export * from './src/types';
+// export * from './src/types';
+export * from './srcnew/types';
+export * from './srcnew/generateGraph';
+export * from './srcnew/generateGraphProps';
+export * from './srcnew/generateLayout';
+export * from './srcnew/layoutGraph';

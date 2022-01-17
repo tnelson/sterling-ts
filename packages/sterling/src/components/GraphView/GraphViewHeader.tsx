@@ -1,38 +1,26 @@
-import { Button, buttonClicked } from '@/sterling-connection';
-import { PaneHeaderButton, PaneTitle } from '@/sterling-ui';
-import { useSterlingDispatch } from '../../state/hooks';
-import { ActiveGraphData } from '../../state/store';
+import { Button, DatumParsed } from '@/sterling-connection';
+import { PaneTitle } from '@/sterling-ui';
+import { GraphData } from '../../statenew/graphs/graphs';
+import { GraphViewHeaderButton } from './GraphViewHeaderButton';
 
 interface GraphViewHeaderProps {
-  graphData: ActiveGraphData;
+  datum: DatumParsed<any>;
 }
 
 const GraphViewHeader = (props: GraphViewHeaderProps) => {
-  const { graphData } = props;
-  const { datumId, datum } = graphData;
-  const { buttons } = datum;
-  const dispatch = useSterlingDispatch();
+  const { datum } = props;
+  const { id, parsed, buttons } = datum;
+  const command = parsed.command;
 
   return (
     <div className='w-full flex item-center space-x-2 px-2'>
-      <PaneTitle>Datum ID: {datumId}</PaneTitle>
+      <PaneTitle className='text-gray-400'>ID: {id}</PaneTitle>
+      <PaneTitle>{command}</PaneTitle>
       <div className='grow' />
       {buttons &&
         buttons.map((button: Button, index: number) => {
           return (
-            <PaneHeaderButton
-              key={index}
-              onClick={() => {
-                dispatch(
-                  buttonClicked({
-                    id: datumId,
-                    onClick: button.onClick
-                  })
-                );
-              }}
-            >
-              {button.text}
-            </PaneHeaderButton>
+            <GraphViewHeaderButton key={index} datumId={id} button={button} />
           );
         })}
     </div>

@@ -5,6 +5,7 @@ export type MainView = GraphView | TableView | ScriptView;
 export type CommonDrawerView = 'evaluator' | 'log';
 export type GraphDrawerView =
   | CommonDrawerView
+  | 'state'
   | 'theme'
   | 'layout'
   | 'settings';
@@ -26,7 +27,7 @@ export interface UiState {
 export const newUiState = (initialView?: MainView): UiState => {
   return {
     mainView: initialView || 'GraphView',
-    graphViewDrawer: 'evaluator',
+    graphViewDrawer: 'state',
     tableViewDrawer: 'log',
     scriptViewDrawer: 'log'
   };

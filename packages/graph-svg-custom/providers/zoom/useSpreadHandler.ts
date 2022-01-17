@@ -7,6 +7,7 @@ import {
   scale,
   transform
 } from 'transformation-matrix';
+import { SPREAD_SCALE_FACTOR } from './constants';
 
 const useSpreadHandler = (
   spreadMatrix: Matrix,
@@ -17,7 +18,8 @@ const useSpreadHandler = (
   useCallback(
     (event: WheelEvent) => {
       if (event.deltaX === 0) return;
-      const sf = event.deltaX < 0 ? 1.035 : 1 / 1.035;
+      const sf =
+        event.deltaX < 0 ? SPREAD_SCALE_FACTOR : 1 / SPREAD_SCALE_FACTOR;
       const { x, y } = applyToPoint(
         transform(inverse(spreadMatrix), inverse(zoomMatrix)),
         toSVGCoordinates(event.clientX, event.clientY)

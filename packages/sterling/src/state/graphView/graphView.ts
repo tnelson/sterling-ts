@@ -2,15 +2,26 @@ import { GraphProps } from '@/graph-svg';
 import { keyBy } from 'lodash';
 import { identity, Matrix } from 'transformation-matrix';
 
+// export interface DatumGraphsOld {
+//   // the datum id
+//   id: string;
+//   // the active graph id
+//   active: string;
+//   // the graphs associated with the datum, by graph id
+//   graphs: Record<string, GraphProps>;
+//   // an ordered list of the graph ids
+//   graphIds: string[];
+// }
+
 export interface DatumGraphs {
   // the datum id
   id: string;
-  // the active graph id
-  active: string;
-  // the graphs associated with the datum, by graph id
-  graphs: Record<string, GraphProps>;
-  // an ordered list of the graph ids
+  // the unprojected datum graph ids
   graphIds: string[];
+  // the graphs associated with the datum, by graph id
+  graphsById: Record<string, GraphProps>;
+  // projection graph ids, keyed by type
+  projectionGraphIds: Record<string, string[]>;
 }
 
 export interface GraphMatrices {
@@ -40,9 +51,10 @@ export function newDatumGraphs(
 ): DatumGraphs {
   return {
     id: datumId,
-    active: graphs[0].id,
-    graphs: keyBy(graphs, (graph) => graph.id),
-    graphIds: graphs.map((graph) => graph.id)
+    graphIds: [graphs[0].id],
+    graphsById: keyBy(graphs, (graph) => graph.id),
+    projectionGraphIds: {}
+    // graphIds: graphs.map((graph) => graph.id)
   };
 }
 

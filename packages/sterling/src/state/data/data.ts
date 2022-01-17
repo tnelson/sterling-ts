@@ -1,9 +1,22 @@
 import { DatumParsed } from '@/sterling-connection';
 
+export interface StateProject {
+  type: string;
+  relation: string;
+}
+
+export interface DatumProjections {
+  // projection atoms keyed by signature type
+  projections: Record<string, string>;
+  // state projection atoms keyed by signature type
+  stateProjections: Record<string, string>;
+}
+
 export interface DataState {
-  activeById: Record<string, boolean>;
+  active: string | null;
   datumById: Record<string, DatumParsed<any>>;
   datumIds: string[];
+  projectionsById: Record<string, DatumProjections>;
 }
 
 /**
@@ -11,8 +24,9 @@ export interface DataState {
  */
 export const newDataState = (): DataState => {
   return {
-    activeById: {},
+    active: null,
     datumById: {},
-    datumIds: []
+    datumIds: [],
+    projectionsById: {}
   };
 };

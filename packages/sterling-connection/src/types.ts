@@ -10,6 +10,10 @@ export interface Button {
    * A string that will be sent to the provider when the button is clicked.
    */
   onClick: string;
+  /**
+   * A string that will be displayed as a tooltip with the button is hovered.
+   */
+  mouseover?: string;
 }
 
 /**

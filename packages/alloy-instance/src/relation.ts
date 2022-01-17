@@ -10,14 +10,17 @@ export interface AlloyRelation {
   // the types that are allowed in the relation's tuples
   types: string[];
   // the relation's tuples
-  tuples: AlloyTuple[]
+  tuples: AlloyTuple[];
 }
 
 export function getRelationTuples(relation: AlloyRelation): AlloyTuple[] {
   return relation.tuples;
 }
 
-export function relationFromElement(typeNames: Record<string, string>, element: Element): AlloyRelation {
+export function relationFromElement(
+  typeNames: Record<string, string>,
+  element: Element
+): AlloyRelation {
   const label = element.getAttribute('label');
   if (!label) throw new Error('No label found for field element');
   const types = typesFromTypesElement(typeNames, element);
@@ -30,16 +33,24 @@ export function relationFromElement(typeNames: Record<string, string>, element: 
     name: label,
     types,
     tuples
-  }
+  };
 }
 
-export function relationsFromElements(typeNames: Record<string, string>, elements: NodeListOf<Element>): AlloyRelation[] {
-  return Array.from(elements).map(element => relationFromElement(typeNames, element));
+export function relationsFromElements(
+  typeNames: Record<string, string>,
+  elements: NodeListOf<Element>
+): AlloyRelation[] {
+  return Array.from(elements).map((element) =>
+    relationFromElement(typeNames, element)
+  );
 }
 
-function typesFromTypesElement(typeNames: Record<string, string>, element: Element): string[] {
+function typesFromTypesElement(
+  typeNames: Record<string, string>,
+  element: Element
+): string[] {
   const typeElements = element.querySelectorAll('type');
-  return Array.from(typeElements).map(typeElement => {
+  return Array.from(typeElements).map((typeElement) => {
     const typeId = typeElement.getAttribute('ID');
     if (!typeId) throw new Error('Type element must have an ID attribute');
     const typeName = typeNames[typeId];

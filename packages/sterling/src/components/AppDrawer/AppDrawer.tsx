@@ -1,24 +1,21 @@
 import { Pane, PaneBody, PaneHeader, PaneTitle } from '@/sterling-ui';
-import { useSterlingSelector } from '../../state/hooks';
-import { selectCommonDrawer } from '../../state/store';
+import { useSterlingSelector } from '../../statenew/hooks';
+import { selectMainView } from '../../statenew/selectors';
 import {
   EvaluatorDrawer,
   EvaluatorDrawerHeader
 } from './common/EvaluatorDrawer/EvaluatorDrawer';
 import { LogDrawer, LogDrawerHeader } from './common/LogDrawer';
+import { GraphDrawer, GraphDrawerHeader } from './graph/GraphDrawer';
 
 const AppDrawer = () => {
-  const commonDrawer = useSterlingSelector(selectCommonDrawer);
+  const view = useSterlingSelector(selectMainView);
   return (
     <Pane>
       <PaneHeader className='border-b'>
-        {commonDrawer === 'evaluator' && <EvaluatorDrawerHeader />}
-        {commonDrawer === 'log' && <LogDrawerHeader />}
+        {view === 'GraphView' && <GraphDrawerHeader />}
       </PaneHeader>
-      <PaneBody>
-        {commonDrawer === 'evaluator' && <EvaluatorDrawer />}
-        {commonDrawer === 'log' && <LogDrawer />}
-      </PaneBody>
+      <PaneBody>{view === 'GraphView' && <GraphDrawer />}</PaneBody>
     </Pane>
   );
 };

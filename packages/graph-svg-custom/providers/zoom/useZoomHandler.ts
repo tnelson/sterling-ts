@@ -1,6 +1,7 @@
 import { Vector2 } from '@/vector2';
 import { useCallback, WheelEvent } from 'react';
 import { Matrix, scale, transform } from 'transformation-matrix';
+import { ZOOM_SCALE_FACTOR } from './constants';
 
 /**
  * React hook to create a memoized callback that when called with a WheelEvent
@@ -18,7 +19,7 @@ const useZoomHandler = (
   useCallback(
     (event: WheelEvent) => {
       if (event.deltaY === 0) return;
-      const sf = event.deltaY < 0 ? 1.035 : 1 / 1.035;
+      const sf = event.deltaY < 0 ? ZOOM_SCALE_FACTOR : 1 / ZOOM_SCALE_FACTOR;
       const { x, y } = toLocalCoordinates(event.clientX, event.clientY);
       const newZoom = transform(zoomMatrix, scale(sf, sf, x, y));
       callback(newZoom);

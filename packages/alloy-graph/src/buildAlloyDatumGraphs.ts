@@ -1,7 +1,7 @@
 import { AlloyEdge, AlloyGraph, AlloyNode } from '@/alloy-graph';
-import { AlloyTrace } from '@/alloy-instance';
+import { AlloyDatum } from '@/alloy-instance';
 import { newGraph } from '@/graph-lib';
-import { SterlingTheme } from '@/sterling-theme';
+import { SterlingThemeOld } from '@/sterling-theme';
 import _ from 'lodash';
 import {
   AtomNode,
@@ -17,9 +17,9 @@ import { projectInstances } from './projectInstances';
  * @param trace
  * @param theme
  */
-export function buildTraceGraphs(
-  trace: AlloyTrace,
-  theme?: SterlingTheme
+export function buildAlloyDatumGraphs(
+  trace: AlloyDatum,
+  theme?: SterlingThemeOld
 ): AlloyGraph[] {
   // Apply projections to all instances
   const instances = projectInstances(trace.instances, theme);

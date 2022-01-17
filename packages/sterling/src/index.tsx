@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { ChakraProvider } from '@chakra-ui/react';
 import { sterlingTheme } from '@/sterling-ui';
 import { Sterling } from './components/Sterling';
-import store from './state/store';
+import store from './statenew/store';
 import './index.css';
 
 ReactDOM.render(

@@ -1,6 +1,6 @@
-import { SterlingTheme } from '@/sterling-theme';
+import { SterlingThemeOld } from '@/sterling-theme';
 
-export function getHiddenTypes(theme: SterlingTheme): string[] {
+export function getHiddenTypes(theme: SterlingThemeOld): string[] {
   const hiddenTypes: string[] = [];
   theme.nodes?.forEach((nodeTheme) => {
     if (nodeTheme.visible === false) {
