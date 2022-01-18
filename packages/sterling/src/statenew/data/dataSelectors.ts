@@ -8,7 +8,10 @@ import { DataState } from './data';
  */
 function selectActiveDatum(state: DataState): DatumParsed<any> | undefined {
   const active = selectActiveDatumId(state);
-  return active ? selectDatumById(state, active) : undefined;
+  console.log(`Active datum id: ${active}`);
+  const datum = active ? selectDatumById(state, active) : undefined;
+  console.log(datum);
+  return datum;
 }
 
 /**

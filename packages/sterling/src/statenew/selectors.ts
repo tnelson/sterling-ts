@@ -69,6 +69,9 @@ export function selectActiveDatumId(state: SterlingState): string | null {
 export const selectActiveGraphData = createSelector(
   [selectActiveDatum, selectActiveGraphLayout, selectActiveTheme],
   (datum, layout, theme) => {
+    console.log(datum);
+    console.log(layout);
+    console.log(theme);
     if (datum && layout && theme && isDatumAlloy(datum)) {
       const instance = datum.parsed.instances[0];
       const projections = theme.projections || [];
