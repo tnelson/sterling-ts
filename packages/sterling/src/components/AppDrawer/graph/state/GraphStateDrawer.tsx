@@ -1,4 +1,6 @@
 import {
+  AlloyAtom,
+  AlloyInstance,
   AlloyRelation,
   AlloyType,
   getInstanceAtoms,
@@ -9,7 +11,8 @@ import {
   isAlloyDatum,
   isAlloyDatumTrace
 } from '@/alloy-instance';
-import { Projection } from '@/sterling-theme';
+import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
+import { Projection, SterlingTheme } from '@/sterling-theme';
 import { PaneTitle } from '@/sterling-ui';
 import { Icon } from '@chakra-ui/react';
 import { useState } from 'react';
@@ -27,22 +30,99 @@ import {
   selectActiveDatum,
   selectActiveTheme
 } from '../../../../statenew/selectors';
+import { themeChanged } from '../../../../statenew/theme/themeSlice';
 import { AddTimeProjectionButton } from './AddTimeProjectionButton';
 import { AddTimeProjectionMenu } from './AddTimeProjectionMenu';
 
-const TimeProjectionsList = (props: {
-  projections: Projection[] | undefined;
+const ProjectionRow = (props: {
+  datum: DatumParsed<any>;
+  theme: SterlingTheme;
+  projection: Projection;
+  atoms: AlloyAtom[];
 }) => {
-  const { projections } = props;
+  const { datum, theme, projection, atoms } = props;
+  const { type, atom } = projection;
+  const dispatch = useSterlingDispatch();
+  const index = atoms.findIndex((a) => a.id === atom);
+
+  const onPrev = () => {
+    if (index > 0) {
+      const prev = atoms[index - 1];
+      const projections = theme.projections || [];
+      const oldIndex = projections.findIndex((proj) => proj.type === type);
+      const newprojections = projections.slice();
+      newprojections[oldIndex] = { type, atom: prev.id, time: true };
+      if (oldIndex > -1) {
+        dispatch(
+          themeChanged({
+            datum,
+            theme: {
+              ...theme,
+              projections: newprojections
+            }
+          })
+        );
+      }
+    }
+  };
+
+  const onNext = () => {
+    if (index < atoms.length - 1) {
+      const next = atoms[index + 1];
+      const projections = theme.projections || [];
+      const oldIndex = projections.findIndex((proj) => proj.type === type);
+      const newprojections = projections.slice();
+      newprojections[oldIndex] = { type, atom: next.id, time: true };
+      if (oldIndex > -1) {
+        dispatch(
+          themeChanged({
+            datum,
+            theme: {
+              ...theme,
+              projections: newprojections
+            }
+          })
+        );
+      }
+    }
+  };
+
+  return (
+    <div className='flex text-sm'>
+      <div className='first: pl-2 px-1 py-0.5'>{type}</div>
+      <div
+        className='first: pl-2 px-1 py-0.5 cursor-pointer'
+        onClick={onPrev}
+      >{`<`}</div>
+      <div className='first: pl-2 px-1 py-0.5'>{atom || ''}</div>
+      <div
+        className='first: pl-2 px-1 py-0.5 cursor-pointer'
+        onClick={onNext}
+      >{`>`}</div>
+    </div>
+  );
+};
+
+const TimeProjectionsList = (props: {
+  datum: DatumParsed<any>;
+  theme: SterlingTheme;
+  projections: Projection[] | undefined;
+  instance: AlloyInstance;
+}) => {
+  const { datum, theme, projections, instance } = props;
   if (!projections) return null;
   return (
     <div className='flex flex-col'>
       {projections.map((projection) => {
+        const atoms = getTypeAtoms(getInstanceType(instance, projection.type));
         return (
-          <div key={projection.type} className='flex'>
-            <div>{projection.type}</div>
-            <div>{projection.atom || ''}</div>
-          </div>
+          <ProjectionRow
+            key={projection.type}
+            datum={datum}
+            theme={theme}
+            projection={projection}
+            atoms={atoms}
+          />
         );
       })}
     </div>
@@ -54,10 +134,20 @@ const GraphStateDrawer = () => {
   const activeTheme = useSterlingSelector(selectActiveTheme);
   const [addingTimeProjection, setAddingTimeProjection] = useState(false);
 
+  const instance =
+    activeDatum && isDatumAlloy(activeDatum)
+      ? activeDatum.parsed.instances[0]
+      : undefined;
+
   return (
     <div className='absolute inset-0 flex flex-col'>
-      {activeTheme && (
-        <TimeProjectionsList projections={activeTheme.projections} />
+      {activeDatum && activeTheme && instance && (
+        <TimeProjectionsList
+          datum={activeDatum}
+          theme={activeTheme}
+          projections={activeTheme.projections}
+          instance={instance}
+        />
       )}
       {activeDatum && activeTheme && !addingTimeProjection && (
         <AddTimeProjectionButton

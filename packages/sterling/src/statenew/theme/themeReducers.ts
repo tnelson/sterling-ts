@@ -1,7 +1,6 @@
 import { DatumParsed } from '@/sterling-connection';
-import { Projection, SterlingTheme } from '@/sterling-theme';
+import { SterlingTheme } from '@/sterling-theme';
 import { PayloadAction } from '@reduxjs/toolkit';
-import { merge } from 'lodash';
 import { ThemeState } from './theme';
 
 /**
@@ -17,7 +16,11 @@ function themeChanged(
   const { datum, theme } = action.payload;
   state.themeByDatumId[datum.id] = theme;
   // if (state.themeByDatumId[datum.id]) {
-  //   merge(state.themeByDatumId[datum.id], theme);
+  //   mergeWith(state.themeByDatumId[datum.id], theme, (objValue, srcValue) => {
+  //     if (isArray(objValue)) {
+  //       return objValue.concat(srcValue);
+  //     }
+  //   });
   // }
 }
 
