@@ -1,6 +1,6 @@
 import { Pane } from '@/sterling-ui';
-import { useSterlingSelector } from '../../statenew/hooks';
-import { selectMainView } from '../../statenew/selectors';
+import { useSterlingSelector } from '../../state/hooks';
+import { selectMainView } from '../../state/selectors';
 import { GraphView } from '../GraphView/GraphView';
 import { ScriptView } from '../ScriptView/ScriptView';
 import { TableView } from '../TableView/TableView';

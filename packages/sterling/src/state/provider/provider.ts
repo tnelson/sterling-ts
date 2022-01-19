@@ -3,6 +3,9 @@ export interface ProviderState {
   providerName: string;
 }
 
+/**
+ * Create a new provider state.
+ */
 export const newProviderState = (): ProviderState => {
   return {
     connected: false,

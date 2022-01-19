@@ -1,7 +1,9 @@
 import { NavButton } from '@/sterling-ui';
-import { Icon } from '@blueprintjs/core';
+import { HiCode } from 'react-icons/hi';
+import { FaTable } from 'react-icons/fa';
+import { BiNetworkChart } from 'react-icons/bi';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
-import { selectMainView } from '../../state/store';
+import { selectMainView } from '../../state/selectors';
 import { mainViewChanged } from '../../state/ui/uiSlice';
 
 const ViewButtons = () => {
@@ -12,7 +14,7 @@ const ViewButtons = () => {
       <NavButton
         isActive={mainView === 'GraphView'}
         mr={1}
-        leftIcon={<Icon icon='graph' />}
+        leftIcon={<BiNetworkChart />}
         onClick={() => dispatch(mainViewChanged('GraphView'))}
       >
         Graph
@@ -20,7 +22,7 @@ const ViewButtons = () => {
       <NavButton
         isActive={mainView === 'TableView'}
         mr={1}
-        leftIcon={<Icon icon='th' />}
+        leftIcon={<FaTable />}
         onClick={() => dispatch(mainViewChanged('TableView'))}
       >
         Table
@@ -28,7 +30,7 @@ const ViewButtons = () => {
       <NavButton
         isActive={mainView === 'ScriptView'}
         mr={1}
-        leftIcon={<Icon icon='code' />}
+        leftIcon={<HiCode />}
         onClick={() => dispatch(mainViewChanged('ScriptView'))}
       >
         Script

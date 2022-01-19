@@ -3,10 +3,10 @@ import { DatumParsed } from '@/sterling-connection';
 import { throttle } from 'lodash';
 import { useCallback } from 'react';
 import { Matrix } from 'transformation-matrix';
-import { GraphData } from '../../statenew/graphs/graphs';
-import { graphSpread, graphZoomed } from '../../statenew/graphs/graphsSlice';
-import { useSterlingDispatch, useSterlingSelector } from '../../statenew/hooks';
-import { selectSpreadMatrix, selectZoomMatrix } from '../../statenew/selectors';
+import { GraphData } from '../../state/graphs/graphs';
+import { graphSpread, graphZoomed } from '../../state/graphs/graphsSlice';
+import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
+import { selectSpreadMatrix, selectZoomMatrix } from '../../state/selectors';
 
 interface GraphViewDatumProps {
   datum: DatumParsed<any>;

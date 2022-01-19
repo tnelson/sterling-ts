@@ -1,9 +1,9 @@
 import { SideBar, SideBarButton } from '@/sterling-ui';
 import { Spacer } from '@chakra-ui/react';
 import { GoNote, GoTerminal } from 'react-icons/go';
-import { useSterlingDispatch, useSterlingSelector } from '../../statenew/hooks';
-import { selectDrawerView, selectMainView } from '../../statenew/selectors';
-import { commonDrawerViewChanged } from '../../statenew/ui/uiSlice';
+import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
+import { selectDrawerView, selectMainView } from '../../state/selectors';
+import { commonDrawerViewChanged } from '../../state/ui/uiSlice';
 import { GraphViewButtons } from './GraphViewButtons';
 import { ScriptViewButtons } from './ScriptViewButtons';
 import { TableViewButtons } from './TableViewButtons';

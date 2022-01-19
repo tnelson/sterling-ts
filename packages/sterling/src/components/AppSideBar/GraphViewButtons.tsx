@@ -1,10 +1,11 @@
 import { SideBarButton } from '@/sterling-ui';
 import { FaFilm } from 'react-icons/fa';
 import { IoSettingsOutline } from 'react-icons/io5';
-import { MdOutlinePalette, MdWorkspacesOutline } from 'react-icons/md';
-import { useSterlingDispatch, useSterlingSelector } from '../../statenew/hooks';
-import { selectGraphDrawer, selectMainView } from '../../statenew/selectors';
-import { graphDrawerViewChanged } from '../../statenew/ui/uiSlice';
+import { MdWorkspacesOutline } from 'react-icons/md';
+import { RiPaletteLine } from 'react-icons/ri';
+import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
+import { selectGraphDrawer, selectMainView } from '../../state/selectors';
+import { graphDrawerViewChanged } from '../../state/ui/uiSlice';
 
 const GraphViewButtons = () => {
   const dispatch = useSterlingDispatch();
@@ -20,7 +21,7 @@ const GraphViewButtons = () => {
       />
       <SideBarButton
         text='Theme'
-        rightIcon={<MdOutlinePalette />}
+        rightIcon={<RiPaletteLine />}
         isActive={view === 'GraphView' && drawer === 'theme'}
         onClick={() => dispatch(graphDrawerViewChanged('theme'))}
       />

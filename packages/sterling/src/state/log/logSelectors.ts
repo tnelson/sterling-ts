@@ -1,6 +1,11 @@
-import { LogState } from './log';
+import { LogItem, LogState } from './log';
 
-const selectLogItems = (state: LogState) => state.items;
+/**
+ * Select all log items.
+ */
+function selectLogItems(state: LogState): LogItem[] {
+  return state.items;
+}
 
 export default {
   selectLogItems

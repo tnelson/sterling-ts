@@ -1,13 +1,20 @@
 import { ProviderState } from './provider';
 
 /**
- * Determine if Sterling is connected to a provider
+ * Select the connection status.
  */
-const selectIsConnected = (state: ProviderState) => state.connected;
+function selectIsConnected(state: ProviderState): boolean {
+  return state.connected;
+}
 
 /**
- * Get the name of the data provider.
+ * Select the name of the provider.
  */
-const selectProviderName = (state: ProviderState) => state.providerName;
+function selectProviderName(state: ProviderState): string {
+  return state.providerName;
+}
 
-export default { selectIsConnected, selectProviderName };
+export default {
+  selectIsConnected,
+  selectProviderName
+};

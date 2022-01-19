@@ -29,6 +29,9 @@ export interface LogState {
   sort: LogSortOrder;
 }
 
+/**
+ * Create a new log state.
+ */
 export const newLogState = (): LogState => {
   return {
     items: [],
@@ -36,12 +39,6 @@ export const newLogState = (): LogState => {
     sort: 'ascending'
   };
 };
-
-export function logFilter(filters: LogItemType): (item: LogItem) => boolean {
-  return (item: LogItem): boolean => {
-    return filters.includes(item.type);
-  };
-}
 
 /**
  * Create a new log message.

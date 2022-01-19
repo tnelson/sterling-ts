@@ -1,8 +1,8 @@
 import { Pane, PaneBody, PaneHeader, PaneTitle } from '@/sterling-ui';
 import { Box, Icon } from '@chakra-ui/react';
 import { FaFilm } from 'react-icons/fa';
-import { useSterlingSelector } from '../../statenew/hooks';
-import { selectActiveDatumId, selectData } from '../../statenew/selectors';
+import { useSterlingSelector } from '../../state/hooks';
+import { selectActiveDatumId, selectData } from '../../state/selectors';
 import { GraphPreview } from '../GraphPreview/GraphPreview';
 import { ListView } from './ListView/ListView';
 

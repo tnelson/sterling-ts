@@ -6,13 +6,13 @@ import { GoTerminal } from 'react-icons/go';
 import {
   useSterlingDispatch,
   useSterlingSelector
-} from '../../../../statenew/hooks';
+} from '../../../../state/hooks';
 import {
   selectActiveDatum,
   selectActiveDatumExpressions,
   selectEvaluatorActive,
   selectNextExpressionId
-} from '../../../../statenew/selectors';
+} from '../../../../state/selectors';
 import { EvaluatorExpressions } from './EvaluatorExpressions';
 import { EvaluatorInput } from './EvaluatorInput';
 

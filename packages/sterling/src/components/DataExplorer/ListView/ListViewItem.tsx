@@ -1,9 +1,10 @@
-import { isAlloyDatum, isAlloyDatumTrace } from '@/alloy-instance';
-import { MouseEvent } from 'react';
 import { DatumParsed } from '@/sterling-connection';
 import { Icon } from '@chakra-ui/react';
+import { MouseEvent } from 'react';
 import { FaFilm } from 'react-icons/fa';
 import { GoTerminal } from 'react-icons/go';
+import { useSterlingSelector } from '../../../state/hooks';
+import { selectDatumIsStateful } from '../../../state/selectors';
 import { Row, RowItem } from './Row';
 
 interface ListViewItemProps {
@@ -14,6 +15,9 @@ interface ListViewItemProps {
 
 const ListViewItem = (props: ListViewItemProps) => {
   const { datum, active, onClickItem } = props;
+  const isStateful = useSterlingSelector((state) =>
+    selectDatumIsStateful(state, datum)
+  );
   const cn = active ? 'text-white bg-blue-600' : '';
 
   return (
@@ -22,11 +26,7 @@ const ListViewItem = (props: ListViewItemProps) => {
       <RowItem className={cn}>
         {datum.evaluator && <Icon as={GoTerminal} />}
       </RowItem>
-      <RowItem className={cn}>
-        {isAlloyDatum(datum.parsed) && isAlloyDatumTrace(datum.parsed) && (
-          <Icon as={FaFilm} />
-        )}
-      </RowItem>
+      <RowItem className={cn}>{isStateful && <Icon as={FaFilm} />}</RowItem>
     </Row>
   );
 };

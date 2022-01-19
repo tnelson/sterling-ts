@@ -1,0 +1,48 @@
+import { isAlloyDatumTrace } from '@/alloy-instance';
+import { DataJoinParsed, isDatumAlloy } from '@/sterling-connection';
+import { PayloadAction } from '@reduxjs/toolkit';
+import { WritableDraft } from 'immer/dist/types/types-external';
+import { identity } from 'transformation-matrix';
+import { GraphsState } from './graphs';
+import { DEFAULT_THEME } from './graphsDefaults';
+import { validateLayouts } from './graphsReducers';
+
+type DraftState = WritableDraft<GraphsState>;
+
+function dataReceived(
+  state: DraftState,
+  action: PayloadAction<DataJoinParsed>
+) {
+  const { enter } = action.payload;
+
+  if (enter) {
+    // Extract Alloy data, since that's all we know how to use right now
+    const alloyData = enter.filter(isDatumAlloy);
+
+    // For each one, generate matrices, initial layout, and theme
+    alloyData.forEach((alloyDatum) => {
+      const datumId = alloyDatum.id;
+
+      // Generate matrices
+      state.matricesByDatumId[alloyDatum.id] = {
+        datumId,
+        spreadMatrix: identity(),
+        zoomMatrix: identity()
+      };
+
+      // Initialize with the default theme
+      state.themeByDatumId[datumId] = DEFAULT_THEME;
+
+      // Generate the layout associated with no projection
+      state.layoutsByDatumId[datumId] = { datumId, layoutById: {} };
+      validateLayouts(state, alloyDatum);
+
+      // Choose the first index as the first instance to display
+      state.timeByDatumId[datumId] = 0;
+    });
+  }
+}
+
+export default {
+  dataReceived
+};

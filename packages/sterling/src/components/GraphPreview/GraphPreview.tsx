@@ -1,9 +1,5 @@
-import { GraphGroup, GraphSVGDiv, ShapeDef } from '@/graph-svg';
+import { GraphSVGDiv } from '@/graph-svg';
 import { AspectRatio } from '@chakra-ui/react';
-import { forEach } from 'lodash';
-import { identity, scale, transform } from 'transformation-matrix';
-import { useSterlingSelector } from '../../state/hooks';
-import {} from '../../state/store';
 
 const GraphPreview = () => {
   // const graphs = useSterlingSelector((state) =>

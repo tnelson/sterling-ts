@@ -1,41 +1,63 @@
 import { DatumParsed } from '@/sterling-connection';
-import { DataState, DatumProjections } from './data';
+import { createSelector } from '@reduxjs/toolkit';
+import { isUndefined } from 'lodash';
+import { DataState } from './data';
 
 /**
- * Get an ordered list of all data.
+ * Select the currently active datum.
  */
-const selectData = (state: DataState): DatumParsed<any>[] => {
-  const data = state.datumById;
-  return state.datumIds.map((id) => data[id]);
-};
+function selectActiveDatum(state: DataState): DatumParsed<any> | undefined {
+  const active = selectActiveDatumId(state);
+  return active ? selectDatumById(state, active) : undefined;
+}
 
 /**
- * Get an ordered list of all active data.
+ * Select the id of the currently active datum.
  */
-const selectActiveDatum = (state: DataState): DatumParsed<any> | null => {
-  const active = state.active;
-  return active ? state.datumById[active] : null;
-};
+function selectActiveDatumId(state: DataState): string | null {
+  return state.active;
+}
 
 /**
- * Get an ordered list of all active data projections.
- * @param state
+ * Select a datum by its datum id.
  */
-const selectActiveDatumProjections = (
-  state: DataState
-): DatumProjections | null => {
-  const active = state.active;
-  return active ? state.projectionsById[active] : null;
-};
+function selectDatumById(
+  state: DataState,
+  datumId: string
+): DatumParsed<any> | undefined {
+  return state.datumById[datumId];
+}
 
-const selectStateProjections = (state: DataState, datumId: string) => {
-  const projections = state.projectionsById[datumId];
-  return projections ? projections.stateProjections || {} : {};
-};
+/**
+ * Select an ordered array of all datum objects.
+ */
+const selectData = createSelector(
+  [selectSelf, selectDatumIds],
+  (state, datumIds) => {
+    return datumIds
+      .map((datumId) => selectDatumById(state, datumId))
+      .filter((datum): datum is DatumParsed<any> => !isUndefined(datum));
+  }
+);
+
+/**
+ * Select an ordered array of all datum ids.
+ */
+function selectDatumIds(state: DataState): string[] {
+  return state.datumIds;
+}
+
+/**
+ * Select the DataState slice.
+ */
+function selectSelf(state: DataState): DataState {
+  return state;
+}
 
 export default {
-  selectData,
   selectActiveDatum,
-  selectActiveDatumProjections,
-  selectStateProjections
+  selectActiveDatumId,
+  selectData,
+  selectDatumById,
+  selectDatumIds
 };

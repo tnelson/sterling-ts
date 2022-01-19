@@ -1,24 +1,24 @@
 import { EvaluatorState, Expression } from './evaluator';
 
-const selectDatumExpressions = (
+/**
+ * Select the ordered array of expression associated with a datum.
+ */
+function selectDatumExpressions(
   state: EvaluatorState,
   datumId: string
-): Expression[] => {
+): Expression[] {
   const order = state.orderByDatumId[datumId] || [];
-  return order.map((expressionId) => {
-    return state.expressionsById[expressionId];
-  });
-};
+  return order.map((expressionId) => state.expressionsById[expressionId]);
+}
 
-const selectEvaluatorActive = (state: EvaluatorState): boolean => {
-  return true;
-};
-
-const selectNextExpressionId = (state: EvaluatorState): number =>
-  state.nextExpressionId;
+/**
+ * Select the next expression id.
+ */
+function selectNextExpressionId(state: EvaluatorState): number {
+  return state.nextExpressionId;
+}
 
 export default {
   selectDatumExpressions,
-  selectEvaluatorActive,
   selectNextExpressionId
 };

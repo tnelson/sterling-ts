@@ -28,11 +28,11 @@ export const isAlloyDatumTrace = (
   datum: AlloyDatum
 ): datum is AlloyDatumTrace => {
   return (
-    datum.minTrace !== undefined &&
-    datum.minTrace > 0 &&
-    datum.maxTrace !== undefined &&
-    datum.maxTrace > 0 &&
-    datum.traceLength !== undefined &&
+    // datum.minTrace !== undefined &&
+    // datum.minTrace > 0 &&
+    // datum.maxTrace !== undefined &&
+    // datum.maxTrace > 0 &&
+    // datum.traceLength !== undefined &&
     datum.loopBack !== undefined
   );
 };

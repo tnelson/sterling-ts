@@ -1,7 +1,7 @@
 import { StatusBar } from '@/sterling-ui';
 import { Divider, Spacer } from '@chakra-ui/react';
-import { dumpClicked } from '../../statenew/data/dataSlice';
-import { useSterlingDispatch } from '../../statenew/hooks';
+import { dumpClicked } from '../../state/data/dataSlice';
+import { useSterlingDispatch } from '../../state/hooks';
 import { ConnectionStatus } from './ConnectionStatus';
 
 const AppStatusBar = () => {

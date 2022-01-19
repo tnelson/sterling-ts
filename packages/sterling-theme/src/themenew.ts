@@ -1,3 +1,6 @@
+import { ShapeDef } from '@/graph-svg';
+import { CSSProperties, SVGProps } from 'react';
+
 export interface SterlingTheme {
   // array of projections
   projections?: Projection[];
@@ -15,6 +18,23 @@ export interface SterlingTheme {
   };
 }
 
+export interface NodeStyleSpec {
+  // the shape of the node
+  shape?: ShapeDef;
+  // props
+  props?: {
+    // svg props applied to the label elements
+    label?: SVGProps<SVGTextElement>;
+  };
+  // styles
+  styles?: {
+    // css properties applied to the shape element
+    node?: CSSProperties;
+    // css properties applied to the label elements
+    label?: CSSProperties;
+  };
+}
+
 export interface Projection {
   // the type over which to project
   type: string;
@@ -24,4 +44,6 @@ export interface Projection {
   time?: boolean;
   // a relation that defines the total ordering if this is a time projection
   timeOrdering?: string;
+  // theming to be applied only in the context of this projection
+  theme?: Omit<SterlingTheme, 'projections'>;
 }

@@ -2,7 +2,7 @@ import { Button, buttonClicked } from '@/sterling-connection';
 import { PaneHeaderButton } from '@/sterling-ui';
 import { Tooltip } from '@chakra-ui/react';
 import { useCallback } from 'react';
-import { useSterlingDispatch } from '../../statenew/hooks';
+import { useSterlingDispatch } from '../../state/hooks';
 
 interface GraphViewHeaderButtonProps {
   datumId: string;

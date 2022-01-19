@@ -3,9 +3,9 @@ import {
   sterlingConnected,
   sterlingDisconnected
 } from '@/sterling-connection';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ProviderMeta } from '@/sterling-connection';
+import { createSlice } from '@reduxjs/toolkit';
 import { newProviderState, ProviderState } from './provider';
+import extraReducers from './providerExtraReducers';
 
 const initialState: ProviderState = newProviderState();
 
@@ -13,19 +13,11 @@ const providerSlice = createSlice({
   name: 'provider',
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: (builder) =>
     builder
-      .addCase(metaReceived, (state, action: PayloadAction<ProviderMeta>) => {
-        const { name } = action.payload;
-        state.providerName = name || 'unknown provider';
-      })
-      .addCase(sterlingConnected, (state) => {
-        state.connected = true;
-      })
-      .addCase(sterlingDisconnected, (state) => {
-        state.connected = false;
-      });
-  }
+      .addCase(metaReceived, extraReducers.metaReceived)
+      .addCase(sterlingConnected, extraReducers.sterlingConnected)
+      .addCase(sterlingDisconnected, extraReducers.sterlingDisconected)
 });
 
 export const {} = providerSlice.actions;

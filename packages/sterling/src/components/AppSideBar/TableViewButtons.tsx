@@ -1,8 +1,8 @@
 import { SideBarButton } from '@/sterling-ui';
 import { IoSettingsOutline } from 'react-icons/io5';
+import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
+import { selectMainView, selectTableDrawer } from '../../state/selectors';
 import { tableDrawerViewChanged } from '../../state/ui/uiSlice';
-import { useSterlingDispatch, useSterlingSelector } from '../../statenew/hooks';
-import { selectMainView, selectTableDrawer } from '../../statenew/selectors';
 
 const TableViewButtons = () => {
   const dispatch = useSterlingDispatch();

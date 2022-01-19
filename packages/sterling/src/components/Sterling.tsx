@@ -1,8 +1,8 @@
 import { connectSterling, disconnectSterling } from '@/sterling-connection';
 import { Dashboard } from '@/sterling-ui';
 import { useEffect } from 'react';
-import { useSterlingDispatch, useSterlingSelector } from '../statenew/hooks';
-import { selectDrawerIsCollapsed } from '../statenew/selectors';
+import { useSterlingDispatch, useSterlingSelector } from '../state/hooks';
+import { selectDrawerIsCollapsed } from '../state/selectors';
 import { AppDrawer } from './AppDrawer/AppDrawer';
 import { AppNavBar } from './AppNavBar/AppNavBar';
 import { AppSideBar } from './AppSideBar/AppSideBar';

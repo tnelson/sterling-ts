@@ -11,7 +11,10 @@ export function parseAlloyXML(xml: string): AlloyDatum {
     instances: instances.map(instanceFromElement),
     bitwidth: parseNumericAttribute(instances[0], 'bitwidth'),
     command: parseStringAttribute(instances[0], 'command'),
-    loopBack: parseNumericAttribute(instances[0], 'backloop'),
+    loopBack:
+      parseNumericAttribute(instances[0], 'backloop') ||
+      // TODO: Remove this hack once forge is fixed
+      parseNumericAttribute(instances[0], 'loop'),
     maxSeq: parseNumericAttribute(instances[0], 'maxseq'),
     maxTrace: parseNumericAttribute(instances[0], 'maxtrace'),
     minTrace: parseNumericAttribute(instances[0], 'mintrace'),

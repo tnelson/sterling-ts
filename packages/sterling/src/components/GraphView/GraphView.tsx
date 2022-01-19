@@ -1,10 +1,10 @@
 import { GraphProps } from '@/graph-svg';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
-import { useSterlingSelector } from '../../statenew/hooks';
+import { useSterlingSelector } from '../../state/hooks';
 import {
   selectActiveDatum,
   selectActiveGraphData
-} from '../../statenew/selectors';
+} from '../../state/selectors';
 import { GraphViewDatum } from './GraphViewDatum';
 import { GraphViewHeader } from './GraphViewHeader';
 

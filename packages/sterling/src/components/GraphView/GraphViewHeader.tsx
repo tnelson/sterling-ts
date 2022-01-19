@@ -1,6 +1,6 @@
 import { Button, DatumParsed } from '@/sterling-connection';
 import { PaneTitle } from '@/sterling-ui';
-import { GraphData } from '../../statenew/graphs/graphs';
+import { GraphData } from '../../state/graphs/graphs';
 import { GraphViewHeaderButton } from './GraphViewHeaderButton';
 
 interface GraphViewHeaderProps {

@@ -20,14 +20,12 @@ export interface UiState {
 }
 
 /**
- * Create a new Sterling UI base state.
- *
- * @param initialView The main view that will be initially displayed.
+ * Create a new UI state.
  */
 export const newUiState = (initialView?: MainView): UiState => {
   return {
     mainView: initialView || 'GraphView',
-    graphViewDrawer: 'state',
+    graphViewDrawer: 'theme',
     tableViewDrawer: 'log',
     scriptViewDrawer: 'log'
   };

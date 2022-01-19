@@ -1,45 +1,41 @@
-import { AlloyRelation, AlloyType } from '@/alloy-instance';
 import { DatumParsed } from '@/sterling-connection';
 import { SterlingTheme } from '@/sterling-theme';
 import { Button, Select } from '@chakra-ui/react';
 import { keyBy, keys, merge } from 'lodash';
 import { useCallback, useState } from 'react';
+import { projectionAdded } from '../../../../state/graphs/graphsSlice';
 import {
   useSterlingDispatch,
   useSterlingSelector
-} from '../../../../statenew/hooks';
-import { selectProjectableTypes } from '../../../../statenew/selectors';
-import { themeChanged } from '../../../../statenew/theme/themeSlice';
+} from '../../../../state/hooks';
+import { selectAvailableProjectableTypes } from '../../../../state/selectors';
 
 interface AddTimeProjectionMenuProps {
   datum: DatumParsed<any>;
-  theme: SterlingTheme;
   onSubmit: () => void;
 }
 
 const AddTimeProjectionMenu = (props: AddTimeProjectionMenuProps) => {
-  const { datum, theme, onSubmit } = props;
+  const { datum, onSubmit } = props;
   const dispatch = useSterlingDispatch();
   const [type, setType] = useState<string>('');
   const projectables = useSterlingSelector((state) =>
-    selectProjectableTypes(state, datum.id)
+    selectAvailableProjectableTypes(state, datum.id)
   );
   const projectableTypes = keys(projectables);
 
   const onClick = useCallback(() => {
     const atom = projectables[type][0];
-    const projections = theme.projections || [];
     dispatch(
-      themeChanged({
+      projectionAdded({
         datum,
-        theme: {
-          ...theme,
-          projections: [...projections, { type, atom, time: true }]
-        }
+        type,
+        atom,
+        time: true
       })
     );
     onSubmit();
-  }, [datum, theme, type, onSubmit, projectables]);
+  }, [datum, type, onSubmit, projectables]);
 
   return (
     <div className='p-2 flex flex-col'>

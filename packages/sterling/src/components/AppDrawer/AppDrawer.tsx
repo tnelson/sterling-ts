@@ -1,6 +1,6 @@
 import { Pane, PaneBody, PaneHeader, PaneTitle } from '@/sterling-ui';
-import { useSterlingSelector } from '../../statenew/hooks';
-import { selectMainView } from '../../statenew/selectors';
+import { useSterlingSelector } from '../../state/hooks';
+import { selectMainView } from '../../state/selectors';
 import {
   EvaluatorDrawer,
   EvaluatorDrawerHeader

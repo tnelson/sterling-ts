@@ -1,8 +1,8 @@
 import { SideBarButton } from '@/sterling-ui';
 import { IoSettingsOutline } from 'react-icons/io5';
+import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
+import { selectMainView, selectScriptDrawer } from '../../state/selectors';
 import { scriptDrawerViewChanged } from '../../state/ui/uiSlice';
-import { useSterlingDispatch, useSterlingSelector } from '../../statenew/hooks';
-import { selectMainView, selectScriptDrawer } from '../../statenew/selectors';
 
 const ScriptViewButtons = () => {
   const dispatch = useSterlingDispatch();

@@ -12,18 +12,21 @@ const NavButtonTheme = {
     borderRadius: 'sm',
     px: 4,
     lineHeight: 1.2,
-    fontSize: 'sm',
+    fontSize: 'xs',
     fontWeight: 'semibold',
+    color: 'gray.200',
     transitionProperty: 'common',
     transitionDuration: 'normal',
     _hover: {
       bg: 'gray.100',
+      color: 'initial',
       _disabled: {
         bg: 'initial'
       }
     },
     _active: {
-      bg: 'gray.200'
+      bg: 'gray.200',
+      color: 'initial'
     },
     _disabled: {
       opacity: 0.4,

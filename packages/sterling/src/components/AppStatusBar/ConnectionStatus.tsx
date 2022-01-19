@@ -1,9 +1,6 @@
 import { Center, CenterProps, Text, Tooltip } from '@chakra-ui/react';
-import { useSterlingSelector } from '../../statenew/hooks';
-import {
-  selectIsConnected,
-  selectProviderName
-} from '../../statenew/selectors';
+import { useSterlingSelector } from '../../state/hooks';
+import { selectIsConnected, selectProviderName } from '../../state/selectors';
 import { ConnectionDot } from './ConnectionDot';
 
 const ConnectionStatus = (props: CenterProps) => {

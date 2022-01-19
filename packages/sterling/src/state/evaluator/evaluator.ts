@@ -8,6 +8,9 @@ export interface EvaluatorState {
   orderByDatumId: Record<string, string[]>;
 }
 
+/**
+ * Create a new evaluator state.
+ */
 export const newEvaluatorState = (): EvaluatorState => {
   return {
     nextExpressionId: 0,

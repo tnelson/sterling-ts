@@ -1,47 +1,42 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { isCommonDrawerView, UiState } from './ui';
+import {
+  GraphDrawerView,
+  MainView,
+  ScriptDrawerView,
+  TableDrawerView,
+  UiState
+} from './ui';
 
 /**
- * Get the currently active main view.
+ * Select the main view.
  */
-const selectMainView = (state: UiState) => state.mainView;
+function selectMainView(state: UiState): MainView {
+  return state.mainView;
+}
 
 /**
- * Get the drawer that's open for the graph view.
+ * Select the graph drawer view.
  */
-const selectGraphDrawer = (state: UiState) => state.graphViewDrawer;
+function selectGraphDrawer(state: UiState): GraphDrawerView | null {
+  return state.graphViewDrawer;
+}
 
 /**
- * Get the drawer that's open for the table view.
+ * Select the table drawer view.
  */
-const selectTableDrawer = (state: UiState) => state.tableViewDrawer;
+function selectTableDrawer(state: UiState): TableDrawerView | null {
+  return state.tableViewDrawer;
+}
 
 /**
- * Get the drawer that's open for the script view.
+ * Select the script drawer view.
  */
-const selectScriptDrawer = (state: UiState) => state.scriptViewDrawer;
+function selectScriptDrawer(state: UiState): ScriptDrawerView | null {
+  return state.scriptViewDrawer;
+}
 
 /**
- * Select the currently open common drawer view. Returns null if a common drawer
- * view is not currently open.
- */
-const selectCommonDrawer = createSelector(
-  [selectMainView, selectGraphDrawer, selectTableDrawer, selectScriptDrawer],
-  (main, graph, table, script) => {
-    switch (main) {
-      case 'GraphView':
-        return isCommonDrawerView(graph) ? graph : null;
-      case 'TableView':
-        return isCommonDrawerView(table) ? table : null;
-      case 'ScriptView':
-        return isCommonDrawerView(script) ? script : null;
-    }
-    return null;
-  }
-);
-
-/**
- * Get a string indicating if the drawer is open or closed.
+ * Select the open/closed state of the drawer.
  */
 const selectDrawerIsCollapsed = createSelector(
   [selectMainView, selectGraphDrawer, selectTableDrawer, selectScriptDrawer],
@@ -59,11 +54,30 @@ const selectDrawerIsCollapsed = createSelector(
   }
 );
 
+/**
+ * Select the drawer view.
+ */
+const selectDrawerView = createSelector(
+  [selectMainView, selectGraphDrawer, selectTableDrawer, selectScriptDrawer],
+  (main, graph, table, script) => {
+    switch (main) {
+      case 'GraphView':
+        return graph;
+      case 'TableView':
+        return table;
+      case 'ScriptView':
+        return script;
+      default:
+        return null;
+    }
+  }
+);
+
 export default {
   selectMainView,
   selectGraphDrawer,
   selectTableDrawer,
   selectScriptDrawer,
-  selectCommonDrawer,
-  selectDrawerIsCollapsed
+  selectDrawerIsCollapsed,
+  selectDrawerView
 };
