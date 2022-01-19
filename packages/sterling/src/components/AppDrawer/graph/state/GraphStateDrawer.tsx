@@ -3,7 +3,7 @@ import { Icon } from '@chakra-ui/react';
 import { FaFilm } from 'react-icons/fa';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum } from '../../../../state/selectors';
-import { ProjectionsSection } from './projections/ProjectionsSection';
+import { TimeProjectionSection } from './projections/TimeProjectionSection';
 import { TimeSection } from './time/TimeSection';
 
 const GraphStateDrawer = () => {
@@ -12,7 +12,7 @@ const GraphStateDrawer = () => {
   if (!activeDatum) return null;
   return (
     <div className='absolute inset-0 flex flex-col overflow-y-auto'>
-      <ProjectionsSection datum={activeDatum} />
+      <TimeProjectionSection datum={activeDatum} />
       <TimeSection datum={activeDatum} />
     </div>
   );

@@ -32,7 +32,7 @@ const AddTimeProjectionButton = (props: AddTimeProjectionButtonProps) => {
   );
   const types = keys(available);
 
-  // Create a callback which will dispatch a projection added action
+  // Create a callback that dispatches a projectionAdded action
   const onClick = useCallback(
     (type: string) => {
       const atoms = available[type];

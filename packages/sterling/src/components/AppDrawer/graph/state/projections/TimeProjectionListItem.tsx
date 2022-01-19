@@ -46,15 +46,20 @@ const TimeProjectionsListRow = (props: ItemProps) => {
   } = props;
   return (
     <>
-      <div className='mt-0.5 text-sm px-2 flex items-center'>{type}</div>
+      <div className='text-sm px-2 flex items-center align-middle'>{type}</div>
       <div className='flex items-center'>
-        <Select size='xs' value={atom} onChange={onChange}>
+        <Select
+          className='flex items-center'
+          size='xs'
+          value={atom}
+          onChange={onChange}
+        >
           {atoms.map((atom) => {
             return <option value={atom}>{atom}</option>;
           })}
         </Select>
       </div>
-      <div className='mt-0.5 px-2 flex items-center justify-end'>
+      <div className='px-2 flex items-center justify-end'>
         <ButtonGroup size='xs' isAttached>
           <IconButton
             aria-label='Previous'
@@ -179,7 +184,7 @@ interface TimeProjectionsListItemProps {
   relations: string[];
 }
 
-const TimeProjectionsListItem = (props: TimeProjectionsListItemProps) => {
+const TimeProjectionListItem = (props: TimeProjectionsListItemProps) => {
   const { datum, projection, atoms, relations } = props;
   const { type, atom, timeOrdering } = projection;
   const [isCard, setIsCard] = useState(false);
@@ -284,4 +289,4 @@ const TimeProjectionsListItem = (props: TimeProjectionsListItemProps) => {
   );
 };
 
-export { TimeProjectionsListItem };
+export { TimeProjectionListItem };

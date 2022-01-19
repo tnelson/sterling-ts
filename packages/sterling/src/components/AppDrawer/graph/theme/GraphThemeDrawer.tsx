@@ -3,14 +3,15 @@ import { Icon } from '@chakra-ui/react';
 import { RiPaletteLine } from 'react-icons/ri';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum } from '../../../../state/selectors';
-import { ThemeView } from './ThemeView';
+import { ProjectionSection } from './projection/ProjectionSection';
 
 const GraphThemeDrawer = () => {
-  const datum = useSterlingSelector(selectActiveDatum);
+  const activeDatum = useSterlingSelector(selectActiveDatum);
 
+  if (!activeDatum) return null;
   return (
-    <div className='absolute inset-0 flex flex-col'>
-      {datum && <ThemeView datum={datum} />}
+    <div className='absolute inset-0 flex flex-col overflow-y-auto'>
+      <ProjectionSection datum={activeDatum} />
     </div>
   );
 };

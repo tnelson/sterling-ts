@@ -1,24 +1,13 @@
 import { DatumParsed } from '@/sterling-connection';
-import { keys } from 'lodash';
 import { useSterlingSelector } from '../../../../../state/hooks';
 import {
-  selectActiveDatum,
-  selectActiveTheme,
-  selectAvailableProjectableTypes,
   selectProjectableTypes,
   selectProjections,
-  selectRelations,
-  selectTheme
+  selectRelations
 } from '../../../../../state/selectors';
-import { TimeProjectionsListItem } from './TimeProjectionsListItem';
+import { TimeProjectionListItem } from './TimeProjectionListItem';
 
-interface TimeProjectionsListProps {
-  datum: DatumParsed<any>;
-}
-
-const TimeProjectionsList = (props: TimeProjectionsListProps) => {
-  const { datum } = props;
-
+const TimeProjectionList = ({ datum }: { datum: DatumParsed<any> }) => {
   // Get Record<string, string[]> mapping type names to atom names
   const projectable = useSterlingSelector((state) =>
     selectProjectableTypes(state, datum.id)
@@ -35,13 +24,16 @@ const TimeProjectionsList = (props: TimeProjectionsListProps) => {
     selectRelations(state, datum.id)
   );
 
+  // Render nothing if there are no time projections
+  if (time.length === 0) return null;
+
   return (
-    <div className='p-2 grid grid-cols-[minmax(min-content,max-content)_minmax(max-content,auto)_minmax(min-content,max-content)]'>
+    <div className='p-2 grid grid-cols-[minmax(min-content,max-content)_minmax(max-content,auto)_minmax(min-content,max-content)] gap-y-2'>
       {time.map((projection) => {
         const type = projection.type;
         const atoms = projectable[type];
         return (
-          <TimeProjectionsListItem
+          <TimeProjectionListItem
             datum={datum}
             projection={projection}
             atoms={atoms}
@@ -53,4 +45,4 @@ const TimeProjectionsList = (props: TimeProjectionsListProps) => {
   );
 };
 
-export { TimeProjectionsList };
+export { TimeProjectionList };
