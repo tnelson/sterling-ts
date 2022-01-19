@@ -12,7 +12,7 @@ const NodeGroup = memo((props: NodeDef) => {
   const translate = useMemo(() => {
     const transformed = applyToPoint(spreadMatrix, position);
     return `translate(${transformed.x} ${transformed.y})`;
-  }, [position]);
+  }, [position, spreadMatrix]);
 
   return (
     <g id={id} transform={translate}>
