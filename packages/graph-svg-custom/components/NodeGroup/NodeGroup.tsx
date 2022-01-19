@@ -1,11 +1,11 @@
 import { NodeDef } from '@/graph-svg';
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { applyToPoint } from 'transformation-matrix';
 import { useZoom } from '../../providers/zoom/ZoomProvider';
 import { NodeLabel } from '../NodeLabel/NodeLabel';
 import { Shape } from '../Shape/Shape';
 
-const NodeGroup = (props: NodeDef) => {
+const NodeGroup = memo((props: NodeDef) => {
   const { id, position, shape, style, labels } = props;
   const { spreadMatrix } = useZoom();
 
@@ -20,6 +20,6 @@ const NodeGroup = (props: NodeDef) => {
       {labels && <NodeLabel label={labels} />}
     </g>
   );
-};
+});
 
 export { NodeGroup };
