@@ -55,7 +55,11 @@ const TimeProjectionsListRow = (props: ItemProps) => {
           onChange={onChange}
         >
           {atoms.map((atom) => {
-            return <option value={atom}>{atom}</option>;
+            return (
+              <option key={atom} value={atom}>
+                {atom}
+              </option>
+            );
           })}
         </Select>
       </div>
@@ -112,7 +116,11 @@ const TimeProjectionsListCard = (props: ItemProps) => {
       <div className='px-2 grid grid-cols-[minmax(max-content,auto)_minmax(max-content,auto)]'>
         <Select size='xs' value={atom} onChange={onChange}>
           {atoms.map((atom) => {
-            return <option value={atom}>{atom}</option>;
+            return (
+              <option key={atom} value={atom}>
+                {atom}
+              </option>
+            );
           })}
         </Select>
         <div className='mt-0.5 flex items-center justify-end'>

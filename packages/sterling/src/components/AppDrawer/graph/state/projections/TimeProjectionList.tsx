@@ -34,6 +34,7 @@ const TimeProjectionList = ({ datum }: { datum: DatumParsed<any> }) => {
         const atoms = projectable[type];
         return (
           <TimeProjectionListItem
+            key={type}
             datum={datum}
             projection={projection}
             atoms={atoms}

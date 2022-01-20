@@ -74,6 +74,7 @@ function projectRelations(
         typeIsOfType(instance, relationType, projectedType)
       )
     );
+
     const projectedIndices = isProjected
       ? getProjectedTypeIndices(instance, relation.types, projectedTypes)
       : [];

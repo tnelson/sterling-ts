@@ -1,4 +1,4 @@
-import { AlloyAtom } from './atom';
+import { AlloyAtom, atomIsOfType } from './atom';
 import {
   AlloyRelation,
   getRelationTuples,
@@ -34,6 +34,15 @@ export function getInstanceAtoms(instance: AlloyInstance): AlloyAtom[] {
   return getInstanceTypes(instance)
     .map(getTypeAtoms)
     .reduce((prev, curr) => prev.concat(curr), []);
+}
+
+export function getInstanceAtomsOfType(
+  instance: AlloyInstance,
+  type: AlloyType | string
+): AlloyAtom[] {
+  return getInstanceAtoms(instance).filter((atom) =>
+    atomIsOfType(instance, atom, type)
+  );
 }
 
 export function getInstanceRelation(

@@ -1,8 +1,7 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
-import { identity, Matrix } from 'transformation-matrix';
+import { createContext, ReactNode, useContext } from 'react';
 
 export interface InteractionContext {
-  spreadMatrix: Matrix;
+  onClickNode: (nodeId: string) => void;
 }
 
 const interactionContext = createContext<InteractionContext>(
@@ -14,24 +13,24 @@ const useInteractions = () => {
 };
 
 const useInteractionState = (
-  initialSpreadMatrix?: Matrix
+  onClickNode?: (nodeId: string) => void
 ): InteractionContext => {
-  const [spreadMatrix, setSpreadMatrix] = useState<Matrix>(
-    initialSpreadMatrix || identity()
-  );
+  const handleClickNode = (nodeId: string) => {
+    if (onClickNode) onClickNode(nodeId);
+  };
   return {
-    spreadMatrix
+    onClickNode: handleClickNode
   };
 };
 
 const InteractionProvider = ({
   children,
-  spread
+  onClickNode
 }: {
   children?: ReactNode;
-  spread?: Matrix;
+  onClickNode?: (nodeId: string) => void;
 }) => {
-  const interactionState = useInteractionState(spread);
+  const interactionState = useInteractionState(onClickNode);
   return (
     <interactionContext.Provider value={interactionState}>
       {children}
@@ -41,7 +40,7 @@ const InteractionProvider = ({
 
 function defaultInteractionContext(): InteractionContext {
   return {
-    spreadMatrix: identity()
+    onClickNode: () => {}
   };
 }
 

@@ -30,7 +30,7 @@ const GraphGroup = memo(
       nodeShapes,
       nodeStyles,
       nodeLabels,
-      targetSpread,
+      onClickNode,
       ...rest
     } = props;
 
@@ -89,7 +89,7 @@ const GraphGroup = memo(
     const arrows: ArrowDef[] = extractArrowHeads(Object.values(edgeStyles));
 
     return (
-      <InteractionProvider spread={targetSpread}>
+      <InteractionProvider onClickNode={onClickNode}>
         <g id={id} {...rest}>
           <Defs arrowHeads={arrows} />
           <NodesGroup nodes={nodes} />

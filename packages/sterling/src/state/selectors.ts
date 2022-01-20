@@ -6,6 +6,7 @@ import {
 } from '@/alloy-graph';
 import {
   applyProjections,
+  getInstanceAtomsOfType,
   getInstanceRelations,
   getInstanceType,
   getProjectableTypes,
@@ -80,8 +81,12 @@ export const selectActiveGraphData = createSelector(
       const timeProjections = projections.filter((p) => p.time === true);
 
       const atoms = projections.map((p) => p.atom).filter(isDefined);
+      // console.log(atoms);
+      // console.log('applying projections');
       const projected = applyProjections(instance, atoms);
+      // console.log('generating graph');
       const graph = generateGraph(projected, theme);
+      // console.log('applying layout');
       const graphPositioned = layoutGraph(graph, layout);
       const graphProps = generateGraphProps('', graphPositioned);
 
@@ -300,7 +305,9 @@ export function selectProjectableTypes(
     const instance = datum.parsed.instances[0];
     getProjectableTypes(instance).forEach((typeId) => {
       const type = getInstanceType(instance, typeId);
-      projectableTypes[typeId] = getTypeAtoms(type).map((a) => a.id);
+      projectableTypes[typeId] = getInstanceAtomsOfType(instance, type).map(
+        (a) => a.id
+      );
     });
   }
   return projectableTypes;

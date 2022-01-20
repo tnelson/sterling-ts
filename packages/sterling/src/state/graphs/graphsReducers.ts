@@ -160,8 +160,12 @@ function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
     if (!state.layoutsByDatumId[datumId].layoutById[layoutId]) {
       const instances = datum.parsed.instances;
       const atoms = projections.map((proj) => proj.atom).filter(isDefined);
+      console.log(atoms);
+      console.log('applying projections');
       const projected = instances.map((inst) => applyProjections(inst, atoms));
+      console.log('generating graphs');
       const graphs = projected.map((inst) => generateGraph(inst, theme));
+      console.log('generating layout');
 
       state.layoutsByDatumId[datumId].layoutById[layoutId] = generateLayout(
         graphs,

@@ -13,7 +13,7 @@ export interface AlloyType {
   // the atoms defined by the type
   atoms: AlloyAtom[];
   // flags describing the type
-  meta?: TypeMeta
+  meta?: TypeMeta;
 }
 
 interface TypeMeta {
@@ -26,7 +26,7 @@ interface TypeMeta {
 }
 
 export function findAndPopulateIntType(bitwidth: number, types: AlloyType[]) {
-  const intType = types.find(t => t.id === 'Int');
+  const intType = types.find((t) => t.id === 'Int');
   if (!intType) throw new Error('Could not find Int type');
   intType.atoms = buildIntAtoms(bitwidth);
 }
@@ -63,7 +63,10 @@ export function isPrivate(type: AlloyType): boolean {
   return type.meta !== undefined && type.meta.private === true;
 }
 
-export function typeFromElement(typeHierarchies: Record<string, string[]>, element: Element): AlloyType {
+export function typeFromElement(
+  typeHierarchies: Record<string, string[]>,
+  element: Element
+): AlloyType {
   const id = element.getAttribute('label');
   if (!id) throw new Error('No label attribute in sig element');
   const types = typeHierarchies[id];
@@ -83,17 +86,22 @@ export function typeFromElement(typeHierarchies: Record<string, string[]>, eleme
   return type;
 }
 
-export function typesFromElements(typeHierarchies: Record<string, string[]>, elements: NodeListOf<Element>): AlloyType[] {
+export function typesFromElements(
+  typeHierarchies: Record<string, string[]>,
+  elements: NodeListOf<Element>
+): AlloyType[] {
   return Array.from(elements)
-    .filter(element => !sigElementIsSet(element))
-    .map(element => typeFromElement(typeHierarchies, element));
+    .filter((element) => !sigElementIsSet(element))
+    .map((element) => typeFromElement(typeHierarchies, element));
 }
 
-export function typeIsOfType(instance: AlloyInstance, type: AlloyType | string, isOfType: AlloyType | string): boolean {
-  if (typeof type === 'string')
-    type = getInstanceType(instance, type);
-  if (typeof isOfType !== 'string')
-    isOfType = isOfType.id;
+export function typeIsOfType(
+  instance: AlloyInstance,
+  type: AlloyType | string,
+  isOfType: AlloyType | string
+): boolean {
+  if (typeof type === 'string') type = getInstanceType(instance, type);
+  if (typeof isOfType !== 'string') isOfType = isOfType.id;
   return type.types.includes(isOfType);
 }
 
