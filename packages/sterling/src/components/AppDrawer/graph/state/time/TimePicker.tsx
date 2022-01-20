@@ -1,5 +1,5 @@
 import { DatumParsed } from '@/sterling-connection';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { timeIndexSet } from '../../../../../state/graphs/graphsSlice';
 import {
   useSterlingDispatch,
@@ -14,6 +14,7 @@ import { Minimap } from '../../../../Minimap/Minimap';
 
 const TimePicker = ({ datum }: { datum: DatumParsed<any> }) => {
   const dispatch = useSterlingDispatch();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const timeIndex = useSterlingSelector((state) =>
     selectTimeIndex(state, datum.id)
@@ -40,12 +41,13 @@ const TimePicker = ({ datum }: { datum: DatumParsed<any> }) => {
   return (
     <div className='mx-1 my-2'>
       <Minimap
-        collapsed={false}
+        collapsed={isCollapsed}
         current={timeIndex}
         length={traceLength}
         loopBack={loopBack}
         label={(index) => `State ${index + 1}/${traceLength}`}
         onChange={indexSet}
+        onToggleCollapse={() => setIsCollapsed((collapsed) => !collapsed)}
       />
     </div>
   );

@@ -11,7 +11,15 @@ import {
 import { MinimapProps } from './Minimap';
 
 const MinimapControls = (props: MinimapProps) => {
-  const { collapsed, current, length, onChange, label, loopBack } = props;
+  const {
+    collapsed,
+    current,
+    length,
+    onChange,
+    label,
+    loopBack,
+    onToggleCollapse
+  } = props;
   return (
     <div className='flex'>
       <ButtonGroup width='full' isAttached size='sm'>
@@ -61,6 +69,7 @@ const MinimapControls = (props: MinimapProps) => {
           borderLeftWidth={1}
           borderLeftColor='gray.300'
           icon={collapsed ? <BiChevronDown /> : <BiChevronUp />}
+          onClick={() => onToggleCollapse()}
         />
       </ButtonGroup>
     </div>

@@ -14,13 +14,16 @@ export interface MinimapProps {
   label: (index: number) => string;
   // a callback to call when the index is changed by the user
   onChange: (index: number) => void;
+  // a callback to call when the user clicks the collapse button
+  onToggleCollapse: () => void;
 }
 
 const Minimap = (props: MinimapProps) => {
+  const { collapsed } = props;
   return (
     <div className='border rounded mx-2'>
       <MinimapControls {...props} />
-      <MinimapGraph {...props} />
+      {!collapsed && <MinimapGraph {...props} />}
     </div>
   );
 };
