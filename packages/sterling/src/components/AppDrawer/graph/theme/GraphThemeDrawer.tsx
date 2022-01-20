@@ -1,5 +1,5 @@
 import { PaneTitle } from '@/sterling-ui';
-import { Icon } from '@chakra-ui/react';
+import { Button, ButtonGroup, Icon } from '@chakra-ui/react';
 import { RiPaletteLine } from 'react-icons/ri';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum } from '../../../../state/selectors';
@@ -18,9 +18,14 @@ const GraphThemeDrawer = () => {
 
 const GraphThemeDrawerHeader = () => {
   return (
-    <div className='flex items-center px-2 space-x-2'>
+    <div className='w-full flex items-center px-2 space-x-2'>
       <Icon as={RiPaletteLine} />
       <PaneTitle>Theme</PaneTitle>
+      <div className='grow' />
+      <ButtonGroup isAttached variant='outline' size='xs'>
+        <Button>Load...</Button>
+        <Button>Save...</Button>
+      </ButtonGroup>
     </div>
   );
 };

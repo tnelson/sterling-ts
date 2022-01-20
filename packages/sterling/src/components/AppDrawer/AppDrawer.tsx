@@ -1,11 +1,6 @@
-import { Pane, PaneBody, PaneHeader, PaneTitle } from '@/sterling-ui';
+import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
 import { useSterlingSelector } from '../../state/hooks';
 import { selectMainView } from '../../state/selectors';
-import {
-  EvaluatorDrawer,
-  EvaluatorDrawerHeader
-} from './common/EvaluatorDrawer/EvaluatorDrawer';
-import { LogDrawer, LogDrawerHeader } from './common/LogDrawer';
 import { GraphDrawer, GraphDrawerHeader } from './graph/GraphDrawer';
 
 const AppDrawer = () => {
