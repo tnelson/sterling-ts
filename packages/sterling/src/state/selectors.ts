@@ -1,34 +1,37 @@
 import {
   generateGraph,
   generateGraphProps,
+  getInstanceEdgeStyleSpecs,
+  getInstanceNodeStyleSpecs,
   GraphLayout,
   layoutGraph
 } from '@/alloy-graph';
 import {
   applyProjections,
   getInstanceAtomsOfType,
+  getInstanceRelation,
   getInstanceRelations,
   getInstanceType,
   getProjectableTypes,
-  getTypeAtoms,
   isAlloyDatumTrace,
   isDefined
 } from '@/alloy-instance';
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
 import { Projection, SterlingTheme } from '@/sterling-theme';
 import { createSelector } from '@reduxjs/toolkit';
-import { difference, keys, pick } from 'lodash';
+import { difference, get, keys, pick, set } from 'lodash';
 import { Matrix } from 'transformation-matrix';
+import { getTypeNodeStylesSpecs } from '../../../alloy-graph/srcnew/getTypeNodeStylesSpecs';
+import { getWildcardNodeStylesSpecs } from '../../../alloy-graph/srcnew/getWildcardNodeStylesSpecs';
 import dataSelectors from './data/dataSelectors';
 import { Expression } from './evaluator/evaluator';
 import evaluatorSelectors from './evaluator/evaluatorSelectors';
-import { generateLayoutId } from './graphs/graphs';
+import { generateLayoutId, RelationStyle, TypeStyle } from './graphs/graphs';
 import graphsSelectors from './graphs/graphsSelectors';
 import { LogItem } from './log/log';
 import logSelectors from './log/logSelectors';
 import providerSelectors from './provider/providerSelectors';
 import { SterlingState } from './store';
-// import themeSelectors from './theme/themeSelectors';
 import {
   GraphDrawerView,
   MainView,
@@ -81,14 +84,15 @@ export const selectActiveGraphData = createSelector(
       const timeProjections = projections.filter((p) => p.time === true);
 
       const atoms = projections.map((p) => p.atom).filter(isDefined);
-      // console.log(atoms);
-      // console.log('applying projections');
       const projected = applyProjections(instance, atoms);
-      // console.log('generating graph');
       const graph = generateGraph(projected, theme);
-      // console.log('applying layout');
       const graphPositioned = layoutGraph(graph, layout);
-      const graphProps = generateGraphProps('', graphPositioned);
+      const graphProps = generateGraphProps(
+        '',
+        instance,
+        graphPositioned,
+        theme
+      );
 
       if (timeProjections.length) {
         return timeProjections.map(() => graphProps);
@@ -231,6 +235,38 @@ export function selectDrawerView(
   state: SterlingState
 ): GraphDrawerView | TableDrawerView | ScriptDrawerView | null {
   return uiSelectors.selectDrawerView(state.ui);
+}
+
+/**
+ * Select whether a relation style is expanded in the graph drawer view associated
+ * with a datum.
+ */
+export function selectGraphDrawerThemeRelationExpanded(
+  state: SterlingState,
+  datumId: string,
+  relation: string
+): boolean {
+  return uiSelectors.selectGraphDrawerThemeRelationExpanded(
+    state.ui,
+    datumId,
+    relation
+  );
+}
+
+/**
+ * Select whether a type style is expanded in the graph drawer view associated
+ * with a datum.
+ */
+export function selectGraphDrawerThemeTypeExpanded(
+  state: SterlingState,
+  datumId: string,
+  type: string
+): boolean {
+  return uiSelectors.selectGraphDrawerThemeTypeExpanded(
+    state.ui,
+    datumId,
+    type
+  );
 }
 
 /**
@@ -380,7 +416,7 @@ export function selectTableDrawer(
 export function selectTheme(
   state: SterlingState,
   datumId: string
-): SterlingTheme | undefined {
+): SterlingTheme {
   return graphsSelectors.selectTheme(state.graphs, datumId);
 }
 
@@ -404,6 +440,114 @@ export function selectTraceLength(
     return datum.parsed.instances.length;
   }
   return 1;
+}
+
+/**
+ * Select the displayable styles associated with a datum's relation.
+ */
+export function selectRelationStyle(
+  state: SterlingState,
+  datum: DatumParsed<any>,
+  relationId: string
+): RelationStyle {
+  if (isDatumAlloy(datum)) {
+    const instance = datum.parsed.instances[0];
+    const theme = selectTheme(state, datum.id);
+    const specs = getInstanceEdgeStyleSpecs(instance, theme);
+
+    const style: RelationStyle = {};
+    const relations = ['*', relationId];
+
+    relations.forEach((relation) => {
+      specs[relation].forEach((spec) => {
+        const curve = get(spec, ['curve']);
+        const stroke = get(spec, ['styles', 'edge', 'stroke']);
+        const strokeWidth = get(spec, ['styles', 'edge', 'strokeWidth']);
+        const fontSize = get(spec, ['styles', 'label', 'fontSize']);
+        const textColor = get(spec, ['styles', 'label', 'fill']);
+
+        if (curve) {
+          set(style, ['curve', 'value'], curve);
+          set(style, ['curve', 'inherited'], relation !== relationId);
+        }
+        if (stroke) {
+          set(style, ['stroke', 'value'], stroke);
+          set(style, ['stroke', 'inherited'], relation !== relationId);
+        }
+        if (strokeWidth) {
+          set(style, ['strokeWidth', 'value'], strokeWidth);
+          set(style, ['strokeWidth', 'inherited'], relation !== relationId);
+        }
+        if (fontSize) {
+          set(style, ['fontSize', 'value'], fontSize);
+          set(style, ['fontSize', 'inherited'], relation !== relationId);
+        }
+        if (textColor) {
+          set(style, ['textColor', 'value'], textColor);
+          set(style, ['textColor', 'inherited'], relation !== relationId);
+        }
+      });
+    });
+
+    return style;
+  }
+  return {};
+}
+
+/**
+ * Select the displayable styles associated with a datum's type.
+ */
+export function selectTypeStyle(
+  state: SterlingState,
+  datum: DatumParsed<any>,
+  typeId: string
+): TypeStyle {
+  if (isDatumAlloy(datum)) {
+    const instance = datum.parsed.instances[0];
+    const theme = selectTheme(state, datum.id);
+    const specs = getInstanceNodeStyleSpecs(instance, theme);
+
+    const style: TypeStyle = {};
+    const type = getInstanceType(instance, typeId);
+    const hierarchy = ['*', 'univ', ...type.types.slice().reverse()];
+
+    hierarchy.forEach((type) => {
+      specs[type].forEach((spec) => {
+        const shape = get(spec, ['shape']);
+        const fill = get(spec, ['styles', 'node', 'fill']);
+        const stroke = get(spec, ['styles', 'node', 'stroke']);
+        const strokeWidth = get(spec, ['styles', 'node', 'strokeWidth']);
+        const fontSize = get(spec, ['styles', 'label', 'fontSize']);
+        const textColor = get(spec, ['styles', 'label', 'fill']);
+        if (shape) {
+          set(style, ['shape', 'value'], shape);
+          set(style, ['shape', 'inherited'], type !== typeId);
+        }
+        if (fill) {
+          set(style, ['fill', 'value'], fill);
+          set(style, ['fill', 'inherited'], type !== typeId);
+        }
+        if (stroke) {
+          set(style, ['stroke', 'value'], stroke);
+          set(style, ['stroke', 'inherited'], type !== typeId);
+        }
+        if (strokeWidth) {
+          set(style, ['strokeWidth', 'value'], strokeWidth);
+          set(style, ['strokeWidth', 'inherited'], type !== typeId);
+        }
+        if (fontSize) {
+          set(style, ['fontSize', 'value'], fontSize);
+          set(style, ['fontSize', 'inherited'], type !== typeId);
+        }
+        if (textColor) {
+          set(style, ['textColor', 'value'], textColor);
+          set(style, ['textColor', 'inherited'], type !== typeId);
+        }
+      });
+    });
+    return style;
+  }
+  return {};
 }
 
 /**

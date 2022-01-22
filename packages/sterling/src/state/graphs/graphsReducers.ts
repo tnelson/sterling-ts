@@ -1,10 +1,18 @@
 import { generateGraph, generateLayout } from '@/alloy-graph';
 import { applyProjections, isDefined } from '@/alloy-instance';
+import { CurveDef, ShapeDef } from '@/graph-svg';
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
-import { Projection } from '@/sterling-theme';
-import { PayloadAction } from '@reduxjs/toolkit';
+import {
+  EdgeStyleSpec,
+  NodeStyleSpec,
+  Projection,
+  SterlingTheme,
+  ThemeTypeTarget
+} from '@/sterling-theme';
+import { current, PayloadAction } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 import { WritableDraft } from 'immer/dist/types/types-external';
-import { remove } from 'lodash';
+import { findLast, has, last, remove, set, unset } from 'lodash';
 import { Matrix } from 'transformation-matrix';
 import { generateLayoutId, GraphsState } from './graphs';
 import { DEFAULT_LAYOUT_SETTINGS } from './graphsDefaults';
@@ -14,6 +22,150 @@ import { DEFAULT_LAYOUT_SETTINGS } from './graphsDefaults';
  * rather than build a new one in our reducers.
  */
 type DraftState = WritableDraft<GraphsState>;
+
+function curveRemoved(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; relation: string }>
+) {
+  const { datumId, relation } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the edge style spec where the given type is the only target
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+
+    // if there is one, unset the curve
+    if (spec) unset(spec, ['curve']);
+  }
+}
+
+function curveSet(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; relation: string; curve: CurveDef }>
+) {
+  const { datumId, relation, curve } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the edge style spec where the given relation in the only target
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+
+    if (spec) {
+      // if there is one, set the new value
+      set(spec, ['curve'], curve);
+    } else {
+      // if there isn't one, create a new one and add it to the array of edge
+      // style specs (creating the array if it doesn't exist)
+      const newSpec: EdgeStyleSpec = {
+        targets: [{ relation }],
+        curve
+      };
+
+      if (!theme.edges) theme.edges = [];
+      theme.edges.push(castDraft(newSpec));
+    }
+  }
+}
+
+function edgeLabelStyleRemoved(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; relation: string; style: string }>
+) {
+  const { datumId, relation, style } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+
+    // if there is one, unset the given style
+    if (spec) unset(spec, ['styles', 'label', style]);
+  }
+}
+
+function edgeLabelStyleSet(
+  state: DraftState,
+  action: PayloadAction<{
+    datumId: string;
+    relation: string;
+    style: string;
+    value: any;
+  }>
+) {
+  const { datumId, relation, style, value } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+
+    if (spec) {
+      // if there is one, set the new value
+      set(spec, ['styles', 'label', style], value);
+    } else {
+      // if there isn't one, create a new one and add it to the array of node
+      // style specs (creating the array if that doesn't exist)
+      const newSpec: EdgeStyleSpec = {
+        targets: [{ relation }],
+        styles: {
+          label: {
+            [style]: value
+          }
+        }
+      };
+
+      if (!theme.edges) theme.edges = [];
+      theme.edges.push(castDraft(newSpec));
+    }
+  }
+}
+
+function edgeStyleRemoved(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; relation: string; style: string }>
+) {
+  const { datumId, relation, style } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the edge style spec where the given relation is the only target
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+
+    // if there is one, unset the given style
+    if (spec) unset(spec, ['styles', 'edge', style]);
+  }
+}
+
+function edgeStyleSet(
+  state: DraftState,
+  action: PayloadAction<{
+    datumId: string;
+    relation: string;
+    style: string;
+    value: any;
+  }>
+) {
+  const { datumId, relation, style, value } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the edge style spec where the given relation is the only target
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+
+    if (spec) {
+      // if there is one, set the new value
+      set(spec, ['styles', 'edge', style], value);
+    } else {
+      // if there isn't one, create a new one and add it to the array of edge
+      // style specs (creating the array if it doesn't exist)
+      const newSpec: EdgeStyleSpec = {
+        targets: [{ relation }],
+        styles: {
+          edge: {
+            [style]: value
+          }
+        }
+      };
+
+      if (!theme.edges) theme.edges = [];
+      theme.edges.push(castDraft(newSpec));
+    }
+  }
+}
 
 /**
  * Set the spread matrix for a datum.
@@ -40,6 +192,121 @@ function graphZoomed(
   const matrices = state.matricesByDatumId[datumId];
   if (matrices) {
     matrices.zoomMatrix = matrix;
+  }
+}
+
+/**
+ * Unset the value of a specific label prop for a single type associated with a datum.
+ */
+function nodeLabelPropRemoved(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; type: string; prop: string }>
+) {
+  const { datumId, type, prop } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getNodeStyleSpecUnique(theme, type);
+
+    // if there is one, unset the given prop
+    if (spec) unset(spec, ['props', 'label', prop]);
+  }
+}
+
+/**
+ * Unset the value of a specific shape style for a single type associated with a datum.
+ */
+function nodeLabelStyleRemoved(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; type: string; style: string }>
+) {
+  const { datumId, type, style } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getNodeStyleSpecUnique(theme, type);
+
+    // if there is one, unset the given style
+    if (spec) unset(spec, ['styles', 'label', style]);
+  }
+}
+
+/**
+ * Set the value of a specific shape style for a single type associated with a datum.
+ */
+function nodeLabelStyleSet(
+  state: DraftState,
+  action: PayloadAction<{
+    datumId: string;
+    type: string;
+    style: string;
+    value: any;
+  }>
+) {
+  const { datumId, type, style, value } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getNodeStyleSpecUnique(theme, type);
+
+    if (spec) {
+      // if there is one, set the new value
+      set(spec, ['styles', 'label', style], value);
+    } else {
+      // if there isn't one, create a new one and add it to the array of node
+      // style specs (creating the array if that doesn't exist)
+      const newSpec: NodeStyleSpec = {
+        targets: [{ type }],
+        styles: {
+          label: {
+            [style]: value
+          }
+        }
+      };
+
+      if (!theme.nodes) theme.nodes = [];
+      theme.nodes.push(castDraft(newSpec));
+    }
+  }
+}
+
+/**
+ * set the value of a specific label prop for a single type associated with a datum.
+ */
+function nodeLabelPropSet(
+  state: DraftState,
+  action: PayloadAction<{
+    datumId: string;
+    type: string;
+    prop: string;
+    value: any;
+  }>
+) {
+  const { datumId, type, prop, value } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getNodeStyleSpecUnique(theme, type);
+
+    if (spec) {
+      // if there is one, set the new value
+      set(spec, ['props', 'label', prop], value);
+    } else {
+      // if there isn't one, create a new one and add it to the array of node
+      // style specs (creating the array if that doesn't exist)
+      const newSpec: NodeStyleSpec = {
+        targets: [{ type }],
+        props: {
+          label: {
+            [prop]: value
+          }
+        }
+      };
+
+      if (!theme.nodes) theme.nodes = [];
+      theme.nodes.push(castDraft(newSpec));
+    }
   }
 }
 
@@ -136,6 +403,111 @@ function projectionSet(
   validateLayouts(state, datum);
 }
 
+function shapeRemoved(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; type: string }>
+) {
+  const { datumId, type } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getNodeStyleSpecUnique(theme, type);
+
+    // if there is one, unset the shape
+    if (spec) unset(spec, ['shape']);
+  }
+}
+
+/**
+ * Set the shape for a single type associated with a datum.
+ */
+function shapeSet(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; type: string; shape: ShapeDef }>
+) {
+  const { datumId, type, shape } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getNodeStyleSpecUnique(theme, type);
+
+    if (spec) {
+      // if there is one, set the new value
+      set(spec, ['shape'], shape);
+    } else {
+      // if there isn't one, create a new one and add it to the array of node
+      // style specs (creating the array if that doesn't exist);
+      const newSpec: NodeStyleSpec = {
+        targets: [{ type }],
+        shape
+      };
+
+      if (!theme.nodes) theme.nodes = [];
+      theme.nodes.push(castDraft(newSpec));
+    }
+  }
+}
+
+/**
+ * Unset the value of a specific shape style for a single type associated with a datum.
+ */
+function shapeStyleRemoved(
+  state: DraftState,
+  action: PayloadAction<{ datumId: string; type: string; style: string }>
+) {
+  const { datumId, type, style } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getNodeStyleSpecUnique(theme, type);
+
+    // if there is one, unset the given style
+    if (spec) unset(spec, ['styles', 'node', style]);
+  }
+}
+
+/**
+ * Set the value of a specific shape style for a single type associated with a datum.
+ */
+function shapeStyleSet(
+  state: DraftState,
+  action: PayloadAction<{
+    datumId: string;
+    type: string;
+    style: string;
+    value: any;
+  }>
+) {
+  const { datumId, type, style, value } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the node style spec where the given type is the only target
+    const spec = getNodeStyleSpecUnique(theme, type);
+
+    if (spec) {
+      // if there is one, set the new value
+      set(spec, ['styles', 'node', style], value);
+    } else {
+      // if there isn't one, create a new one and add it to the array of node
+      // style specs (creating the array if that doesn't exist)
+      const newSpec: NodeStyleSpec = {
+        targets: [{ type }],
+        styles: {
+          node: {
+            [style]: value
+          }
+        }
+      };
+
+      if (!theme.nodes) theme.nodes = [];
+      theme.nodes.push(castDraft(newSpec));
+    }
+  }
+}
+
+/**
+ * Set the time index for a datum.
+ */
 function timeIndexSet(
   state: DraftState,
   action: PayloadAction<{ datum: DatumParsed<any>; index: number }>
@@ -144,6 +516,44 @@ function timeIndexSet(
 
   const datumId = datum.id;
   state.timeByDatumId[datumId] = index;
+}
+
+function getEdgeStyleSpecUnique(
+  theme: WritableDraft<SterlingTheme>,
+  relation: string
+): WritableDraft<EdgeStyleSpec> | undefined {
+  return theme.edges?.find((spec) => {
+    const targets = spec.targets;
+    const target = targets ? targets[0] : undefined;
+    return (
+      targets !== undefined &&
+      targets.length === 1 &&
+      target !== undefined &&
+      target !== '*' &&
+      target.relation === relation
+    );
+  });
+}
+
+/**
+ * Get the first occurance of a node style spec in which the only target is the
+ * give type.
+ */
+function getNodeStyleSpecUnique(
+  theme: WritableDraft<SterlingTheme>,
+  type: string
+): WritableDraft<NodeStyleSpec> | undefined {
+  return theme.nodes?.find((spec) => {
+    const targets = spec.targets;
+    const target = targets ? targets[0] : undefined;
+    return (
+      targets !== undefined &&
+      targets.length === 1 &&
+      target !== undefined &&
+      target !== '*' &&
+      target.type === type
+    );
+  });
 }
 
 /**
@@ -160,12 +570,8 @@ function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
     if (!state.layoutsByDatumId[datumId].layoutById[layoutId]) {
       const instances = datum.parsed.instances;
       const atoms = projections.map((proj) => proj.atom).filter(isDefined);
-      console.log(atoms);
-      console.log('applying projections');
       const projected = instances.map((inst) => applyProjections(inst, atoms));
-      console.log('generating graphs');
       const graphs = projected.map((inst) => generateGraph(inst, theme));
-      console.log('generating layout');
 
       state.layoutsByDatumId[datumId].layoutById[layoutId] = generateLayout(
         graphs,
@@ -176,12 +582,26 @@ function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
 }
 
 export default {
+  curveRemoved,
+  curveSet,
+  edgeLabelStyleRemoved,
+  edgeLabelStyleSet,
+  edgeStyleRemoved,
+  edgeStyleSet,
   graphSpread,
   graphZoomed,
+  nodeLabelPropRemoved,
+  nodeLabelPropSet,
+  nodeLabelStyleRemoved,
+  nodeLabelStyleSet,
   projectionAdded,
   projectionOrderingSet,
   projectionRemoved,
   projectionSet,
+  shapeRemoved,
+  shapeSet,
+  shapeStyleRemoved,
+  shapeStyleSet,
   timeIndexSet
 };
 

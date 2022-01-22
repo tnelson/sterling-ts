@@ -1,6 +1,6 @@
-import { isAlloyDatumTrace } from '@/alloy-instance';
 import { DataJoinParsed, isDatumAlloy } from '@/sterling-connection';
 import { PayloadAction } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 import { WritableDraft } from 'immer/dist/types/types-external';
 import { identity } from 'transformation-matrix';
 import { GraphsState } from './graphs';
@@ -31,7 +31,7 @@ function dataReceived(
       };
 
       // Initialize with the default theme
-      state.themeByDatumId[datumId] = DEFAULT_THEME;
+      state.themeByDatumId[datumId] = castDraft(DEFAULT_THEME);
 
       // Generate the layout associated with no projection
       state.layoutsByDatumId[datumId] = { datumId, layoutById: {} };

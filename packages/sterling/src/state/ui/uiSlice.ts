@@ -14,6 +14,8 @@ export const {
   mainViewChanged,
   commonDrawerViewChanged,
   graphDrawerViewChanged,
+  graphDrawerThemeRelationToggled,
+  graphDrawerThemeTypeToggled,
   tableDrawerViewChanged,
   scriptDrawerViewChanged
 } = uiSlice.actions;

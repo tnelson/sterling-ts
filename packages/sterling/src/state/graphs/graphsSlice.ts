@@ -15,12 +15,26 @@ const graphsSlice = createSlice({
 });
 
 export const {
+  edgeLabelStyleRemoved,
+  edgeLabelStyleSet,
+  edgeStyleRemoved,
+  edgeStyleSet,
+  curveRemoved,
+  curveSet,
   graphSpread,
   graphZoomed,
+  nodeLabelStyleRemoved,
+  nodeLabelStyleSet,
+  nodeLabelPropRemoved,
+  nodeLabelPropSet,
   projectionAdded,
   projectionOrderingSet,
   projectionRemoved,
   projectionSet,
+  shapeRemoved,
+  shapeSet,
+  shapeStyleRemoved,
+  shapeStyleSet,
   timeIndexSet
 } = graphsSlice.actions;
 export default graphsSlice.reducer;

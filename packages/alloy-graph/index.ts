@@ -8,3 +8,5 @@ export * from './srcnew/generateGraph';
 export * from './srcnew/generateGraphProps';
 export * from './srcnew/generateLayout';
 export * from './srcnew/layoutGraph';
+export * from './srcnew/getInstanceNodeStyleSpecs';
+export * from './srcnew/getInstanceEdgeStyleSpecs';

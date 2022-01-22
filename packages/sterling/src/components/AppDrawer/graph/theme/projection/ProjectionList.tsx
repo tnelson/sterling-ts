@@ -28,6 +28,7 @@ const ProjectionList = ({ datum }: { datum: DatumParsed<any> }) => {
         const atoms = projectable[type];
         return (
           <ProjectionListItem
+            key={type}
             datum={datum}
             projection={projection}
             atoms={atoms}

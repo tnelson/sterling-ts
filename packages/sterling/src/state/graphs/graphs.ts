@@ -1,5 +1,5 @@
 import { GraphLayout } from '@/alloy-graph';
-import { GraphProps } from '@/graph-svg';
+import { CurveDef, GraphProps, ShapeDef } from '@/graph-svg';
 import { DatumParsed } from '@/sterling-connection';
 import { Projection, SterlingTheme } from '@/sterling-theme';
 import { Matrix } from 'transformation-matrix';
@@ -37,6 +37,28 @@ export interface GraphData {
   graphProps: GraphProps;
   // the time projection type, if one was used
   timeProjection?: string;
+}
+
+type Inheritable<T> = {
+  value: T;
+  inherited: boolean;
+};
+
+export interface RelationStyle {
+  curve?: Inheritable<CurveDef>;
+  stroke?: Inheritable<string>;
+  strokeWidth?: Inheritable<number>;
+  fontSize?: Inheritable<string>;
+  textColor?: Inheritable<string>;
+}
+
+export interface TypeStyle {
+  shape?: Inheritable<ShapeDef>;
+  fill?: Inheritable<string>;
+  stroke?: Inheritable<string>;
+  strokeWidth?: Inheritable<number>;
+  fontSize?: Inheritable<string>;
+  textColor?: Inheritable<string>;
 }
 
 /**

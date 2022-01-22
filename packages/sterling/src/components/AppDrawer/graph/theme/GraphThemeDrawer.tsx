@@ -4,6 +4,7 @@ import { RiPaletteLine } from 'react-icons/ri';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum } from '../../../../state/selectors';
 import { ProjectionSection } from './projection/ProjectionSection';
+import { StyleSection } from './style/StyleSection';
 
 const GraphThemeDrawer = () => {
   const activeDatum = useSterlingSelector(selectActiveDatum);
@@ -12,6 +13,7 @@ const GraphThemeDrawer = () => {
   return (
     <div className='absolute inset-0 flex flex-col overflow-y-auto'>
       <ProjectionSection datum={activeDatum} />
+      <StyleSection datum={activeDatum} />
     </div>
   );
 };

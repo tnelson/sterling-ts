@@ -13,10 +13,22 @@ export type TableDrawerView = CommonDrawerView | 'settings';
 export type ScriptDrawerView = CommonDrawerView | 'settings';
 
 export interface UiState {
+  // the main view state
   mainView: MainView;
+
+  // the drawer states
   graphViewDrawer: GraphDrawerView | null;
   tableViewDrawer: TableDrawerView | null;
   scriptViewDrawer: ScriptDrawerView | null;
+
+  // the graph view drawer states
+  graphDrawerThemeById: Record<
+    string,
+    {
+      expandedTypes: Record<string, boolean>;
+      expandedRelations: Record<string, boolean>;
+    }
+  >;
 }
 
 /**
@@ -27,7 +39,8 @@ export const newUiState = (initialView?: MainView): UiState => {
     mainView: initialView || 'GraphView',
     graphViewDrawer: 'state',
     tableViewDrawer: 'log',
-    scriptViewDrawer: 'log'
+    scriptViewDrawer: 'log',
+    graphDrawerThemeById: {}
   };
 };
 

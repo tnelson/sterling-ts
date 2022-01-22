@@ -8,6 +8,7 @@ import {
 } from '@/alloy-instance';
 import { newGraph } from '@/graph-lib';
 import { SterlingTheme } from '@/sterling-theme';
+import { WritableDraft } from 'immer/dist/types/types-external';
 import { first, last } from 'lodash';
 import { generateEdgeId, generateNodeId } from './ids';
 import { AlloyEdge, AlloyGraph, AlloyNode } from './types';
@@ -21,7 +22,7 @@ import { AlloyEdge, AlloyGraph, AlloyNode } from './types';
  */
 export function generateGraph(
   instance: AlloyInstance,
-  theme?: SterlingTheme
+  theme?: SterlingTheme | WritableDraft<SterlingTheme>
 ): AlloyGraph {
   // Determine which nodes to exclude from the graph
   const hideDisconnected = theme?.hidden?.disconnected || false;

@@ -1,4 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
+import { get } from 'lodash';
 import {
   GraphDrawerView,
   MainView,
@@ -19,6 +20,36 @@ function selectMainView(state: UiState): MainView {
  */
 function selectGraphDrawer(state: UiState): GraphDrawerView | null {
   return state.graphViewDrawer;
+}
+
+function selectGraphDrawerThemeRelationExpanded(
+  state: UiState,
+  datumId: string,
+  relation: string
+): boolean {
+  return (
+    get(state, [
+      'graphDrawerThemeById',
+      datumId,
+      'expandedRelations',
+      relation
+    ]) === true
+  );
+}
+
+/**
+ * Select whether a type style is expanded in the graph drawer view associated
+ * with a datum.
+ */
+function selectGraphDrawerThemeTypeExpanded(
+  state: UiState,
+  datumId: string,
+  type: string
+): boolean {
+  return (
+    get(state, ['graphDrawerThemeById', datumId, 'expandedTypes', type]) ===
+    true
+  );
 }
 
 /**
@@ -76,6 +107,8 @@ const selectDrawerView = createSelector(
 export default {
   selectMainView,
   selectGraphDrawer,
+  selectGraphDrawerThemeRelationExpanded,
+  selectGraphDrawerThemeTypeExpanded,
   selectTableDrawer,
   selectScriptDrawer,
   selectDrawerIsCollapsed,

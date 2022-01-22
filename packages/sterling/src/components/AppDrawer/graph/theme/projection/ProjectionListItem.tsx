@@ -82,7 +82,11 @@ const ProjectionListItem = (props: ProjectionRowProps) => {
           onChange={onChange}
         >
           {atoms.map((atom) => {
-            return <option value={atom}>{atom}</option>;
+            return (
+              <option key={atom} value={atom}>
+                {atom}
+              </option>
+            );
           })}
         </Select>
       </div>

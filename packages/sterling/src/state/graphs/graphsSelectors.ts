@@ -36,10 +36,7 @@ function selectSpreadMatrix(
 /**
  * Select the theme associated with a datum.
  */
-function selectTheme(
-  state: GraphsState,
-  datumId: string
-): SterlingTheme | undefined {
+function selectTheme(state: GraphsState, datumId: string): SterlingTheme {
   return state.themeByDatumId[datumId];
 }
 

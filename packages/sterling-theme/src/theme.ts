@@ -13,7 +13,7 @@ export interface SterlingThemeOld {
   projections?: ProjectionOld[];
 }
 
-export interface NodeStyleSpec {
+interface NodeStyleSpec {
   targets?: ThemeTypeTarget[];
   shape?: ShapeDef;
   styles?: {
@@ -26,7 +26,7 @@ export interface NodeStyleSpec {
   visible?: boolean;
 }
 
-export interface EdgeStyleSpec {
+interface EdgeStyleSpec {
   targets?: ThemeRelationTarget[];
   styles?: {
     edge?: CSSProperties;
@@ -35,17 +35,17 @@ export interface EdgeStyleSpec {
   collapse?: boolean;
 }
 
-export interface ProjectionOld {
+interface ProjectionOld {
   type: string;
 }
 
-export type ThemeTypeTarget =
+type ThemeTypeTarget =
   | {
       type: string;
     }
   | '*';
 
-export type ThemeRelationTarget =
+type ThemeRelationTarget =
   | {
       relation: string;
     }
