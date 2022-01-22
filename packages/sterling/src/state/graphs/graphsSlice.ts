@@ -15,6 +15,7 @@ const graphsSlice = createSlice({
 });
 
 export const {
+  asAttributeSet,
   edgeLabelStyleRemoved,
   edgeLabelStyleSet,
   edgeStyleRemoved,
@@ -32,9 +33,11 @@ export const {
   projectionRemoved,
   projectionSet,
   shapeRemoved,
+  saveThemeRequested,
   shapeSet,
   shapeStyleRemoved,
   shapeStyleSet,
+  themeFileLoaded,
   timeIndexSet
 } = graphsSlice.actions;
 export default graphsSlice.reducer;

@@ -7,7 +7,7 @@ import {
   getRelationTuples
 } from '@/alloy-instance';
 import { newGraph } from '@/graph-lib';
-import { SterlingTheme } from '@/sterling-theme';
+import { getRelationIsAttribute, SterlingTheme } from '@/sterling-theme';
 import { WritableDraft } from 'immer/dist/types/types-external';
 import { first, last } from 'lodash';
 import { generateEdgeId, generateNodeId } from './ids';
@@ -48,20 +48,25 @@ export function generateGraph(
 
   const edges: AlloyEdge[] = [];
   getInstanceRelations(instance).forEach((relation) => {
-    getRelationTuples(relation).forEach((tuple) => {
-      const edgeId = generateEdgeId(relation, tuple);
-      const atoms = tuple.atoms;
-      const source = first(atoms);
-      const target = last(atoms);
-      if (source && target && edgeIds.has(edgeId))
-        edges.push({
-          id: edgeId,
-          source: generateNodeId(getInstanceAtom(instance, source)),
-          target: generateNodeId(getInstanceAtom(instance, target)),
-          relation,
-          tuple
-        });
-    });
+    const isAttribute = theme
+      ? getRelationIsAttribute(theme, relation.id)
+      : false;
+    if (!isAttribute) {
+      getRelationTuples(relation).forEach((tuple) => {
+        const edgeId = generateEdgeId(relation, tuple);
+        const atoms = tuple.atoms;
+        const source = first(atoms);
+        const target = last(atoms);
+        if (source && target && edgeIds.has(edgeId))
+          edges.push({
+            id: edgeId,
+            source: generateNodeId(getInstanceAtom(instance, source)),
+            target: generateNodeId(getInstanceAtom(instance, target)),
+            relation,
+            tuple
+          });
+      });
+    }
   });
 
   return newGraph(nodes, edges);

@@ -9,7 +9,6 @@ import {
 import {
   applyProjections,
   getInstanceAtomsOfType,
-  getInstanceRelation,
   getInstanceRelations,
   getInstanceType,
   getProjectableTypes,
@@ -21,8 +20,6 @@ import { Projection, SterlingTheme } from '@/sterling-theme';
 import { createSelector } from '@reduxjs/toolkit';
 import { difference, get, keys, pick, set } from 'lodash';
 import { Matrix } from 'transformation-matrix';
-import { getTypeNodeStylesSpecs } from '../../../alloy-graph/srcnew/getTypeNodeStylesSpecs';
-import { getWildcardNodeStylesSpecs } from '../../../alloy-graph/srcnew/getWildcardNodeStylesSpecs';
 import dataSelectors from './data/dataSelectors';
 import { Expression } from './evaluator/evaluator';
 import evaluatorSelectors from './evaluator/evaluatorSelectors';
@@ -89,7 +86,7 @@ export const selectActiveGraphData = createSelector(
       const graphPositioned = layoutGraph(graph, layout);
       const graphProps = generateGraphProps(
         '',
-        instance,
+        projected,
         graphPositioned,
         theme
       );
@@ -460,12 +457,14 @@ export function selectRelationStyle(
 
     relations.forEach((relation) => {
       specs[relation].forEach((spec) => {
+        const asAttribute = get(spec, ['asAttribute']);
         const curve = get(spec, ['curve']);
         const stroke = get(spec, ['styles', 'edge', 'stroke']);
         const strokeWidth = get(spec, ['styles', 'edge', 'strokeWidth']);
         const fontSize = get(spec, ['styles', 'label', 'fontSize']);
         const textColor = get(spec, ['styles', 'label', 'fill']);
 
+        set(style, ['asAttribute'], asAttribute === true);
         if (curve) {
           set(style, ['curve', 'value'], curve);
           set(style, ['curve', 'inherited'], relation !== relationId);

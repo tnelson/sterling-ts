@@ -48,7 +48,6 @@ export function defaultThemeNew(): SterlingTheme {
             userSelect: 'none'
           }
         },
-        props: { label: { dy: '0.33em' } },
         targets: ['*']
       }
     ]

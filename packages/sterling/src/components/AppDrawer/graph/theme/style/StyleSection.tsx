@@ -56,6 +56,7 @@ const StyleSection = ({ datum }: { datum: DatumParsed<any> }) => {
 
   return (
     <div className='flex flex-col justify-middle'>
+      <div className='prose prose-md font-bold mx-2 my-2 border-b'>Styles</div>
       {typeTree && (
         <StylesTree
           datum={datum}

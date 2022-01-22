@@ -1,18 +1,22 @@
 import { generateGraph, generateLayout } from '@/alloy-graph';
-import { applyProjections, isDefined } from '@/alloy-instance';
+import {
+  applyProjections,
+  getInstanceType,
+  getTypeAtoms,
+  isDefined
+} from '@/alloy-instance';
 import { CurveDef, ShapeDef } from '@/graph-svg';
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
 import {
   EdgeStyleSpec,
   NodeStyleSpec,
   Projection,
-  SterlingTheme,
-  ThemeTypeTarget
+  SterlingTheme
 } from '@/sterling-theme';
 import { current, PayloadAction } from '@reduxjs/toolkit';
-import { castDraft } from 'immer';
+import produce, { castDraft } from 'immer';
 import { WritableDraft } from 'immer/dist/types/types-external';
-import { findLast, has, last, remove, set, unset } from 'lodash';
+import { remove, set, unset } from 'lodash';
 import { Matrix } from 'transformation-matrix';
 import { generateLayoutId, GraphsState } from './graphs';
 import { DEFAULT_LAYOUT_SETTINGS } from './graphsDefaults';
@@ -22,6 +26,38 @@ import { DEFAULT_LAYOUT_SETTINGS } from './graphsDefaults';
  * rather than build a new one in our reducers.
  */
 type DraftState = WritableDraft<GraphsState>;
+
+function asAttributeSet(
+  state: DraftState,
+  action: PayloadAction<{
+    datumId: string;
+    relation: string;
+    asAttribute: boolean;
+  }>
+) {
+  const { datumId, relation, asAttribute } = action.payload;
+  const theme = state.themeByDatumId[datumId];
+  if (theme) {
+    // get the edge style spec where the given type is the only target
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+
+    if (spec) {
+      if (asAttribute) {
+        set(spec, ['asAttribute'], true);
+      } else {
+        unset(spec, ['asAttribute']);
+      }
+    } else if (asAttribute) {
+      const newSpec: EdgeStyleSpec = {
+        targets: [{ relation }],
+        asAttribute: true
+      };
+
+      if (!theme.edges) theme.edges = [];
+      theme.edges.push(castDraft(newSpec));
+    }
+  }
+}
 
 function curveRemoved(
   state: DraftState,
@@ -384,6 +420,28 @@ function projectionRemoved(
   validateLayouts(state, datum);
 }
 
+function saveThemeRequested(
+  state: DraftState,
+  action: PayloadAction<{ datum: DatumParsed<any> }>
+) {
+  const { datum } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
+  if (theme) {
+    const snapshot = current(theme);
+    const cleaned = produce(snapshot, (draft) => {
+      draft.projections?.forEach((projection) => {
+        unset(projection, 'atom');
+      });
+    });
+    const data = JSON.stringify(cleaned, null, 2);
+    const a = document.createElement('a');
+    const file = new Blob([data], { type: 'application/json' });
+    a.href = URL.createObjectURL(file);
+    a.download = 'theme.json';
+    a.click();
+  }
+}
+
 /**
  * Set the projected atom of a certain type for a datum.
  */
@@ -505,6 +563,15 @@ function shapeStyleSet(
   }
 }
 
+function themeFileLoaded(
+  state: DraftState,
+  action: PayloadAction<{ datum: DatumParsed<any>; data: string }>
+) {
+  const { datum, data } = action.payload;
+  state.themeByDatumId[datum.id] = JSON.parse(data);
+  validateLayouts(state, datum);
+}
+
 /**
  * Set the time index for a datum.
  */
@@ -565,6 +632,21 @@ function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
     const datumId = datum.id;
     const theme = state.themeByDatumId[datum.id];
     const projections = theme ? theme.projections || [] : [];
+
+    // make sure each projection has a node assigned if possible
+    if (projections) {
+      const instance = datum.parsed.instances[0];
+      projections.forEach((projection) => {
+        if (!projection.atom) {
+          const type = projection.type;
+          const atoms = getTypeAtoms(getInstanceType(instance, type));
+          if (atoms.length) {
+            projection.atom = atoms[0].id;
+          }
+        }
+      });
+    }
+
     const layoutId = generateLayoutId(projections);
 
     if (!state.layoutsByDatumId[datumId].layoutById[layoutId]) {
@@ -582,6 +664,7 @@ function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
 }
 
 export default {
+  asAttributeSet,
   curveRemoved,
   curveSet,
   edgeLabelStyleRemoved,
@@ -598,10 +681,12 @@ export default {
   projectionOrderingSet,
   projectionRemoved,
   projectionSet,
+  saveThemeRequested,
   shapeRemoved,
   shapeSet,
   shapeStyleRemoved,
   shapeStyleSet,
+  themeFileLoaded,
   timeIndexSet
 };
 

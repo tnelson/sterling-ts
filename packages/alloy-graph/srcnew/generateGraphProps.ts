@@ -1,13 +1,24 @@
-import { AlloyInstance, getAtomType } from '@/alloy-instance';
+import {
+  AlloyInstance,
+  getAtomType,
+  getInstanceRelations,
+  getRelationTuples
+} from '@/alloy-instance';
 import { getEdges, getNodes, PositionedGraph } from '@/graph-lib';
 import {
   CurveDef,
   EdgeLabelDef,
   GraphProps,
+  LabelDef,
   NodeLabelDef,
   ShapeDef
 } from '@/graph-svg';
-import { EdgeStyleSpec, NodeStyleSpec, SterlingTheme } from '@/sterling-theme';
+import {
+  EdgeStyleSpec,
+  getRelationIsAttribute,
+  NodeStyleSpec,
+  SterlingTheme
+} from '@/sterling-theme';
 import { assign } from 'lodash';
 import { CSSProperties } from 'react';
 import { getInstanceEdgeStyleSpecs } from './getInstanceEdgeStyleSpecs';
@@ -40,6 +51,23 @@ export function generateGraphProps(
     theme
   );
 
+  // Generate attribute labels (Record<atom, label[]>)
+  const attributeLabels: Record<string, string[]> = {};
+  getInstanceRelations(instance).forEach((relation) => {
+    if (getRelationIsAttribute(theme, relation.id)) {
+      getRelationTuples(relation).forEach((tuple) => {
+        const atoms = tuple.atoms;
+        if (atoms.length > 1) {
+          const atom = atoms[0];
+          if (!attributeLabels[atom]) attributeLabels[atom] = [];
+          attributeLabels[atom].push(
+            `${relation.name}: ${atoms.slice(1).join(', ')}`
+          );
+        }
+      });
+    }
+  });
+
   // Generate node labels and styles
   getNodes(graph).forEach((node) => {
     nodeLabels[node.id] = [
@@ -49,6 +77,17 @@ export function generateGraphProps(
         style: {}
       }
     ];
+    if (attributeLabels[node.id]) {
+      nodeLabels[node.id].push(
+        ...attributeLabels[node.id].map((label) => {
+          return {
+            text: label,
+            props: {},
+            style: {}
+          };
+        })
+      );
+    }
     nodeStyles[node.id] = {};
   });
 
@@ -84,6 +123,9 @@ export function generateGraphProps(
           assign(label.props, spec.props?.label);
           assign(label.style, spec.styles?.label);
         });
+
+        // vertically align labels if there are multiple
+        verticallyAlignLabels(nodeLabels[id]);
       });
     });
   });
@@ -106,6 +148,9 @@ export function generateGraphProps(
           assign(label.props, spec.props?.label);
           assign(label.style, spec.styles?.label);
         });
+
+        // vertically align labels if there are multiple
+        verticallyAlignLabels(edgeLabels[id]);
       });
     });
   });
@@ -120,4 +165,12 @@ export function generateGraphProps(
     edgeLabels,
     edgeStyles
   };
+}
+
+function verticallyAlignLabels(labels: LabelDef[]) {
+  const height = labels.length - 1;
+  labels.forEach((label, index) => {
+    if (!label.props) label.props = {};
+    label.props.dy = `${index - height / 2 + 0.33}em`;
+  });
 }

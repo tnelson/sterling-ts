@@ -1,5 +1,7 @@
 import { CurveDef } from '@/graph-svg';
+import { Checkbox } from '@chakra-ui/react';
 import {
+  asAttributeSet,
   curveRemoved,
   curveSet,
   edgeLabelStyleRemoved,
@@ -12,6 +14,7 @@ import {
   useSterlingSelector
 } from '../../../../../state/hooks';
 import { selectRelationStyle } from '../../../../../state/selectors';
+import { BooleanPicker } from './common/BooleanPicker';
 import { ColorPicker } from './common/ColorPicker';
 import { CurvePicker } from './common/CurvePicker';
 import { NumberPicker } from './common/NumberPicker';
@@ -24,7 +27,18 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const style = useSterlingSelector((state) =>
     selectRelationStyle(state, datum, id)
   );
-  const { curve, stroke, strokeWidth, fontSize, textColor } = style;
+  const { asAttribute, curve, stroke, strokeWidth, fontSize, textColor } =
+    style;
+
+  const onAsAttributeChange = (selected: boolean) => {
+    dispatch(
+      asAttributeSet({
+        datumId: datum.id,
+        relation: id,
+        asAttribute: selected
+      })
+    );
+  };
 
   const onCurveChange = (curve: CurveDef) => {
     dispatch(
@@ -96,6 +110,13 @@ const RelationStylePanel = (props: StylesTreePanel) => {
           inherited={curve.inherited}
           onChange={onCurveChange}
           onRemove={onCurveRemove}
+        />
+      )}
+      {asAttribute !== undefined && (
+        <BooleanPicker
+          label='Display as attribute'
+          value={asAttribute}
+          onChange={onAsAttributeChange}
         />
       )}
       {stroke && (
