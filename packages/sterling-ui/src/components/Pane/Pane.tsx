@@ -1,9 +1,9 @@
-import { Box, BoxProps, useStyleConfig } from '@chakra-ui/react';
+import { Box, BoxProps, forwardRef, useStyleConfig } from '@chakra-ui/react';
 
-const Pane = (props: BoxProps) => {
+const Pane = forwardRef((props: BoxProps, ref) => {
   const styles = useStyleConfig('Pane');
-  return <Box __css={styles} {...props} />;
-};
+  return <Box __css={styles} ref={ref} {...props} />;
+});
 
 const PaneTheme = {
   baseStyle: {

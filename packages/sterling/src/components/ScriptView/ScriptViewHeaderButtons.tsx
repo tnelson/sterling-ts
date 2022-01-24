@@ -5,7 +5,13 @@ import { ScriptStageType } from '../../state/script/script';
 import { scriptStageSet } from '../../state/script/scriptSlice';
 import { selectScriptStage } from '../../state/selectors';
 
-const ScriptViewHeaderButtons = () => {
+interface ScriptViewHeaderButtonsProps {
+  onExecute: () => void;
+}
+
+const ScriptViewHeaderButtons = (props: ScriptViewHeaderButtonsProps) => {
+  const { onExecute } = props;
+
   const stage = useSterlingSelector(selectScriptStage);
   const dispatch = useSterlingDispatch();
 
@@ -16,7 +22,7 @@ const ScriptViewHeaderButtons = () => {
   return (
     <div className='flex'>
       <Tooltip hasArrow label=''>
-        <Button colorScheme='blue' size='xs'>
+        <Button colorScheme='blue' size='xs' onClick={onExecute}>
           Run
         </Button>
       </Tooltip>

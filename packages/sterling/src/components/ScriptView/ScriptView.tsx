@@ -1,9 +1,10 @@
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
+import { Projection } from '@/sterling-theme';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
-import { editor } from 'monaco-editor';
-import { useCallback } from 'react';
 import { require as d3require } from 'd3-require';
-import MonacoEditor, { monaco } from 'react-monaco-editor';
+import { editor } from 'monaco-editor';
+import { useCallback, useRef, useState } from 'react';
+import { useDimensions } from '../../../../graph-svg-custom/hooks/useDimensions';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { scriptTextSet } from '../../state/script/scriptSlice';
 import {
@@ -14,6 +15,7 @@ import {
 } from '../../state/selectors';
 import { AlloyAtom } from './alloy-proxy/AlloyAtom';
 import { AlloyInstance } from './alloy-proxy/AlloyInstance';
+import { ScriptEditor } from './ScriptEditor';
 import { ScriptViewHeader } from './ScriptViewHeader';
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
 
@@ -26,69 +28,109 @@ const ScriptView = () => {
   const stage = useSterlingSelector(selectScriptStage);
   const dispatch = useSterlingDispatch();
 
-  const onRun = useCallback(
-    (editor: IStandaloneCodeEditor) => {
-      const value = editor.getModel()?.getValue();
-      const instance = getAlloyProxy(activeDatum);
-      const projs = new Map<string, string>();
+  const [size, setSize] = useState<DOMRect>();
+  const [editor, setEditor] = useState<IStandaloneCodeEditor>();
+  const [stageRef, setStageRef] = useState<
+    SVGSVGElement | HTMLCanvasElement | HTMLDivElement | null
+  >(null);
 
-      projections.forEach((projection) => {
-        if (projection.type && projection.atom) {
-          projs.set(projection.type, projection.atom);
+  const containerRef = useCallback((node: HTMLDivElement) => {
+    if (node) {
+      setSize(node.getBoundingClientRect());
+      const resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === node) {
+            setSize(entry.contentRect);
+          }
+        });
+      });
+      resizeObserver.observe(node);
+    }
+  }, []);
+  const editorRef = useCallback((editor: IStandaloneCodeEditor) => {
+    setEditor(editor);
+  }, []);
+  const svgRef = useCallback((node: SVGSVGElement) => {
+    if (node) setStageRef(node);
+  }, []);
+  const canvasRef = useCallback((node: HTMLCanvasElement) => {
+    if (node) setStageRef(node);
+  }, []);
+  const divRef = useCallback((node: HTMLDivElement) => {
+    if (node) setStageRef(node);
+  }, []);
+
+  const onExecute = useCallback(() => {
+    const scriptText = editor?.getValue();
+    const instance = getAlloyProxy(activeDatum);
+    if (scriptText && instance && stageRef && size) {
+      const width = size.width;
+      const height = size.height;
+      const [libraryNames, script] = extractRequires(scriptText);
+      const [variableNames, variables] = getInstanceVariables(
+        instance,
+        projections
+      );
+      console.log(variableNames);
+      Promise.all(libraryNames.map(fetchLibrary)).then((libraries) => {
+        const executable = new Function(
+          stage,
+          'width',
+          'height',
+          'instance',
+          ...variableNames,
+          ...libraryNames,
+          script
+        );
+        try {
+          executable(
+            stageRef,
+            width,
+            height,
+            instance,
+            ...variables,
+            ...libraries
+          );
+        } catch (e) {
+          console.error(e);
         }
       });
+    }
+  }, [editorRef, stageRef, activeDatum, projections, size]);
 
-      if (value && instance) {
-        const [libs, val] = extractRequires(value);
-        const [varnames, vars] = getInstanceVariables(instance, projs);
-
-        Promise.all(libs.map(fetchLibrary)).then((libraries) => {
-          const script = new Function(...varnames, ...libs, val);
-          script(...vars, ...libraries);
-        });
-      }
-    },
-    [activeDatum, projections]
-  );
+  const beforeUnmount = useCallback((text: string) => {
+    dispatch(scriptTextSet(text));
+  }, []);
 
   if (!activeDatum) return null;
   return (
     <Pane>
       <PaneHeader className='border-b'>
-        <ScriptViewHeader datum={activeDatum} />
+        <ScriptViewHeader datum={activeDatum} onExecute={onExecute} />
       </PaneHeader>
       <PaneBody>
         <div className='grid grid-cols-2 divide-x h-full'>
-          <Pane className='relative'>
-            {stage === 'div' && <div className='w-full h-full' />}
-            {stage === 'canvas' && <canvas className='w-full h-full' />}
-            {stage === 'svg' && <svg className='w-full h-full' />}
+          <Pane ref={containerRef} className='relative'>
+            {stage === 'div' && <div ref={divRef} className='w-full h-full' />}
+            {stage === 'canvas' && (
+              <canvas ref={canvasRef} className='w-full h-full' />
+            )}
+            {stage === 'svg' && (
+              <svg
+                ref={svgRef}
+                className='relative inset-0'
+                width='100%'
+                height='100%'
+              />
+            )}
           </Pane>
           <Pane className='relative'>
-            <MonacoEditor
-              language='javascript'
-              options={{
-                automaticLayout: true,
-                scrollBeyondLastLine: false,
-                scrollbar: {
-                  verticalScrollbarSize: 12
-                },
-                value: initialText
-              }}
-              editorDidMount={(editor) => {
-                editor.addCommand(
-                  monaco.KeyMod.WinCtrl | monaco.KeyCode.Enter,
-                  () => {
-                    onRun(editor);
-                  }
-                );
-              }}
-              editorWillUnmount={(editor: IStandaloneCodeEditor) => {
-                const value = editor.getModel()?.getValue();
-                if (value) {
-                  dispatch(scriptTextSet(value));
-                }
-              }}
+            <ScriptEditor
+              initialText={initialText}
+              editorRef={editorRef}
+              stageRef={stageRef}
+              beforeUnmount={beforeUnmount}
+              onExecute={onExecute}
             />
           </Pane>
         </div>
@@ -123,14 +165,16 @@ function getAlloyProxy(datum?: DatumParsed<any>): AlloyInstance | null {
 
 function getInstanceVariables(
   instance: AlloyInstance,
-  projections: Map<string, string>
+  projections: Projection[]
 ): [string[], any[]] {
   const atoms = instance.atoms();
   const projectAtoms: AlloyAtom[] = [];
-  projections.forEach((atomID) => {
-    const atom = atoms.find((atom) => atom.id() === atomID);
-    if (!atom) throw Error(`Atom ${atomID} not in instance`);
-    projectAtoms.push(atom);
+  projections.forEach((projection) => {
+    const atomId = projection.atom;
+    if (atomId) {
+      const atom = atoms.find((atom) => atom.id() === atomId);
+      if (atom) projectAtoms.push(atom);
+    }
   });
 
   const _instance = instance.project(projectAtoms);

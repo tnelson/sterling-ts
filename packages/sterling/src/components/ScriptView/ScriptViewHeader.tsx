@@ -5,10 +5,11 @@ import { ScriptViewHeaderButtons } from './ScriptViewHeaderButtons';
 
 interface ScriptViewHeaderProps {
   datum: DatumParsed<any>;
+  onExecute: () => void;
 }
 
 const ScriptViewHeader = (props: ScriptViewHeaderProps) => {
-  const { datum } = props;
+  const { datum, onExecute } = props;
   const { id, parsed, buttons } = datum;
   const command = parsed.command;
   return (
@@ -16,7 +17,7 @@ const ScriptViewHeader = (props: ScriptViewHeaderProps) => {
       <PaneTitle className='text-gray-400'>ID: {id}</PaneTitle>
       <PaneTitle>{command}</PaneTitle>
       <div className='grow' />
-      <ScriptViewHeaderButtons />
+      <ScriptViewHeaderButtons onExecute={onExecute} />
       {buttons &&
         buttons.map((button: Button, index: number) => {
           return <ViewHeaderButton key={index} datumId={id} button={button} />;
