@@ -49,23 +49,6 @@ export function selectActiveDatum(
 }
 
 /**
- * Select the ordered array of expressions associated with the active datum.
- */
-export function selectActiveDatumExpressions(
-  state: SterlingState
-): Expression[] {
-  const activeDatumId = selectActiveDatumId(state);
-  return activeDatumId ? selectDatumExpressions(state, activeDatumId) : [];
-}
-
-/**
- * Select the id of the currently active datum.
- */
-export function selectActiveDatumId(state: SterlingState): string | null {
-  return dataSelectors.selectActiveDatumId(state.data);
-}
-
-/**
  * Select the active graph data. The active graph data is an array of GraphProps
  * objects, which should be rendered side-by-side in the graph view.
  */
@@ -114,13 +97,13 @@ export const selectActiveGraphData = createSelector(
 export function selectActiveGraphLayout(
   state: SterlingState
 ): GraphLayout | undefined {
-  const activeDatumId = selectActiveDatumId(state);
-  if (activeDatumId) {
-    const projections = selectProjections(state, activeDatumId);
+  const activeDatum = selectActiveDatum(state);
+  if (activeDatum) {
+    const projections = selectProjections(state, activeDatum.id);
     const layoutId = generateLayoutId(projections);
     return graphsSelectors.selectGraphLayout(
       state.graphs,
-      activeDatumId,
+      activeDatum.id,
       layoutId
     );
   }
@@ -133,16 +116,16 @@ export function selectActiveGraphLayout(
 export function selectActiveTheme(
   state: SterlingState
 ): SterlingTheme | undefined {
-  const activeDatumId = selectActiveDatumId(state);
-  return activeDatumId ? selectTheme(state, activeDatumId) : undefined;
+  const activeDatum = selectActiveDatum(state);
+  return activeDatum ? selectTheme(state, activeDatum.id) : undefined;
 }
 
 /**
  * Select the current time index associated with the currently active datum.
  */
 export function selectActiveTimeIndex(state: SterlingState): number {
-  const activeDatumId = selectActiveDatumId(state);
-  return activeDatumId ? selectTimeIndex(state, activeDatumId) : 0;
+  const activeDatum = selectActiveDatum(state);
+  return activeDatum ? selectTimeIndex(state, activeDatum.id) : 0;
 }
 
 /**
@@ -174,23 +157,6 @@ export function selectDatumById(
   datumId: string
 ): DatumParsed<any> | undefined {
   return dataSelectors.selectDatumById(state.data, datumId);
-}
-
-/**
- * Select the ordered array of expressions associated with a datum.
- */
-export function selectDatumExpressions(
-  state: SterlingState,
-  datumId: string
-): Expression[] {
-  return evaluatorSelectors.selectDatumExpressions(state.evaluator, datumId);
-}
-
-/**
- * Select an ordered array of all datum ids.
- */
-export function selectDatumIds(state: SterlingState): string[] {
-  return dataSelectors.selectDatumIds(state.data);
 }
 
 /**
@@ -237,6 +203,15 @@ export function selectDrawerView(
 }
 
 /**
+ * Select the graph drawer view.
+ */
+export function selectGraphDrawer(
+  state: SterlingState
+): GraphDrawerView | null {
+  return uiSelectors.selectGraphDrawer(state.ui);
+}
+
+/**
  * Select whether a relation style is expanded in the graph drawer view associated
  * with a datum.
  */
@@ -271,18 +246,19 @@ export function selectGraphDrawerThemeTypeExpanded(
 /**
  * Select a boolean indicating if the currently active datum can use the evaluator.
  */
-export function selectEvaluatorActive(state: SterlingState): boolean {
+export function selectEvaluatorIsEnabled(state: SterlingState): boolean {
   const activeDatum = selectActiveDatum(state);
   return activeDatum !== undefined && activeDatum.evaluator === true;
 }
 
 /**
- * Select the graph drawer view.
+ * Select the ordered array of expression associated with a datum.
  */
-export function selectGraphDrawer(
-  state: SterlingState
-): GraphDrawerView | null {
-  return uiSelectors.selectGraphDrawer(state.ui);
+export function selectEvaluatorExpressions(
+  state: SterlingState,
+  datum: DatumParsed<any>
+): Expression[] {
+  return evaluatorSelectors.selectDatumExpressions(state.evaluator, datum.id);
 }
 
 /**

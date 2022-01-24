@@ -1,6 +1,9 @@
+import { DatumParsed } from '@/sterling-connection';
 import { Icon } from '@chakra-ui/react';
 import { GoChevronRight } from 'react-icons/go';
 import { Expression } from '../../../../state/evaluator/evaluator';
+import { useSterlingSelector } from '../../../../state/hooks';
+import { selectEvaluatorExpressions } from '../../../../state/selectors';
 
 interface EvaluatorExpressionProps {
   expression: Expression;
@@ -22,11 +25,14 @@ const EvaluatorExpression = (props: EvaluatorExpressionProps) => {
 };
 
 interface EvaluatorExpressionsProps {
-  expressions: Expression[];
+  datum: DatumParsed<any>;
 }
 
 const EvaluatorExpressions = (props: EvaluatorExpressionsProps) => {
-  const { expressions } = props;
+  const { datum } = props;
+  const expressions = useSterlingSelector((state) =>
+    selectEvaluatorExpressions(state, datum)
+  );
   return (
     <div className='absolute inset-x-0 top-[35px] bottom-0 flex flex-col overflow-y-auto'>
       {expressions.map((expression) => {

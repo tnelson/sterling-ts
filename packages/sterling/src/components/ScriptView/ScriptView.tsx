@@ -1,6 +1,7 @@
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
 import { Projection } from '@/sterling-theme';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
+import { useToast } from '@chakra-ui/react';
 import { require as d3require } from 'd3-require';
 import { editor } from 'monaco-editor';
 import { useCallback, useState } from 'react';
@@ -26,6 +27,7 @@ const ScriptView = () => {
   const initialText = useSterlingSelector(selectScriptText);
   const stage = useSterlingSelector(selectScriptStage);
   const dispatch = useSterlingDispatch();
+  const toast = useToast();
 
   const [size, setSize] = useState<DOMRect>();
   const [editor, setEditor] = useState<IStandaloneCodeEditor>();
@@ -63,6 +65,7 @@ const ScriptView = () => {
     const scriptText = editor?.getValue();
     const instance = getAlloyProxy(activeDatum);
     if (scriptText && instance && stageRef && size) {
+      dispatch(scriptTextSet(scriptText));
       const width = size.width;
       const height = size.height;
       const [libraryNames, script] = extractRequires(scriptText);
@@ -90,7 +93,27 @@ const ScriptView = () => {
             ...libraries
           );
         } catch (e) {
-          console.error(e);
+          if (e instanceof Error) {
+            toast({
+              variant: 'top-accent',
+              position: 'bottom-right',
+              title: e.name,
+              description: e.message,
+              status: 'error',
+              duration: 10000,
+              isClosable: true
+            });
+          } else {
+            toast({
+              variant: 'top-accent',
+              position: 'bottom-right',
+              title: 'Error',
+              description: `${e}`,
+              status: 'error',
+              duration: 9000,
+              isClosable: true
+            });
+          }
         }
       });
     }

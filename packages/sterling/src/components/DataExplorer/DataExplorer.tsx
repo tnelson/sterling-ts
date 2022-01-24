@@ -2,12 +2,12 @@ import { Pane, PaneBody, PaneHeader, PaneTitle } from '@/sterling-ui';
 import { Box, Icon } from '@chakra-ui/react';
 import { FaFilm } from 'react-icons/fa';
 import { useSterlingSelector } from '../../state/hooks';
-import { selectActiveDatumId, selectData } from '../../state/selectors';
+import { selectActiveDatum, selectData } from '../../state/selectors';
 import { GraphPreview } from '../GraphPreview/GraphPreview';
 import { ListView } from './ListView/ListView';
 
 const DataExplorer = () => {
-  const activeDatumId = useSterlingSelector(selectActiveDatumId);
+  const activeDatum = useSterlingSelector(selectActiveDatum);
   const data = useSterlingSelector(selectData);
   return (
     <Pane>
@@ -15,7 +15,7 @@ const DataExplorer = () => {
         <PaneTitle>Explorer</PaneTitle>
       </PaneHeader>
       <PaneBody className='flex flex-col overflow-x-hidden overflow-y-auto'>
-        <ListView data={data} activeDatumId={activeDatumId} />
+        <ListView data={data} active={activeDatum} />
       </PaneBody>
     </Pane>
   );

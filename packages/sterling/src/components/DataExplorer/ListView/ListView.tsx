@@ -6,11 +6,11 @@ import { ListViewItem } from './ListViewItem';
 
 interface ListViewProps {
   data: DatumParsed<any>[];
-  activeDatumId: string | null;
+  active: DatumParsed<any> | undefined;
 }
 
 const ListView = (props: ListViewProps) => {
-  const { data, activeDatumId } = props;
+  const { data, active } = props;
   const dispatch = useSterlingDispatch();
 
   const onClickRow = useCallback(
@@ -28,7 +28,7 @@ const ListView = (props: ListViewProps) => {
           <ListViewItem
             key={id}
             datum={datum}
-            active={activeDatumId === id}
+            active={datum === active}
             onClickItem={onClickRow}
           />
         );
