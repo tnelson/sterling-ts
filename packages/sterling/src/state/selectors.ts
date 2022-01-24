@@ -11,7 +11,10 @@ import {
   getInstanceAtomsOfType,
   getInstanceRelations,
   getInstanceType,
+  getInstanceTypes,
   getProjectableTypes,
+  getRelationTuples,
+  getTypeAtoms,
   isAlloyDatumTrace,
   isDefined
 } from '@/alloy-instance';
@@ -31,6 +34,7 @@ import providerSelectors from './provider/providerSelectors';
 import { ScriptStageType } from './script/script';
 import scriptSelectors from './script/scriptSelectors';
 import { SterlingState } from './store';
+import { TableData } from './table/table';
 import {
   GraphDrawerView,
   MainView,
@@ -160,19 +164,25 @@ export function selectDatumById(
 }
 
 /**
- * Select whether a datum is stateful, meaning it consists of multiple states
- * that can each be viewed individually.
+ * Select whether a datum is natively stateful, meaning it is a trace.
  */
 export function selectDatumIsStateful(
   state: SterlingState,
   datum: DatumParsed<any>
 ): boolean {
+  return selectDatumIsTrace(state, datum);
+}
+
+/**
+ * Select whether a datum is stateful through projection.
+ */
+export function selectDatumIsStatefulProjected(
+  state: SterlingState,
+  datum: DatumParsed<any>
+): boolean {
   const datumId = datum.id;
   const projections = selectProjections(state, datumId) || [];
-
-  return (
-    selectDatumIsTrace(state, datum) || projections.some((p) => p.time === true)
-  );
+  return projections.some((p) => p.time === true);
 }
 
 /**
@@ -388,6 +398,36 @@ export function selectSpreadMatrix(
   datumId: string
 ): Matrix | undefined {
   return graphsSelectors.selectSpreadMatrix(state.graphs, datumId);
+}
+
+export function selectTables(
+  state: SterlingState,
+  datum: DatumParsed<any>
+): TableData[] {
+  if (isDatumAlloy(datum)) {
+    const instance = datum.parsed.instances[0];
+    const relations: TableData[] = getInstanceRelations(instance).map(
+      (relation) => {
+        return {
+          title: relation.name,
+          type: 'relation',
+          headers: relation.types,
+          data: getRelationTuples(relation).map((tuple) => {
+            return tuple.atoms;
+          })
+        };
+      }
+    );
+    const types: TableData[] = getInstanceTypes(instance).map((type) => {
+      return {
+        title: type.id,
+        type: 'type',
+        data: getTypeAtoms(type).map((atom) => [atom.id])
+      };
+    });
+    return [...relations, ...types];
+  }
+  return [];
 }
 
 /**

@@ -38,7 +38,7 @@ export const newUiState = (initialView?: MainView): UiState => {
   return {
     mainView: initialView || 'GraphView',
     graphViewDrawer: 'state',
-    tableViewDrawer: 'log',
+    tableViewDrawer: null,
     scriptViewDrawer: null,
     graphDrawerThemeById: {}
   };

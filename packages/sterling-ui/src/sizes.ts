@@ -1,5 +1,5 @@
 export default {
-  navBarSize: 30,
+  navBarSize: 35,
   sideBarSize: 30,
   statusBarSize: 20
 };
