@@ -74,6 +74,7 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.ttf$/,
+          include: path.resolve(__dirname, './node_modules/monaco_editor'),
           use: ['file-loader']
         }
       ]

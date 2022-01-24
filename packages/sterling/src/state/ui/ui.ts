@@ -36,7 +36,7 @@ export interface UiState {
  */
 export const newUiState = (initialView?: MainView): UiState => {
   return {
-    mainView: initialView || 'ScriptView',
+    mainView: initialView || 'GraphView',
     graphViewDrawer: 'state',
     tableViewDrawer: 'log',
     scriptViewDrawer: null,

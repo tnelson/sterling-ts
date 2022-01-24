@@ -3,8 +3,7 @@ import { Projection } from '@/sterling-theme';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
 import { require as d3require } from 'd3-require';
 import { editor } from 'monaco-editor';
-import { useCallback, useRef, useState } from 'react';
-import { useDimensions } from '../../../../graph-svg-custom/hooks/useDimensions';
+import { useCallback, useState } from 'react';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { scriptTextSet } from '../../state/script/scriptSlice';
 import {
@@ -71,18 +70,17 @@ const ScriptView = () => {
         instance,
         projections
       );
-      console.log(variableNames);
       Promise.all(libraryNames.map(fetchLibrary)).then((libraries) => {
-        const executable = new Function(
-          stage,
-          'width',
-          'height',
-          'instance',
-          ...variableNames,
-          ...libraryNames,
-          script
-        );
         try {
+          const executable = new Function(
+            stage,
+            'width',
+            'height',
+            'instance',
+            ...variableNames,
+            ...libraryNames,
+            script
+          );
           executable(
             stageRef,
             width,
