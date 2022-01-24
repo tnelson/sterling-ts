@@ -8,7 +8,7 @@ const AppNavBar = () => {
       <Logo />
       <Divider orientation='vertical' mx={2} />
       <Spacer />
-      {/*<ViewButtons />*/}
+      <ViewButtons />
     </NavBar>
   );
 };

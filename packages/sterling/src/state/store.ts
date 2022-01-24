@@ -7,6 +7,7 @@ import evaluatorSlice from './evaluator/evaluatorSlice';
 import graphsSlice from './graphs/graphsSlice';
 import logSlice from './log/logSlice';
 import providerSlice from './provider/providerSlice';
+import scriptSlice from './script/scriptSlice';
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
     graphs: graphsSlice,
     log: logSlice,
     provider: providerSlice,
+    script: scriptSlice,
     ui: uiSlice
   },
   middleware: (getDefaultMiddleware) =>

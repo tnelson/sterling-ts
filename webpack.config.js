@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const envs = {
   alloy: 'env/alloy.env',
@@ -40,7 +41,7 @@ module.exports = (env, argv) => {
       }
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
       plugins: [new TsconfigPathsPlugin()]
     },
     module: {
@@ -70,6 +71,10 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/i,
           use: ['style-loader', 'css-loader', 'postcss-loader']
+        },
+        {
+          test: /\.ttf$/,
+          use: ['file-loader']
         }
       ]
     },
@@ -97,7 +102,8 @@ module.exports = (env, argv) => {
           'theme-color': '#ffffff',
           description: 'Web-based visualization of relational models.'
         }
-      })
+      }),
+      new MonacoWebpackPlugin()
     ].filter(Boolean)
   };
 };

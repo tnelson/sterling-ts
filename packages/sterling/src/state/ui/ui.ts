@@ -36,10 +36,10 @@ export interface UiState {
  */
 export const newUiState = (initialView?: MainView): UiState => {
   return {
-    mainView: initialView || 'GraphView',
+    mainView: initialView || 'ScriptView',
     graphViewDrawer: 'state',
     tableViewDrawer: 'log',
-    scriptViewDrawer: 'log',
+    scriptViewDrawer: null,
     graphDrawerThemeById: {}
   };
 };

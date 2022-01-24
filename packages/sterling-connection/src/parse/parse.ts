@@ -52,6 +52,7 @@ function validateFormats<D extends Dispatch, S>(
   if (data)
     data.forEach((datum) => {
       if (formatIsSupported(datum)) {
+        datum.id = `${datum.id}`;
         supported.push(datum);
       } else {
         api.dispatch(

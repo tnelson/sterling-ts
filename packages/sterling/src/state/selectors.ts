@@ -28,6 +28,8 @@ import graphsSelectors from './graphs/graphsSelectors';
 import { LogItem } from './log/log';
 import logSelectors from './log/logSelectors';
 import providerSelectors from './provider/providerSelectors';
+import { ScriptStageType } from './script/script';
+import scriptSelectors from './script/scriptSelectors';
 import { SterlingState } from './store';
 import {
   GraphDrawerView,
@@ -386,6 +388,20 @@ export function selectScriptDrawer(
   state: SterlingState
 ): ScriptDrawerView | null {
   return uiSelectors.selectScriptDrawer(state.ui);
+}
+
+/**
+ * Select the current stage type.
+ */
+export function selectScriptStage(state: SterlingState): ScriptStageType {
+  return scriptSelectors.selectScriptStage(state.script);
+}
+
+/**
+ * Select the current script text.
+ */
+export function selectScriptText(state: SterlingState): string {
+  return scriptSelectors.selectScriptText(state.script);
 }
 
 /**

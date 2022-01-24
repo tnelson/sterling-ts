@@ -19,14 +19,14 @@ const ViewButtons = () => {
       >
         Graph
       </NavButton>
-      <NavButton
-        isActive={mainView === 'TableView'}
-        mr={1}
-        leftIcon={<FaTable />}
-        onClick={() => dispatch(mainViewChanged('TableView'))}
-      >
-        Table
-      </NavButton>
+      {/*<NavButton*/}
+      {/*  isActive={mainView === 'TableView'}*/}
+      {/*  mr={1}*/}
+      {/*  leftIcon={<FaTable />}*/}
+      {/*  onClick={() => dispatch(mainViewChanged('TableView'))}*/}
+      {/*>*/}
+      {/*  Table*/}
+      {/*</NavButton>*/}
       <NavButton
         isActive={mainView === 'ScriptView'}
         mr={1}
