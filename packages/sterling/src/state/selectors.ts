@@ -18,6 +18,7 @@ import {
   isAlloyDatumTrace,
   isDefined
 } from '@/alloy-instance';
+import { GraphProps } from '@/graph-svg';
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
 import { Projection, SterlingTheme } from '@/sterling-theme';
 import { createSelector } from '@reduxjs/toolkit';
@@ -26,12 +27,12 @@ import { Matrix } from 'transformation-matrix';
 import dataSelectors from './data/dataSelectors';
 import { Expression } from './evaluator/evaluator';
 import evaluatorSelectors from './evaluator/evaluatorSelectors';
-import { generateLayoutId, RelationStyle, TypeStyle } from './graphs/graphs';
+import { RelationStyle, TypeStyle } from './graphs/graphs';
 import graphsSelectors from './graphs/graphsSelectors';
 import { LogItem } from './log/log';
 import logSelectors from './log/logSelectors';
 import providerSelectors from './provider/providerSelectors';
-import { ScriptStageType } from './script/script';
+import { ScriptStageType, ScriptVariable } from './script/script';
 import scriptSelectors from './script/scriptSelectors';
 import { SterlingState } from './store';
 import { TableData } from './table/table';
@@ -53,94 +54,14 @@ export function selectActiveDatum(
 }
 
 /**
- * Select the active graph data. The active graph data is an array of GraphProps
- * objects, which should be rendered side-by-side in the graph view.
- */
-export const selectActiveGraphData = createSelector(
-  [
-    selectActiveDatum,
-    selectActiveGraphLayout,
-    selectActiveTheme,
-    selectActiveTimeIndex
-  ],
-  (datum, layout, theme, time) => {
-    if (datum && layout && theme && isDatumAlloy(datum)) {
-      const instance = datum.parsed.instances[time];
-      const projections = theme.projections || [];
-      const timeProjections = projections.filter((p) => p.time === true);
-
-      const atoms = projections.map((p) => p.atom).filter(isDefined);
-      const projected = applyProjections(instance, atoms);
-      const graph = generateGraph(projected, theme);
-      const graphPositioned = layoutGraph(graph, layout);
-      const graphProps = generateGraphProps(
-        '',
-        projected,
-        graphPositioned,
-        theme
-      );
-
-      if (timeProjections.length) {
-        return timeProjections.map(() => graphProps);
-      } else {
-        return [graphProps];
-      }
-    } else {
-      console.log(`datum: ${datum !== undefined}`);
-      console.log(`layout: ${layout !== undefined}`);
-      console.log(`theme: ${theme !== undefined}`);
-      console.log(`time: ${time}`);
-    }
-    return [];
-  }
-);
-
-/**
- * Select the graph layout being used by the currently active datum.
- */
-export function selectActiveGraphLayout(
-  state: SterlingState
-): GraphLayout | undefined {
-  const activeDatum = selectActiveDatum(state);
-  if (activeDatum) {
-    const projections = selectProjections(state, activeDatum.id);
-    const layoutId = generateLayoutId(projections);
-    return graphsSelectors.selectGraphLayout(
-      state.graphs,
-      activeDatum.id,
-      layoutId
-    );
-  }
-  return undefined;
-}
-
-/**
- * Select the theme associated with the currently active datum.
- */
-export function selectActiveTheme(
-  state: SterlingState
-): SterlingTheme | undefined {
-  const activeDatum = selectActiveDatum(state);
-  return activeDatum ? selectTheme(state, activeDatum.id) : undefined;
-}
-
-/**
- * Select the current time index associated with the currently active datum.
- */
-export function selectActiveTimeIndex(state: SterlingState): number {
-  const activeDatum = selectActiveDatum(state);
-  return activeDatum ? selectTimeIndex(state, activeDatum.id) : 0;
-}
-
-/**
  * Select the available projectable types and their atoms.
  */
 export function selectAvailableProjectableTypes(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): Record<string, string[]> {
-  const types = selectProjectableTypes(state, datumId);
-  const projections = selectProjections(state, datumId);
+  const types = selectProjectableTypes(state, datum);
+  const projections = selectProjections(state, datum);
   const projected = projections.map((p) => p.type);
   const available = difference(keys(types), projected);
   return pick(types, available);
@@ -180,8 +101,7 @@ export function selectDatumIsStatefulProjected(
   state: SterlingState,
   datum: DatumParsed<any>
 ): boolean {
-  const datumId = datum.id;
-  const projections = selectProjections(state, datumId) || [];
+  const projections = selectProjections(state, datum) || [];
   return projections.some((p) => p.time === true);
 }
 
@@ -227,12 +147,12 @@ export function selectGraphDrawer(
  */
 export function selectGraphDrawerThemeRelationExpanded(
   state: SterlingState,
-  datumId: string,
+  datum: DatumParsed<any>,
   relation: string
 ): boolean {
   return uiSelectors.selectGraphDrawerThemeRelationExpanded(
     state.ui,
-    datumId,
+    datum,
     relation
   );
 }
@@ -243,14 +163,20 @@ export function selectGraphDrawerThemeRelationExpanded(
  */
 export function selectGraphDrawerThemeTypeExpanded(
   state: SterlingState,
-  datumId: string,
+  datum: DatumParsed<any>,
   type: string
 ): boolean {
-  return uiSelectors.selectGraphDrawerThemeTypeExpanded(
-    state.ui,
-    datumId,
-    type
-  );
+  return uiSelectors.selectGraphDrawerThemeTypeExpanded(state.ui, datum, type);
+}
+
+/**
+ * Select the graph layout associated with a datum.
+ */
+export function selectGraphLayout(
+  state: SterlingState,
+  datum: DatumParsed<any>
+): GraphLayout {
+  return graphsSelectors.selectGraphLayout(state.graphs, datum);
 }
 
 /**
@@ -268,7 +194,7 @@ export function selectEvaluatorExpressions(
   state: SterlingState,
   datum: DatumParsed<any>
 ): Expression[] {
-  return evaluatorSelectors.selectDatumExpressions(state.evaluator, datum.id);
+  return evaluatorSelectors.selectDatumExpressions(state.evaluator, datum);
 }
 
 /**
@@ -290,9 +216,8 @@ export function selectLogItems(state: SterlingState): LogItem[] {
  */
 export function selectLoopbackIndex(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): number | undefined {
-  const datum = selectDatumById(state, datumId);
   if (datum && isDatumAlloy(datum) && isAlloyDatumTrace(datum.parsed)) {
     return datum.parsed.loopBack;
   }
@@ -318,9 +243,8 @@ export function selectNextExpressionId(state: SterlingState): number {
  */
 export function selectProjectableTypes(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): Record<string, string[]> {
-  const datum = selectDatumById(state, datumId);
   const projectableTypes: Record<string, string[]> = {};
   if (datum && isDatumAlloy(datum)) {
     const instance = datum.parsed.instances[0];
@@ -339,9 +263,9 @@ export function selectProjectableTypes(
  */
 export function selectProjections(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): Projection[] {
-  return graphsSelectors.selectProjections(state.graphs, datumId);
+  return graphsSelectors.selectProjections(state.graphs, datum);
 }
 
 /**
@@ -356,10 +280,9 @@ export function selectProviderName(state: SterlingState): string {
  */
 export function selectRelations(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): string[] {
-  const datum = selectDatumById(state, datumId);
-  if (datum && isDatumAlloy(datum)) {
+  if (isDatumAlloy(datum)) {
     const instance = datum.parsed.instances[0];
     const relations = getInstanceRelations(instance);
     return relations.map((relation) => relation.name);
@@ -384,6 +307,16 @@ export function selectScriptStage(state: SterlingState): ScriptStageType {
 }
 
 /**
+ * Select the dimensions of the script stage.
+ */
+export function selectScriptStageDimensions(state: SterlingState): {
+  width: number;
+  height: number;
+} {
+  return scriptSelectors.selectScriptStageDimensions(state.script);
+}
+
+/**
  * Select the current script text.
  */
 export function selectScriptText(state: SterlingState): string {
@@ -395,9 +328,9 @@ export function selectScriptText(state: SterlingState): string {
  */
 export function selectSpreadMatrix(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): Matrix | undefined {
-  return graphsSelectors.selectSpreadMatrix(state.graphs, datumId);
+  return graphsSelectors.selectSpreadMatrix(state.graphs, datum);
 }
 
 export function selectTables(
@@ -444,16 +377,19 @@ export function selectTableDrawer(
  */
 export function selectTheme(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): SterlingTheme {
-  return graphsSelectors.selectTheme(state.graphs, datumId);
+  return graphsSelectors.selectTheme(state.graphs, datum);
 }
 
 /**
  * Select the time index associated with a datum.
  */
-export function selectTimeIndex(state: SterlingState, datumId: string): number {
-  return graphsSelectors.selectTimeIndex(state.graphs, datumId);
+export function selectTimeIndex(
+  state: SterlingState,
+  datum: DatumParsed<any>
+): number {
+  return graphsSelectors.selectTimeIndex(state.graphs, datum);
 }
 
 /**
@@ -462,10 +398,9 @@ export function selectTimeIndex(state: SterlingState, datumId: string): number {
  */
 export function selectTraceLength(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): number {
-  const datum = selectDatumById(state, datumId);
-  if (datum && isDatumAlloy(datum) && isAlloyDatumTrace(datum.parsed)) {
+  if (isDatumAlloy(datum) && isAlloyDatumTrace(datum.parsed)) {
     return datum.parsed.instances.length;
   }
   return 1;
@@ -481,7 +416,7 @@ export function selectRelationStyle(
 ): RelationStyle {
   if (isDatumAlloy(datum)) {
     const instance = datum.parsed.instances[0];
-    const theme = selectTheme(state, datum.id);
+    const theme = selectTheme(state, datum);
     const specs = getInstanceEdgeStyleSpecs(instance, theme);
 
     const style: RelationStyle = {};
@@ -535,7 +470,7 @@ export function selectTypeStyle(
 ): TypeStyle {
   if (isDatumAlloy(datum)) {
     const instance = datum.parsed.instances[0];
-    const theme = selectTheme(state, datum.id);
+    const theme = selectTheme(state, datum);
     const specs = getInstanceNodeStyleSpecs(instance, theme);
 
     const style: TypeStyle = {};
@@ -586,7 +521,61 @@ export function selectTypeStyle(
  */
 export function selectZoomMatrix(
   state: SterlingState,
-  datumId: string
+  datum: DatumParsed<any>
 ): Matrix | undefined {
-  return graphsSelectors.selectZoomMatrix(state.graphs, datumId);
+  return graphsSelectors.selectZoomMatrix(state.graphs, datum);
 }
+
+/**
+ * Select the GraphProps associated with a datum, where GraphProps
+ * are everything required to render a graph.
+ */
+export const selectGraphProps = createSelector(
+  [
+    (state, datum: DatumParsed<any>) => datum,
+    (state, datum: DatumParsed<any>) => selectGraphLayout(state, datum),
+    (state, datum: DatumParsed<any>) => selectTheme(state, datum),
+    (state, datum: DatumParsed<any>) => selectTimeIndex(state, datum)
+  ],
+  (datum, layout, theme, time): GraphProps[] => {
+    if (isDatumAlloy(datum)) {
+      const instance = datum.parsed.instances[time];
+      const projections = theme.projections || [];
+      const timeProjections = projections.filter((p) => p.time === true);
+
+      const atoms = projections.map((p) => p.atom).filter(isDefined);
+      const projected = applyProjections(instance, atoms);
+      const graph = generateGraph(projected, theme);
+      const graphPositioned = layoutGraph(graph, layout);
+      const graphProps = generateGraphProps(
+        '',
+        projected,
+        graphPositioned,
+        theme
+      );
+
+      if (timeProjections.length) {
+        return timeProjections.map(() => graphProps);
+      } else {
+        return [graphProps];
+      }
+    } else {
+      console.log(`datum: ${datum !== undefined}`);
+      console.log(`layout: ${layout !== undefined}`);
+      console.log(`theme: ${theme !== undefined}`);
+      console.log(`time: ${time}`);
+      return [];
+    }
+  }
+);
+
+export const selectScriptVariables = createSelector(
+  [
+    (state, datum: DatumParsed<any>) => datum,
+    (state, datum: DatumParsed<any>) => selectProjections(state, datum),
+    (state, datum: DatumParsed<any>) => selectTimeIndex(state, datum)
+  ],
+  (datum, projections, time): ScriptVariable[] => {
+    return scriptSelectors.selectScriptVariables(datum, projections, time);
+  }
+);

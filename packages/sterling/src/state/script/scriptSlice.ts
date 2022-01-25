@@ -7,6 +7,12 @@ const scriptSlice = createSlice({
   name: 'script',
   initialState,
   reducers: {
+    scriptStageDimensionsSet(
+      state,
+      action: PayloadAction<{ width: number; height: number }>
+    ) {
+      state.stageDimensions = action.payload;
+    },
     scriptStageSet(state, action: PayloadAction<ScriptStageType>) {
       state.stage = action.payload;
     },
@@ -16,5 +22,6 @@ const scriptSlice = createSlice({
   }
 });
 
-export const { scriptStageSet, scriptTextSet } = scriptSlice.actions;
+export const { scriptStageSet, scriptStageDimensionsSet, scriptTextSet } =
+  scriptSlice.actions;
 export default scriptSlice.reducer;

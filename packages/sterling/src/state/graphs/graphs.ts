@@ -2,6 +2,7 @@ import { GraphLayout } from '@/alloy-graph';
 import { CurveDef, GraphProps, ShapeDef } from '@/graph-svg';
 import { DatumParsed } from '@/sterling-connection';
 import { Projection, SterlingTheme } from '@/sterling-theme';
+import { WritableDraft } from 'immer/dist/types/types-external';
 import { Matrix } from 'transformation-matrix';
 
 export interface GraphsState {
@@ -79,7 +80,9 @@ export function newGraphsState(): GraphsState {
  *
  * @param projections A set of projections
  */
-export function generateLayoutId(projections: Projection[]): string {
+export function generateLayoutId(
+  projections: Projection[] | WritableDraft<Projection>[]
+): string {
   if (!projections.length) return '|';
   const sorted = projections.slice().sort((a, b) => {
     if (a.time === b.time) return a.type.localeCompare(b.type);

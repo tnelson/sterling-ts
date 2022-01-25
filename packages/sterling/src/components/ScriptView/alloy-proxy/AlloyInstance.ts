@@ -33,7 +33,7 @@ class AlloyInstance {
    * is created.
    * @param text A string containing the XML output from an Alloy instance
    */
-  constructor(text?: string) {
+  constructor(text?: string, index?: number) {
     this._proxy = new AlloyProxy();
 
     this._atoms = [];
@@ -347,10 +347,11 @@ class AlloyInstance {
     return this._signatures.find((sig) => sig.id() === 'univ') || null;
   }
 
-  private _buildFromXML(text: string): void {
+  private _buildFromXML(text: string, index?: number): void {
     const parser = new DOMParser();
     const document = parser.parseFromString(text, 'application/xml');
-    const instance = document.querySelector('instance');
+    const instances = document.querySelectorAll('instance');
+    const instance = index !== undefined ? instances[index] : instances[0];
 
     if (!instance) throw AlloyError.missingElement('AlloyInstance', 'instance');
 

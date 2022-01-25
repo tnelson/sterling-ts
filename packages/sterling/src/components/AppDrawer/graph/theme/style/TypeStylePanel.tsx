@@ -29,7 +29,7 @@ const TypeStylePanel = (props: StylesTreePanel) => {
   const onLabelStyleChange = (style: string, value: any) => {
     dispatch(
       nodeLabelStyleSet({
-        datumId: datum.id,
+        datum,
         type: id,
         style,
         value
@@ -40,7 +40,7 @@ const TypeStylePanel = (props: StylesTreePanel) => {
   const onLabelStyleRemove = (style: string) => {
     dispatch(
       nodeLabelStyleRemoved({
-        datumId: datum.id,
+        datum,
         type: id,
         style
       })
@@ -50,7 +50,7 @@ const TypeStylePanel = (props: StylesTreePanel) => {
   const onShapeChange = (shape: ShapeDef) => {
     dispatch(
       shapeSet({
-        datumId: datum.id,
+        datum,
         type: id,
         shape
       })
@@ -58,13 +58,13 @@ const TypeStylePanel = (props: StylesTreePanel) => {
   };
 
   const onShapeRemove = () => {
-    dispatch(shapeRemoved({ datumId: datum.id, type: id }));
+    dispatch(shapeRemoved({ datum, type: id }));
   };
 
   const onStyleChange = (style: string, value: any) => {
     dispatch(
       shapeStyleSet({
-        datumId: datum.id,
+        datum,
         type: id,
         style,
         value
@@ -75,7 +75,7 @@ const TypeStylePanel = (props: StylesTreePanel) => {
   const onStyleRemove = (style: string) => {
     dispatch(
       shapeStyleRemoved({
-        datumId: datum.id,
+        datum,
         type: id,
         style
       })

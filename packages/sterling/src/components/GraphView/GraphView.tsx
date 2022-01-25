@@ -1,29 +1,27 @@
-import { GraphProps } from '@/graph-svg';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
 import { useSterlingSelector } from '../../state/hooks';
-import {
-  selectActiveDatum,
-  selectActiveGraphData
-} from '../../state/selectors';
+import { selectActiveDatum, selectGraphProps } from '../../state/selectors';
 import { GraphViewDatum } from './GraphViewDatum';
 import { GraphViewHeader } from './GraphViewHeader';
 
 const GraphView = () => {
-  const activeDatum = useSterlingSelector(selectActiveDatum);
-  const graphProps: GraphProps[] = useSterlingSelector(selectActiveGraphData);
+  const datum = useSterlingSelector(selectActiveDatum);
+  const props = datum
+    ? useSterlingSelector((state) => selectGraphProps(state, datum))
+    : [];
 
   return (
     <Pane className='grid grid-flow-col divide-x divide-dashed'>
-      {activeDatum &&
-        graphProps.map((props, index) => {
+      {datum &&
+        props.map((props, index) => {
           return (
             <div key={index} className='relative'>
               <Pane>
                 <PaneHeader className='border-b'>
-                  <GraphViewHeader datum={activeDatum} />
+                  <GraphViewHeader datum={datum} />
                 </PaneHeader>
                 <PaneBody>
-                  <GraphViewDatum datum={activeDatum} graphProps={props} />
+                  <GraphViewDatum datum={datum} graphProps={props} />
                 </PaneBody>
               </Pane>
             </div>

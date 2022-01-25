@@ -8,14 +8,14 @@ import { StyleSection } from './style/StyleSection';
 import { ThemeFileSection } from './ThemeFileSection';
 
 const GraphThemeDrawer = () => {
-  const activeDatum = useSterlingSelector(selectActiveDatum);
+  const datum = useSterlingSelector(selectActiveDatum);
 
-  if (!activeDatum) return null;
+  if (!datum) return null;
   return (
     <div className='absolute inset-0 flex flex-col overflow-y-auto'>
-      <ThemeFileSection datum={activeDatum} />
-      <ProjectionSection datum={activeDatum} />
-      <StyleSection datum={activeDatum} />
+      <ThemeFileSection datum={datum} />
+      <ProjectionSection datum={datum} />
+      <StyleSection datum={datum} />
     </div>
   );
 };

@@ -7,13 +7,13 @@ import { EvaluatorExpressions } from './EvaluatorExpressions';
 import { EvaluatorInput } from './EvaluatorInput';
 
 const EvaluatorDrawer = () => {
-  const activeDatum = useSterlingSelector(selectActiveDatum);
+  const datum = useSterlingSelector(selectActiveDatum);
 
-  if (!activeDatum) return null;
+  if (!datum) return null;
   return (
     <div className='absolute inset-0'>
-      <EvaluatorInput datum={activeDatum} />
-      <EvaluatorExpressions datum={activeDatum} />
+      <EvaluatorInput datum={datum} />
+      <EvaluatorExpressions datum={datum} />
     </div>
   );
 };

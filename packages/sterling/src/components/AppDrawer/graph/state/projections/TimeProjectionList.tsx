@@ -10,18 +10,18 @@ import { TimeProjectionListItem } from './TimeProjectionListItem';
 const TimeProjectionList = ({ datum }: { datum: DatumParsed<any> }) => {
   // Get Record<string, string[]> mapping type names to atom names
   const projectable = useSterlingSelector((state) =>
-    selectProjectableTypes(state, datum.id)
+    selectProjectableTypes(state, datum)
   );
 
   // Get the existing projections and extract the time ones
   const projections = useSterlingSelector((state) =>
-    selectProjections(state, datum.id)
+    selectProjections(state, datum)
   );
   const time = projections.filter((proj) => proj.time === true);
 
   // Get the names of all relations that could be used to define an ordering
   const relations = useSterlingSelector((state) =>
-    selectRelations(state, datum.id)
+    selectRelations(state, datum)
   );
 
   // Render nothing if there are no time projections

@@ -1,3 +1,4 @@
+import { DatumParsed } from '@/sterling-connection';
 import { createSelector } from '@reduxjs/toolkit';
 import { get } from 'lodash';
 import {
@@ -24,13 +25,13 @@ function selectGraphDrawer(state: UiState): GraphDrawerView | null {
 
 function selectGraphDrawerThemeRelationExpanded(
   state: UiState,
-  datumId: string,
+  datum: DatumParsed<any>,
   relation: string
 ): boolean {
   return (
     get(state, [
       'graphDrawerThemeById',
-      datumId,
+      datum.id,
       'expandedRelations',
       relation
     ]) === true
@@ -43,11 +44,11 @@ function selectGraphDrawerThemeRelationExpanded(
  */
 function selectGraphDrawerThemeTypeExpanded(
   state: UiState,
-  datumId: string,
+  datum: DatumParsed<any>,
   type: string
 ): boolean {
   return (
-    get(state, ['graphDrawerThemeById', datumId, 'expandedTypes', type]) ===
+    get(state, ['graphDrawerThemeById', datum.id, 'expandedTypes', type]) ===
     true
   );
 }

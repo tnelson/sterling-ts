@@ -30,13 +30,13 @@ type DraftState = WritableDraft<GraphsState>;
 function asAttributeSet(
   state: DraftState,
   action: PayloadAction<{
-    datumId: string;
+    datum: DatumParsed<any>;
     relation: string;
     asAttribute: boolean;
   }>
 ) {
-  const { datumId, relation, asAttribute } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, relation, asAttribute } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the edge style spec where the given type is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -61,10 +61,10 @@ function asAttributeSet(
 
 function curveRemoved(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; relation: string }>
+  action: PayloadAction<{ datum: DatumParsed<any>; relation: string }>
 ) {
-  const { datumId, relation } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, relation } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the edge style spec where the given type is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -76,10 +76,14 @@ function curveRemoved(
 
 function curveSet(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; relation: string; curve: CurveDef }>
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    relation: string;
+    curve: CurveDef;
+  }>
 ) {
-  const { datumId, relation, curve } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, relation, curve } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the edge style spec where the given relation in the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -103,10 +107,14 @@ function curveSet(
 
 function edgeLabelStyleRemoved(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; relation: string; style: string }>
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    relation: string;
+    style: string;
+  }>
 ) {
-  const { datumId, relation, style } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, relation, style } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -119,14 +127,14 @@ function edgeLabelStyleRemoved(
 function edgeLabelStyleSet(
   state: DraftState,
   action: PayloadAction<{
-    datumId: string;
+    datum: DatumParsed<any>;
     relation: string;
     style: string;
     value: any;
   }>
 ) {
-  const { datumId, relation, style, value } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, relation, style, value } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -154,10 +162,14 @@ function edgeLabelStyleSet(
 
 function edgeStyleRemoved(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; relation: string; style: string }>
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    relation: string;
+    style: string;
+  }>
 ) {
-  const { datumId, relation, style } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, relation, style } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the edge style spec where the given relation is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -170,14 +182,14 @@ function edgeStyleRemoved(
 function edgeStyleSet(
   state: DraftState,
   action: PayloadAction<{
-    datumId: string;
+    datum: DatumParsed<any>;
     relation: string;
     style: string;
     value: any;
   }>
 ) {
-  const { datumId, relation, style, value } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, relation, style, value } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the edge style spec where the given relation is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -208,10 +220,10 @@ function edgeStyleSet(
  */
 function graphSpread(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; matrix: Matrix }>
+  action: PayloadAction<{ datum: DatumParsed<any>; matrix: Matrix }>
 ) {
-  const { datumId, matrix } = action.payload;
-  const matrices = state.matricesByDatumId[datumId];
+  const { datum, matrix } = action.payload;
+  const matrices = state.matricesByDatumId[datum.id];
   if (matrices) {
     matrices.spreadMatrix = matrix;
   }
@@ -222,10 +234,10 @@ function graphSpread(
  */
 function graphZoomed(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; matrix: Matrix }>
+  action: PayloadAction<{ datum: DatumParsed<any>; matrix: Matrix }>
 ) {
-  const { datumId, matrix } = action.payload;
-  const matrices = state.matricesByDatumId[datumId];
+  const { datum, matrix } = action.payload;
+  const matrices = state.matricesByDatumId[datum.id];
   if (matrices) {
     matrices.zoomMatrix = matrix;
   }
@@ -236,10 +248,10 @@ function graphZoomed(
  */
 function nodeLabelPropRemoved(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; type: string; prop: string }>
+  action: PayloadAction<{ datum: DatumParsed<any>; type: string; prop: string }>
 ) {
-  const { datumId, type, prop } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, type, prop } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -254,10 +266,14 @@ function nodeLabelPropRemoved(
  */
 function nodeLabelStyleRemoved(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; type: string; style: string }>
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    type: string;
+    style: string;
+  }>
 ) {
-  const { datumId, type, style } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, type, style } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -273,14 +289,14 @@ function nodeLabelStyleRemoved(
 function nodeLabelStyleSet(
   state: DraftState,
   action: PayloadAction<{
-    datumId: string;
+    datum: DatumParsed<any>;
     type: string;
     style: string;
     value: any;
   }>
 ) {
-  const { datumId, type, style, value } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, type, style, value } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -312,14 +328,14 @@ function nodeLabelStyleSet(
 function nodeLabelPropSet(
   state: DraftState,
   action: PayloadAction<{
-    datumId: string;
+    datum: DatumParsed<any>;
     type: string;
     prop: string;
     value: any;
   }>
 ) {
-  const { datumId, type, prop, value } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, type, prop, value } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
 
   if (theme) {
     // get the node style spec where the given type is the only target
@@ -361,18 +377,17 @@ function projectionAdded(
 ) {
   const { datum, type, atom, time, timeOrdering } = action.payload;
 
-  const datumId = datum.id;
   const projection: Projection = {
     type,
     atom,
     time,
     timeOrdering
   };
-  const theme = state.themeByDatumId[datumId];
+  const theme = state.themeByDatumId[datum.id];
   if (theme.projections) {
-    theme.projections.push(projection);
+    theme.projections.push(castDraft(projection));
   } else {
-    theme.projections = [projection];
+    theme.projections = [castDraft(projection)];
   }
   validateLayouts(state, datum);
 }
@@ -390,8 +405,7 @@ function projectionOrderingSet(
 ) {
   const { datum, type, relation } = action.payload;
 
-  const datumId = datum.id;
-  const theme = state.themeByDatumId[datumId];
+  const theme = state.themeByDatumId[datum.id];
   const projections = theme ? theme.projections || [] : [];
   const projection = projections.find((p) => p.type === type);
   if (projection) {
@@ -412,8 +426,7 @@ function projectionRemoved(
 ) {
   const { datum, type } = action.payload;
 
-  const datumId = datum.id;
-  const theme = state.themeByDatumId[datumId];
+  const theme = state.themeByDatumId[datum.id];
   if (theme.projections) {
     remove(theme.projections, (p) => p.type === type);
   }
@@ -451,8 +464,7 @@ function projectionSet(
 ) {
   const { datum, type, atom } = action.payload;
 
-  const datumId = datum.id;
-  const theme = state.themeByDatumId[datumId];
+  const theme = state.themeByDatumId[datum.id];
   const projections = theme ? theme.projections || [] : [];
   const projection = projections.find((p) => p.type === type);
   if (projection) {
@@ -463,10 +475,10 @@ function projectionSet(
 
 function shapeRemoved(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; type: string }>
+  action: PayloadAction<{ datum: DatumParsed<any>; type: string }>
 ) {
-  const { datumId, type } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, type } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -481,10 +493,14 @@ function shapeRemoved(
  */
 function shapeSet(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; type: string; shape: ShapeDef }>
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    type: string;
+    shape: ShapeDef;
+  }>
 ) {
-  const { datumId, type, shape } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, type, shape } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -511,10 +527,14 @@ function shapeSet(
  */
 function shapeStyleRemoved(
   state: DraftState,
-  action: PayloadAction<{ datumId: string; type: string; style: string }>
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    type: string;
+    style: string;
+  }>
 ) {
-  const { datumId, type, style } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, type, style } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -530,14 +550,14 @@ function shapeStyleRemoved(
 function shapeStyleSet(
   state: DraftState,
   action: PayloadAction<{
-    datumId: string;
+    datum: DatumParsed<any>;
     type: string;
     style: string;
     value: any;
   }>
 ) {
-  const { datumId, type, style, value } = action.payload;
-  const theme = state.themeByDatumId[datumId];
+  const { datum, type, style, value } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -580,9 +600,7 @@ function timeIndexSet(
   action: PayloadAction<{ datum: DatumParsed<any>; index: number }>
 ) {
   const { datum, index } = action.payload;
-
-  const datumId = datum.id;
-  state.timeByDatumId[datumId] = index;
+  state.timeByDatumId[datum.id] = index;
 }
 
 function getEdgeStyleSpecUnique(
@@ -629,7 +647,6 @@ function getNodeStyleSpecUnique(
  */
 function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
   if (isDatumAlloy(datum)) {
-    const datumId = datum.id;
     const theme = state.themeByDatumId[datum.id];
     const projections = theme ? theme.projections || [] : [];
 
@@ -649,13 +666,13 @@ function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
 
     const layoutId = generateLayoutId(projections);
 
-    if (!state.layoutsByDatumId[datumId].layoutById[layoutId]) {
+    if (!state.layoutsByDatumId[datum.id].layoutById[layoutId]) {
       const instances = datum.parsed.instances;
       const atoms = projections.map((proj) => proj.atom).filter(isDefined);
       const projected = instances.map((inst) => applyProjections(inst, atoms));
       const graphs = projected.map((inst) => generateGraph(inst, theme));
 
-      state.layoutsByDatumId[datumId].layoutById[layoutId] = generateLayout(
+      state.layoutsByDatumId[datum.id].layoutById[layoutId] = generateLayout(
         graphs,
         DEFAULT_LAYOUT_SETTINGS
       );

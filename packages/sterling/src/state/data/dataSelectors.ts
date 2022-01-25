@@ -23,9 +23,9 @@ function selectActiveDatumId(state: DataState): string | null {
  */
 function selectDatumById(
   state: DataState,
-  datumId: string
+  id: string
 ): DatumParsed<any> | undefined {
-  return state.datumById[datumId];
+  return state.datumById[id];
 }
 
 /**
@@ -56,8 +56,6 @@ function selectSelf(state: DataState): DataState {
 
 export default {
   selectActiveDatum,
-  selectActiveDatumId,
   selectData,
-  selectDatumById,
-  selectDatumIds
+  selectDatumById
 };

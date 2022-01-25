@@ -3,7 +3,6 @@ import { DatumParsed } from '@/sterling-connection';
 import { throttle } from 'lodash';
 import { useCallback } from 'react';
 import { Matrix } from 'transformation-matrix';
-import { GraphData } from '../../state/graphs/graphs';
 import { graphSpread, graphZoomed } from '../../state/graphs/graphsSlice';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { selectSpreadMatrix, selectZoomMatrix } from '../../state/selectors';
@@ -15,12 +14,11 @@ interface GraphViewDatumProps {
 
 const GraphViewDatum = (props: GraphViewDatumProps) => {
   const { datum, graphProps } = props;
-  const datumId = datum.id;
   const spreadMatrix = useSterlingSelector((state) =>
-    selectSpreadMatrix(state, datumId)
+    selectSpreadMatrix(state, datum)
   );
   const zoomMatrix = useSterlingSelector((state) =>
-    selectZoomMatrix(state, datumId)
+    selectZoomMatrix(state, datum)
   );
   const {
     id,
@@ -42,22 +40,22 @@ const GraphViewDatum = (props: GraphViewDatumProps) => {
   const onSpreadMatrix = useCallback(
     throttle(
       (matrix: Matrix) => {
-        dispatch(graphSpread({ datumId, matrix }));
+        dispatch(graphSpread({ datum, matrix }));
       },
       16,
       { trailing: false }
     ),
-    [datumId]
+    [datum]
   );
   const onZoomMatrix = useCallback(
     throttle(
       (matrix: Matrix) => {
-        dispatch(graphZoomed({ datumId, matrix }));
+        dispatch(graphZoomed({ datum, matrix }));
       },
       16,
       { trailing: false }
     ),
-    [datumId]
+    [datum]
   );
 
   return (

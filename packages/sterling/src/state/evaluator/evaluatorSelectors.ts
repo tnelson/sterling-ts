@@ -1,3 +1,4 @@
+import { DatumParsed } from '@/sterling-connection';
 import { EvaluatorState, Expression } from './evaluator';
 
 /**
@@ -5,9 +6,9 @@ import { EvaluatorState, Expression } from './evaluator';
  */
 function selectDatumExpressions(
   state: EvaluatorState,
-  datumId: string
+  datum: DatumParsed<any>
 ): Expression[] {
-  const order = state.orderByDatumId[datumId] || [];
+  const order = state.orderByDatumId[datum.id] || [];
   return order.map((expressionId) => state.expressionsById[expressionId]);
 }
 

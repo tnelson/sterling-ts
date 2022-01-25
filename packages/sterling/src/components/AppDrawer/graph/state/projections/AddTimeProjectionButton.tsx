@@ -28,7 +28,7 @@ const AddTimeProjectionButton = (props: AddTimeProjectionButtonProps) => {
   // Get Record<string, string[]> mapping types to atoms for types that are
   // not already projected over.
   const available = useSterlingSelector((state) =>
-    selectAvailableProjectableTypes(state, datum.id)
+    selectAvailableProjectableTypes(state, datum)
   );
   const types = keys(available);
 

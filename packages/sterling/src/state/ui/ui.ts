@@ -10,7 +10,7 @@ export type GraphDrawerView =
   | 'layout'
   | 'settings';
 export type TableDrawerView = CommonDrawerView | 'settings';
-export type ScriptDrawerView = CommonDrawerView | 'settings';
+export type ScriptDrawerView = CommonDrawerView | 'variables' | 'settings';
 
 export interface UiState {
   // the main view state
@@ -36,10 +36,10 @@ export interface UiState {
  */
 export const newUiState = (initialView?: MainView): UiState => {
   return {
-    mainView: initialView || 'GraphView',
+    mainView: initialView || 'ScriptView',
     graphViewDrawer: 'state',
     tableViewDrawer: null,
-    scriptViewDrawer: null,
+    scriptViewDrawer: 'variables',
     graphDrawerThemeById: {}
   };
 };

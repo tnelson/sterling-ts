@@ -17,13 +17,13 @@ const TimePicker = ({ datum }: { datum: DatumParsed<any> }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const timeIndex = useSterlingSelector((state) =>
-    selectTimeIndex(state, datum.id)
+    selectTimeIndex(state, datum)
   );
   const traceLength = useSterlingSelector((state) =>
-    selectTraceLength(state, datum.id)
+    selectTraceLength(state, datum)
   );
   const loopBack = useSterlingSelector((state) =>
-    selectLoopbackIndex(state, datum.id)
+    selectLoopbackIndex(state, datum)
   );
 
   const indexSet = useCallback(

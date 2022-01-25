@@ -1,5 +1,4 @@
 import { CurveDef } from '@/graph-svg';
-import { Checkbox } from '@chakra-ui/react';
 import {
   asAttributeSet,
   curveRemoved,
@@ -33,7 +32,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const onAsAttributeChange = (selected: boolean) => {
     dispatch(
       asAttributeSet({
-        datumId: datum.id,
+        datum,
         relation: id,
         asAttribute: selected
       })
@@ -43,7 +42,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const onCurveChange = (curve: CurveDef) => {
     dispatch(
       curveSet({
-        datumId: datum.id,
+        datum,
         relation: id,
         curve
       })
@@ -53,7 +52,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const onCurveRemove = () => {
     dispatch(
       curveRemoved({
-        datumId: datum.id,
+        datum,
         relation: id
       })
     );
@@ -62,7 +61,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const onLabelStyleChange = (style: string, value: any) => {
     dispatch(
       edgeLabelStyleSet({
-        datumId: datum.id,
+        datum,
         relation: id,
         style,
         value
@@ -73,7 +72,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const onLabelStyleRemove = (style: string) => {
     dispatch(
       edgeLabelStyleRemoved({
-        datumId: datum.id,
+        datum,
         relation: id,
         style
       })
@@ -83,7 +82,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const onStyleChange = (style: string, value: any) => {
     dispatch(
       edgeStyleSet({
-        datumId: datum.id,
+        datum,
         relation: id,
         style,
         value
@@ -94,7 +93,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const onStyleRemove = (style: string) => {
     dispatch(
       edgeStyleRemoved({
-        datumId: datum.id,
+        datum,
         relation: id,
         style
       })

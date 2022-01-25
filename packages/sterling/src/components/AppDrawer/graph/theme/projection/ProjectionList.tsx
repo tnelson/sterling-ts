@@ -9,12 +9,12 @@ import { ProjectionListItem } from './ProjectionListItem';
 const ProjectionList = ({ datum }: { datum: DatumParsed<any> }) => {
   // Get Record<string, string[]> mapping type names to atom names
   const projectable = useSterlingSelector((state) =>
-    selectProjectableTypes(state, datum.id)
+    selectProjectableTypes(state, datum)
   );
 
   // Get the existing projections and ignore the time ones
   const projections = useSterlingSelector((state) =>
-    selectProjections(state, datum.id)
+    selectProjections(state, datum)
   );
   const projs = projections.filter((proj) => proj.time !== true);
 

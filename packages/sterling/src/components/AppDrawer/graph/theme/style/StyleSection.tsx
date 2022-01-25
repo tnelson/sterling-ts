@@ -26,13 +26,13 @@ const StyleSection = ({ datum }: { datum: DatumParsed<any> }) => {
 
   const typeIsOpen = (node: DatumNode): boolean => {
     return useSterlingSelector((state) =>
-      selectGraphDrawerThemeTypeExpanded(state, datum.id, node.id)
+      selectGraphDrawerThemeTypeExpanded(state, datum, node.id)
     );
   };
 
   const relationIsOpen = (node: DatumNode): boolean => {
     return useSterlingSelector((state) =>
-      selectGraphDrawerThemeRelationExpanded(state, datum.id, node.id)
+      selectGraphDrawerThemeRelationExpanded(state, datum, node.id)
     );
   };
 

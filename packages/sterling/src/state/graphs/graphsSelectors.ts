@@ -1,25 +1,30 @@
 import { GraphLayout } from '@/alloy-graph';
+import { DatumParsed } from '@/sterling-connection';
 import { Projection, SterlingTheme } from '@/sterling-theme';
 import { Matrix } from 'transformation-matrix';
-import { GraphsState } from './graphs';
+import { generateLayoutId, GraphsState } from './graphs';
 
 /**
  * Select a graph layout associated with a datum.
  */
 function selectGraphLayout(
   state: GraphsState,
-  datumId: string,
-  layoutId: string
-): GraphLayout | undefined {
-  const layouts = state.layoutsByDatumId[datumId];
-  return layouts ? layouts.layoutById[layoutId] : undefined;
+  datum: DatumParsed<any>
+): GraphLayout {
+  const projections = selectProjections(state, datum);
+  const layouts = state.layoutsByDatumId[datum.id];
+  const layoutId = generateLayoutId(projections);
+  return layouts.layoutById[layoutId];
 }
 
 /**
  * Return an array of projections associated with a datum.
  */
-function selectProjections(state: GraphsState, datumId: string): Projection[] {
-  const theme = selectTheme(state, datumId);
+function selectProjections(
+  state: GraphsState,
+  datum: DatumParsed<any>
+): Projection[] {
+  const theme = selectTheme(state, datum);
   return theme ? theme.projections || [] : [];
 }
 
@@ -28,23 +33,26 @@ function selectProjections(state: GraphsState, datumId: string): Projection[] {
  */
 function selectSpreadMatrix(
   state: GraphsState,
-  datumId: string
+  datum: DatumParsed<any>
 ): Matrix | undefined {
-  return state.matricesByDatumId[datumId]?.spreadMatrix;
+  return state.matricesByDatumId[datum.id]?.spreadMatrix;
 }
 
 /**
  * Select the theme associated with a datum.
  */
-function selectTheme(state: GraphsState, datumId: string): SterlingTheme {
-  return state.themeByDatumId[datumId];
+function selectTheme(
+  state: GraphsState,
+  datum: DatumParsed<any>
+): SterlingTheme {
+  return state.themeByDatumId[datum.id];
 }
 
 /**
  * Select the current time index for a datum.
  */
-function selectTimeIndex(state: GraphsState, datumId: string): number {
-  return state.timeByDatumId[datumId] || 0;
+function selectTimeIndex(state: GraphsState, datum: DatumParsed<any>): number {
+  return state.timeByDatumId[datum.id] || 0;
 }
 
 /**
@@ -52,9 +60,9 @@ function selectTimeIndex(state: GraphsState, datumId: string): number {
  */
 function selectZoomMatrix(
   state: GraphsState,
-  datumId: string
+  datum: DatumParsed<any>
 ): Matrix | undefined {
-  return state.matricesByDatumId[datumId]?.zoomMatrix;
+  return state.matricesByDatumId[datum.id]?.zoomMatrix;
 }
 
 export default {

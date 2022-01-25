@@ -1,7 +1,8 @@
 import { MutableRefObject, RefObject, useLayoutEffect, useState } from 'react';
 
 const useDimensions = (
-  target: RefObject<HTMLElement> | MutableRefObject<HTMLElement>
+  target: RefObject<HTMLElement> | MutableRefObject<HTMLElement>,
+  callback?: (rect: DOMRect) => void
 ) => {
   const [size, setSize] = useState<DOMRect>();
   useLayoutEffect(() => {
@@ -11,7 +12,11 @@ const useDimensions = (
       const resizeObserver = new ResizeObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.target === current) {
-            setSize(entry.contentRect);
+            if (callback) {
+              callback(entry.contentRect);
+            } else {
+              setSize(entry.contentRect);
+            }
           }
         });
       });
@@ -20,7 +25,7 @@ const useDimensions = (
         resizeObserver.unobserve(current);
       };
     }
-  }, [target]);
+  }, [target.current]);
   return size;
 };
 
