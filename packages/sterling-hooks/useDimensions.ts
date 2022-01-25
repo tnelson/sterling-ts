@@ -1,6 +1,8 @@
-import { RefObject, useLayoutEffect, useState } from 'react';
+import { MutableRefObject, RefObject, useLayoutEffect, useState } from 'react';
 
-const useDimensions = (target: RefObject<HTMLDivElement>) => {
+const useDimensions = (
+  target: RefObject<HTMLElement> | MutableRefObject<HTMLElement>
+) => {
   const [size, setSize] = useState<DOMRect>();
   useLayoutEffect(() => {
     const current = target.current;

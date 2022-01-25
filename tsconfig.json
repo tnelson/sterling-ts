@@ -32,6 +32,9 @@
       "@/sterling-connection": [
         "sterling-connection/index.ts"
       ],
+      "@/sterling-hooks": [
+        "sterling-hooks/index.ts"
+      ],
       "@/sterling-theme": [
         "sterling-theme/index.ts"
       ],

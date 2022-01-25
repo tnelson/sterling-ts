@@ -1,10 +1,11 @@
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
+import { useDimensions } from '@/sterling-hooks';
 import { Projection } from '@/sterling-theme';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
 import { useToast } from '@chakra-ui/react';
 import { require as d3require } from 'd3-require';
 import { editor } from 'monaco-editor';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { scriptTextSet } from '../../state/script/scriptSlice';
 import {
@@ -19,6 +20,8 @@ import { ScriptEditor } from './ScriptEditor';
 import { ScriptViewHeader } from './ScriptViewHeader';
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
 
+type StageType = SVGSVGElement | HTMLCanvasElement | HTMLDivElement | null;
+
 const ScriptView = () => {
   const activeDatum = useSterlingSelector(selectActiveDatum);
   const projections = useSterlingSelector((state) =>
@@ -29,25 +32,11 @@ const ScriptView = () => {
   const dispatch = useSterlingDispatch();
   const toast = useToast();
 
-  const [size, setSize] = useState<DOMRect>();
   const [editor, setEditor] = useState<IStandaloneCodeEditor>();
-  const [stageRef, setStageRef] = useState<
-    SVGSVGElement | HTMLCanvasElement | HTMLDivElement | null
-  >(null);
+  const [stageRef, setStageRef] = useState<StageType>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const size = useDimensions(containerRef);
 
-  const containerRef = useCallback((node: HTMLDivElement) => {
-    if (node) {
-      setSize(node.getBoundingClientRect());
-      const resizeObserver = new ResizeObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.target === node) {
-            setSize(entry.contentRect);
-          }
-        });
-      });
-      resizeObserver.observe(node);
-    }
-  }, []);
   const editorRef = useCallback((editor: IStandaloneCodeEditor) => {
     setEditor(editor);
   }, []);
@@ -136,14 +125,7 @@ const ScriptView = () => {
             {stage === 'canvas' && (
               <canvas ref={canvasRef} className='w-full h-full' />
             )}
-            {stage === 'svg' && (
-              <svg
-                ref={svgRef}
-                className='relative inset-0'
-                width='100%'
-                height='100%'
-              />
-            )}
+            {stage === 'svg' && <svg ref={svgRef} className='w-full h-full' />}
           </Pane>
           <Pane className='relative'>
             <ScriptEditor

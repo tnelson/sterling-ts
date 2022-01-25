@@ -1,6 +1,6 @@
+import { useDimensions } from '@/sterling-hooks';
 import { PropsWithChildren, useMemo, useRef, HTMLAttributes } from 'react';
 import { GraphSVG } from './GraphSVG';
-import { useDimensions } from './hooks/useDimensions';
 import { ZoomProviderProps } from './providers/zoom/ZoomProvider';
 
 export type GraphSVGDivProps = PropsWithChildren<

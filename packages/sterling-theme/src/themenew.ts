@@ -71,7 +71,7 @@ export interface Projection {
   // a relation that defines the total ordering if this is a time projection
   timeOrdering?: string;
   // theming to be applied only in the context of this projection
-  // theme?: Omit<SterlingTheme, 'projections'>;
+  theme?: Omit<SterlingTheme, 'projections'>;
 }
 
 export type ThemeTypeTarget =
