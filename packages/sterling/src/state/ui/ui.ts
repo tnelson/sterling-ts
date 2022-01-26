@@ -9,7 +9,7 @@ export type GraphDrawerView =
   | 'theme'
   | 'layout'
   | 'settings';
-export type TableDrawerView = CommonDrawerView | 'settings';
+export type TableDrawerView = CommonDrawerView | 'state' | 'settings';
 export type ScriptDrawerView = CommonDrawerView | 'variables' | 'settings';
 
 export interface UiState {
@@ -40,7 +40,7 @@ export interface UiState {
 export const newUiState = (initialView?: MainView): UiState => {
   return {
     availableViews: ['GraphView', 'TableView', 'ScriptView'],
-    mainView: initialView || 'GraphView',
+    mainView: initialView || 'ScriptView',
     graphViewDrawer: 'state',
     tableViewDrawer: null,
     scriptViewDrawer: 'variables',

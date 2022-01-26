@@ -32,6 +32,7 @@ class AlloyInstance {
    * Create a new Alloy instance. If no text is provided, an empty instance
    * is created.
    * @param text A string containing the XML output from an Alloy instance
+   * @param index
    */
   constructor(text?: string, index?: number) {
     this._proxy = new AlloyProxy();

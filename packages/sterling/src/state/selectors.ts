@@ -340,36 +340,6 @@ export function selectSpreadMatrix(
   return graphsSelectors.selectSpreadMatrix(state.graphs, datum);
 }
 
-export function selectTables(
-  state: SterlingState,
-  datum: DatumParsed<any>
-): TableData[] {
-  if (isDatumAlloy(datum)) {
-    const instance = datum.parsed.instances[0];
-    const relations: TableData[] = getInstanceRelations(instance).map(
-      (relation) => {
-        return {
-          title: relation.name,
-          type: 'relation',
-          headers: relation.types,
-          data: getRelationTuples(relation).map((tuple) => {
-            return tuple.atoms;
-          })
-        };
-      }
-    );
-    const types: TableData[] = getInstanceTypes(instance).map((type) => {
-      return {
-        title: type.id,
-        type: 'type',
-        data: getTypeAtoms(type).map((atom) => [atom.id])
-      };
-    });
-    return [...relations, ...types];
-  }
-  return [];
-}
-
 /**
  * Select the table drawer view.
  */
@@ -587,5 +557,38 @@ export const selectScriptVariables = createSelector(
   ],
   (datum, projections, time): ScriptVariable[] => {
     return scriptSelectors.selectScriptVariables(datum, projections, time);
+  }
+);
+
+export const selectTables = createSelector(
+  [
+    (state, datum: DatumParsed<any>) => datum,
+    (state, datum: DatumParsed<any>) => selectTimeIndex(state, datum)
+  ],
+  (datum, time) => {
+    if (isDatumAlloy(datum)) {
+      const instance = datum.parsed.instances[time];
+      const relations: TableData[] = getInstanceRelations(instance).map(
+        (relation) => {
+          return {
+            title: relation.name,
+            type: 'relation',
+            headers: relation.types,
+            data: getRelationTuples(relation).map((tuple) => {
+              return tuple.atoms;
+            })
+          };
+        }
+      );
+      const types: TableData[] = getInstanceTypes(instance).map((type) => {
+        return {
+          title: type.id,
+          type: 'type',
+          data: getTypeAtoms(type).map((atom) => [atom.id])
+        };
+      });
+      return [...relations, ...types];
+    }
+    return [];
   }
 );

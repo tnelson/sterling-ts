@@ -128,6 +128,7 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
           <Pane className='relative'>
             <ScriptEditor
               initialText={initialText}
+              variables={datumVariables}
               editorRef={editorRef}
               stageRef={stageRef}
               beforeUnmount={beforeUnmount}

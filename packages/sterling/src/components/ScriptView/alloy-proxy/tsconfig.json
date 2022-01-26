@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "System",
+    "moduleResolution": "node",
+    "target": "es5",
+    "sourceMap": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outFile": "./dts/alloy.js",
+    "baseUrl": "../../../../../../",
+    "paths": {
+      "ts-is-present": ["node_modules/ts-is-present/lib"]
+    }
+  }
+}
