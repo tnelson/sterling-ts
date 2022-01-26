@@ -68,6 +68,13 @@ export function selectAvailableProjectableTypes(
 }
 
 /**
+ * Select the main views available to the user.
+ */
+export function selectAvailableViews(state: SterlingState): MainView[] {
+  return uiSelectors.selectAvailableViews(state.ui);
+}
+
+/**
  * Select an ordered array of all datum objects.
  */
 export function selectData(state: SterlingState): DatumParsed<any>[] {
@@ -532,13 +539,16 @@ export function selectZoomMatrix(
  */
 export const selectGraphProps = createSelector(
   [
-    (state, datum: DatumParsed<any>) => datum,
-    (state, datum: DatumParsed<any>) => selectGraphLayout(state, datum),
-    (state, datum: DatumParsed<any>) => selectTheme(state, datum),
-    (state, datum: DatumParsed<any>) => selectTimeIndex(state, datum)
+    (state, datum?: DatumParsed<any>) => datum,
+    (state, datum?: DatumParsed<any>) =>
+      datum ? selectGraphLayout(state, datum) : undefined,
+    (state, datum?: DatumParsed<any>) =>
+      datum ? selectTheme(state, datum) : undefined,
+    (state, datum?: DatumParsed<any>) =>
+      datum ? selectTimeIndex(state, datum) : undefined
   ],
   (datum, layout, theme, time): GraphProps[] => {
-    if (isDatumAlloy(datum)) {
+    if (datum && layout && theme && time !== undefined && isDatumAlloy(datum)) {
       const instance = datum.parsed.instances[time];
       const projections = theme.projections || [];
       const timeProjections = projections.filter((p) => p.time === true);

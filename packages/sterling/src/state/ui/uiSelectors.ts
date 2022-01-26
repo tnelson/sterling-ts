@@ -10,6 +10,13 @@ import {
 } from './ui';
 
 /**
+ * Select the main views available to the user.
+ */
+function selectAvailableViews(state: UiState): MainView[] {
+  return state.availableViews;
+}
+
+/**
  * Select the main view.
  */
 function selectMainView(state: UiState): MainView {
@@ -106,6 +113,7 @@ const selectDrawerView = createSelector(
 );
 
 export default {
+  selectAvailableViews,
   selectMainView,
   selectGraphDrawer,
   selectGraphDrawerThemeRelationExpanded,

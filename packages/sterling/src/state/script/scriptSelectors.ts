@@ -1,6 +1,7 @@
 import { isAlloyDatumTrace } from '@/alloy-instance';
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
 import { Projection } from '@/sterling-theme';
+import { isDatumRaw } from '../../../../sterling-connection/src/parse/raw';
 import { AlloyAtom } from '../../components/ScriptView/alloy-proxy/AlloyAtom';
 import { AlloyInstance } from '../../components/ScriptView/alloy-proxy/AlloyInstance';
 import { ScriptStageType, ScriptState, ScriptVariable } from './script';
@@ -36,7 +37,6 @@ function selectScriptVariables(
   projections: Projection[],
   time: number
 ): ScriptVariable[] {
-  console.log('recalculating variables');
   if (isDatumAlloy(datum)) {
     // get the unparsed text
     const text = datum.data;
@@ -115,13 +115,22 @@ function selectScriptVariables(
         },
         {
           name: 'instances',
+          variable: instances,
           type: 'AlloyInstance[]',
-          variable: instances
+          typeUrl: INSTANCE_URL
         }
       );
     }
 
     return scriptVariables;
+  } else if (isDatumRaw(datum)) {
+    return [
+      {
+        name: 'data',
+        variable: datum.data,
+        type: 'string'
+      }
+    ];
   }
   return [];
 }

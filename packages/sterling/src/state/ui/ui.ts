@@ -13,6 +13,9 @@ export type TableDrawerView = CommonDrawerView | 'settings';
 export type ScriptDrawerView = CommonDrawerView | 'variables' | 'settings';
 
 export interface UiState {
+  // the views available to the user
+  availableViews: MainView[];
+
   // the main view state
   mainView: MainView;
 
@@ -36,7 +39,8 @@ export interface UiState {
  */
 export const newUiState = (initialView?: MainView): UiState => {
   return {
-    mainView: initialView || 'ScriptView',
+    availableViews: ['GraphView', 'TableView', 'ScriptView'],
+    mainView: initialView || 'GraphView',
     graphViewDrawer: 'state',
     tableViewDrawer: null,
     scriptViewDrawer: 'variables',

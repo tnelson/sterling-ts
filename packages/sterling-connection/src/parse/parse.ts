@@ -3,6 +3,7 @@ import { sterlingError } from '../actions';
 import { DataJoin } from '../payload';
 import { Datum, DatumParsed } from '../types';
 import { parseAlloyDatum } from './alloy';
+import { parseRawDatum } from './raw';
 
 export type DataJoinParsed = Omit<DataJoin, 'enter'> & {
   enter?: DatumParsed<any>[];
@@ -26,6 +27,8 @@ export function parseJoin<D extends Dispatch, S>(
       switch (datum.format) {
         case 'alloy':
           return parseAlloyDatum(datum);
+        case 'raw':
+          return parseRawDatum(datum);
         default:
           throw new Error('Unsupported format fell through unexpectedly.');
       }
@@ -72,5 +75,6 @@ function validateFormats<D extends Dispatch, S>(
  * @return true if the Datum's format is supported, false otherwise.
  */
 function formatIsSupported(datum: Datum): boolean {
-  return datum.format === 'alloy';
+  const format = datum.format;
+  return format === 'alloy' || format === 'raw';
 }

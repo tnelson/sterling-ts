@@ -72,6 +72,13 @@ function sterlingDisconnected(state: LogState) {
   state.items.push(newMessage('Connection lost.'));
 }
 
+/**
+ * Add an error to the log.
+ */
+function sterlingError(state: LogState, action: PayloadAction<string>) {
+  state.items.push(newError(action.payload));
+}
+
 export default {
   activeDatumSet,
   buttonClicked,
@@ -80,5 +87,6 @@ export default {
   metaReceived,
   sterlingConnected,
   sterlingConnectionError,
-  sterlingDisconnected
+  sterlingDisconnected,
+  sterlingError
 };

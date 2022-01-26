@@ -5,7 +5,8 @@ import {
   metaReceived,
   sterlingConnected,
   sterlingConnectionError,
-  sterlingDisconnected
+  sterlingDisconnected,
+  sterlingError
 } from '@/sterling-connection';
 import { createSlice } from '@reduxjs/toolkit';
 import { activeDatumSet } from '../data/dataSlice';
@@ -29,6 +30,7 @@ const logSlice = createSlice({
       .addCase(sterlingConnected, extraReducers.sterlingConnected)
       .addCase(sterlingConnectionError, extraReducers.sterlingConnectionError)
       .addCase(sterlingDisconnected, extraReducers.sterlingDisconnected)
+      .addCase(sterlingError, extraReducers.sterlingError)
 });
 
 export const { logCleared, sortOrderChanged, filtersChanged } =
