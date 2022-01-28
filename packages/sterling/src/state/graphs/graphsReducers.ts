@@ -244,6 +244,25 @@ function graphZoomed(
 }
 
 /**
+ * TODO: Remove during refactor
+ * @param state
+ * @param action
+ */
+function hiddenRelationAdded(
+  state: DraftState,
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    type: string;
+    relation: string;
+  }>
+) {
+  const { datum, type, relation } = action.payload;
+  if (!state.hiddenByDatumId[datum.id][type])
+    state.hiddenByDatumId[datum.id][type] = [];
+  state.hiddenByDatumId[datum.id][type].push(relation);
+}
+
+/**
  * Unset the value of a specific label prop for a single type associated with a datum.
  */
 function nodeLabelPropRemoved(
@@ -690,6 +709,7 @@ export default {
   edgeStyleSet,
   graphSpread,
   graphZoomed,
+  hiddenRelationAdded,
   nodeLabelPropRemoved,
   nodeLabelPropSet,
   nodeLabelStyleRemoved,

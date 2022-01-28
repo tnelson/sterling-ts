@@ -29,6 +29,9 @@ export interface GraphsState {
   >;
   themeByDatumId: Record<string, SterlingTheme>;
   timeByDatumId: Record<string, number>;
+
+  // TODO: Refactor this
+  hiddenByDatumId: Record<string, Record<string, string[]>>;
 }
 
 export interface GraphData {
@@ -71,7 +74,8 @@ export function newGraphsState(): GraphsState {
     layoutsByDatumId: {},
     matricesByDatumId: {},
     themeByDatumId: {},
-    timeByDatumId: {}
+    timeByDatumId: {},
+    hiddenByDatumId: {}
   };
 }
 

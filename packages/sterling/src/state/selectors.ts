@@ -18,6 +18,7 @@ import {
   isAlloyDatumTrace,
   isDefined
 } from '@/alloy-instance';
+import { getEdges, removeEdge, removeEdges } from '@/graph-lib';
 import { GraphProps } from '@/graph-svg';
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
 import { Projection, SterlingTheme } from '@/sterling-theme';
@@ -503,6 +504,13 @@ export function selectZoomMatrix(
   return graphsSelectors.selectZoomMatrix(state.graphs, datum);
 }
 
+export function selectHiddenRelations(
+  state: SterlingState,
+  datum: DatumParsed<any>
+): Record<string, string[]> {
+  return graphsSelectors.selectHiddenRelations(state.graphs, datum);
+}
+
 /**
  * Select the GraphProps associated with a datum, where GraphProps
  * are everything required to render a graph.
@@ -515,10 +523,19 @@ export const selectGraphProps = createSelector(
     (state, datum?: DatumParsed<any>) =>
       datum ? selectTheme(state, datum) : undefined,
     (state, datum?: DatumParsed<any>) =>
-      datum ? selectTimeIndex(state, datum) : undefined
+      datum ? selectTimeIndex(state, datum) : undefined,
+    (state, datum?: DatumParsed<any>) =>
+      datum ? selectHiddenRelations(state, datum) : undefined
   ],
-  (datum, layout, theme, time): GraphProps[] => {
-    if (datum && layout && theme && time !== undefined && isDatumAlloy(datum)) {
+  (datum, layout, theme, time, hidden): GraphProps[] => {
+    if (
+      datum &&
+      layout &&
+      theme &&
+      time !== undefined &&
+      isDatumAlloy(datum) &&
+      hidden
+    ) {
       const instance = datum.parsed.instances[time];
       const projections = theme.projections || [];
       const timeProjections = projections.filter((p) => p.time === true);
@@ -526,6 +543,25 @@ export const selectGraphProps = createSelector(
       const atoms = projections.map((p) => p.atom).filter(isDefined);
       const projected = applyProjections(instance, atoms);
       const graph = generateGraph(projected, theme);
+
+      if (timeProjections.length) {
+        return timeProjections.map((projection) => {
+          let tpgraph = graph;
+          const hiddenRelations = hidden[projection.type];
+          if (hiddenRelations) {
+            hidden[projection.type].forEach((hiddenRelation) => {
+              const toremove = getEdges(tpgraph)
+                .filter((edge) => edge.relation.name === hiddenRelation)
+                .map((edge) => edge.id);
+              tpgraph = removeEdges(graph, toremove);
+            });
+          }
+
+          const graphPositioned = layoutGraph(tpgraph, layout);
+          return generateGraphProps('', projected, graphPositioned, theme);
+        });
+      }
+
       const graphPositioned = layoutGraph(graph, layout);
       const graphProps = generateGraphProps(
         '',
@@ -534,11 +570,7 @@ export const selectGraphProps = createSelector(
         theme
       );
 
-      if (timeProjections.length) {
-        return timeProjections.map(() => graphProps);
-      } else {
-        return [graphProps];
-      }
+      return [graphProps];
     } else {
       console.log(`datum: ${datum !== undefined}`);
       console.log(`layout: ${layout !== undefined}`);

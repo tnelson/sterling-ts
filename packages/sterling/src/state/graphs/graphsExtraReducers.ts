@@ -39,6 +39,9 @@ function dataReceived(
 
       // Choose the first index as the first instance to display
       state.timeByDatumId[datumId] = 0;
+
+      // TODO: Remove during refactor
+      state.hiddenByDatumId[datumId] = {};
     });
   }
 }

@@ -13,6 +13,7 @@ import {
 import { ChangeEvent, useCallback, useState } from 'react';
 import { MdChevronLeft, MdChevronRight, MdClose } from 'react-icons/md';
 import {
+  hiddenRelationAdded,
   projectionOrderingSet,
   projectionRemoved,
   projectionSet
@@ -29,6 +30,7 @@ interface ItemProps {
   onNext: () => void;
   onPrevious: () => void;
   onRelation: (relation: string | undefined) => void;
+  onHiddenRelation: (relation: string) => void;
   onRemove: () => void;
   onToggle: () => void;
 }
@@ -90,7 +92,7 @@ const TimeProjectionsListRow = (props: ItemProps) => {
   );
 };
 
-const TimeProjectionsListCard = (props: ItemProps) => {
+const TimeProjectionCard = (props: ItemProps) => {
   const {
     type,
     atom,
@@ -103,6 +105,72 @@ const TimeProjectionsListCard = (props: ItemProps) => {
     onRelation,
     onRemove,
     onToggle
+  } = props;
+
+  return (
+    <div className='m-2 col-span-3 flex flex-col border shadow'>
+      <div className='flex justify-between p-3 bg-slate-50'>
+        <div className='text-sm font-bold'>{type}</div>
+        <MdChevronLeft
+          className='rotate-90 cursor-pointer hover:text-black'
+          onClick={onToggle}
+        />
+      </div>
+      <div className='w-full mt-3 px-3 flex items-center'>
+        <ButtonGroup className='grow' size='xs' isAttached>
+          <Button
+            className='grow'
+            aria-label='Previous'
+            leftIcon={<MdChevronLeft />}
+            onClick={onPrevious}
+          >
+            Previous
+          </Button>
+          <div className='flex items-center -mt-0.5'>
+            <Select size='xs' value={atom} onChange={onChange}>
+              {atoms.map((atom) => {
+                return (
+                  <option key={atom} value={atom}>
+                    {atom}
+                  </option>
+                );
+              })}
+            </Select>
+          </div>
+          <Button
+            className='grow'
+            aria-label='Next'
+            rightIcon={<MdChevronRight />}
+            onClick={onNext}
+          >
+            Next
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className='w-full mt-3 px-3 flex items-center'>
+        <div className='text-sm whitespace-nowrap pr-3'>Ordering Relation:</div>
+        <Select size='xs'>
+          <option>None</option>
+        </Select>
+      </div>
+    </div>
+  );
+};
+
+const TimeProjectionsListCard = (props: ItemProps) => {
+  const {
+    type,
+    atom,
+    atoms,
+    relation,
+    relations,
+    onChange,
+    onNext,
+    onPrevious,
+    onRelation,
+    onRemove,
+    onToggle,
+    onHiddenRelation
   } = props;
   return (
     <div className='m-2 p-2 col-span-3 flex flex-col border shadow'>
@@ -167,6 +235,25 @@ const TimeProjectionsListCard = (props: ItemProps) => {
             </MenuList>
           </Menu>
         )}
+      </div>
+      <div className='p-2'>
+        <Menu matchWidth>
+          <MenuButton as={Button} width='full' size='xs' py={4}>
+            Hide a Relation
+          </MenuButton>
+          <MenuList>
+            {relations.map((relation) => {
+              return (
+                <MenuItem
+                  key={relation}
+                  onClick={() => onHiddenRelation(relation)}
+                >
+                  {relation}
+                </MenuItem>
+              );
+            })}
+          </MenuList>
+        </Menu>
       </div>
       <div className='p-2'>
         <Button
@@ -262,6 +349,19 @@ const TimeProjectionListItem = (props: TimeProjectionsListItemProps) => {
     [datum, type]
   );
 
+  const onHiddenRelation = useCallback(
+    (relation: string) => {
+      dispatch(
+        hiddenRelationAdded({
+          datum,
+          type,
+          relation
+        })
+      );
+    },
+    [datum, type]
+  );
+
   const onToggle = useCallback(() => {
     setIsCard((state) => !state);
   }, [setIsCard]);
@@ -279,6 +379,7 @@ const TimeProjectionListItem = (props: TimeProjectionsListItemProps) => {
       onRemove={onRemove}
       onRelation={onRelation}
       onToggle={onToggle}
+      onHiddenRelation={onHiddenRelation}
     />
   ) : (
     <TimeProjectionsListRow
@@ -293,6 +394,7 @@ const TimeProjectionListItem = (props: TimeProjectionsListItemProps) => {
       onRemove={onRemove}
       onRelation={onRelation}
       onToggle={onToggle}
+      onHiddenRelation={onHiddenRelation}
     />
   );
 };

@@ -24,6 +24,7 @@ export const {
   curveSet,
   graphSpread,
   graphZoomed,
+  hiddenRelationAdded,
   nodeLabelStyleRemoved,
   nodeLabelStyleSet,
   nodeLabelPropRemoved,

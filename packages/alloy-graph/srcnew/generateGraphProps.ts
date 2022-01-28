@@ -4,7 +4,7 @@ import {
   getInstanceRelations,
   getRelationTuples
 } from '@/alloy-instance';
-import { getEdges, getNodes, PositionedGraph } from '@/graph-lib';
+import { Edge, getEdges, getNodes, PositionedGraph } from '@/graph-lib';
 import {
   CurveDef,
   EdgeLabelDef,
@@ -23,8 +23,12 @@ import { assign } from 'lodash';
 import { CSSProperties } from 'react';
 import { getInstanceEdgeStyleSpecs } from './getInstanceEdgeStyleSpecs';
 import { getInstanceNodeStyleSpecs } from './getInstanceNodeStyleSpecs';
-import { AlloyGraph } from './types';
+import { AlloyEdge, AlloyGraph } from './types';
 
+/**
+ * TODO: This function needs to accept an array of themes so that we can apply
+ *       multiple themes in sequence.
+ */
 export function generateGraphProps(
   id: string,
   instance: AlloyInstance,
@@ -91,11 +95,20 @@ export function generateGraphProps(
     nodeStyles[node.id] = {};
   });
 
+  const generateEdgeLabel = (edge: AlloyEdge) => {
+    if (edge.tuple.atoms.length > 2) {
+      return (
+        edge.relation.name + `[${edge.tuple.atoms.slice(1, -1).join(', ')}]`
+      );
+    }
+    return edge.relation.name;
+  };
+
   // Generate edge labels and styles
   getEdges(graph).forEach((edge) => {
     edgeLabels[edge.id] = [
       {
-        text: edge.relation.name,
+        text: generateEdgeLabel(edge),
         props: {},
         style: {}
       }

@@ -17,6 +17,13 @@ function selectGraphLayout(
   return layouts.layoutById[layoutId];
 }
 
+function selectHiddenRelations(
+  state: GraphsState,
+  datum: DatumParsed<any>
+): Record<string, string[]> {
+  return state.hiddenByDatumId[datum.id];
+}
+
 /**
  * Return an array of projections associated with a datum.
  */
@@ -67,6 +74,7 @@ function selectZoomMatrix(
 
 export default {
   selectGraphLayout,
+  selectHiddenRelations,
   selectProjections,
   selectSpreadMatrix,
   selectTheme,
