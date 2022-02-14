@@ -13,10 +13,11 @@ import {
   Projection,
   SterlingTheme
 } from '@/sterling-theme';
+import { add, Vector2 } from '@/vector2';
 import { current, PayloadAction } from '@reduxjs/toolkit';
 import produce, { castDraft } from 'immer';
 import { WritableDraft } from 'immer/dist/types/types-external';
-import { remove, set, unset } from 'lodash';
+import { forEach, remove, set, unset } from 'lodash';
 import { Matrix } from 'transformation-matrix';
 import { generateLayoutId, GraphsState } from './graphs';
 import { DEFAULT_LAYOUT_SETTINGS } from './graphsDefaults';
@@ -339,6 +340,24 @@ function nodeLabelStyleSet(
       theme.nodes.push(castDraft(newSpec));
     }
   }
+}
+
+function nodesOffset(
+  state: DraftState,
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    offsets: Record<string, Vector2>;
+  }>
+) {
+  const { datum, offsets } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
+  const projections = theme ? theme.projections || [] : [];
+  const layoutId = generateLayoutId(projections);
+  const layout = state.layoutsByDatumId[datum.id].layoutById[layoutId];
+  forEach(offsets, (offset, nodeId) => {
+    const position = layout.nodePositions[nodeId];
+    layout.nodePositions[nodeId] = add(position, offset);
+  });
 }
 
 /**
@@ -714,6 +733,7 @@ export default {
   nodeLabelPropSet,
   nodeLabelStyleRemoved,
   nodeLabelStyleSet,
+  nodesOffset,
   projectionAdded,
   projectionOrderingSet,
   projectionRemoved,

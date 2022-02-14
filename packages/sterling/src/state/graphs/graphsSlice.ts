@@ -29,6 +29,7 @@ export const {
   nodeLabelStyleSet,
   nodeLabelPropRemoved,
   nodeLabelPropSet,
+  nodesOffset,
   projectionAdded,
   projectionOrderingSet,
   projectionRemoved,

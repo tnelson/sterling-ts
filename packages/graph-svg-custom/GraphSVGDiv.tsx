@@ -1,25 +1,14 @@
 import { useDimensions } from '@/sterling-hooks';
 import { PropsWithChildren, useMemo, useRef, HTMLAttributes } from 'react';
 import { GraphSVG } from './GraphSVG';
-import { ZoomProviderProps } from './providers/zoom/ZoomProvider';
+import { WithInteractionCallbacks } from './providers/interaction/interactionCallbacks';
 
 export type GraphSVGDivProps = PropsWithChildren<
-  HTMLAttributes<HTMLDivElement>
-> &
-  Pick<
-    ZoomProviderProps,
-    'spreadMatrix' | 'zoomMatrix' | 'onSpreadMatrix' | 'onZoomMatrix'
-  >;
+  WithInteractionCallbacks<HTMLAttributes<HTMLDivElement>>
+>;
 
 const GraphSVGDiv = (props: GraphSVGDivProps) => {
-  const {
-    children,
-    spreadMatrix,
-    zoomMatrix,
-    onSpreadMatrix,
-    onZoomMatrix,
-    ...rest
-  } = props;
+  const { callbacks, children, ...rest } = props;
   const ref = useRef<HTMLDivElement>(null);
   const dimensions = useDimensions(ref);
   const width = useMemo(() => dimensions?.width, [dimensions]);
@@ -32,13 +21,7 @@ const GraphSVGDiv = (props: GraphSVGDivProps) => {
 
   return (
     <div ref={ref} {...rest}>
-      <GraphSVG
-        viewBox={viewBox}
-        spreadMatrix={spreadMatrix}
-        onSpreadMatrix={onSpreadMatrix}
-        zoomMatrix={zoomMatrix}
-        onZoomMatrix={onZoomMatrix}
-      >
+      <GraphSVG callbacks={callbacks} viewBox={viewBox}>
         {children}
       </GraphSVG>
     </div>

@@ -12,8 +12,7 @@ import { EdgesGroup } from './components/EdgesGroup/EdgesGroup';
 import { NodesGroup } from './components/NodesGroup/NodesGroup';
 import { GraphGroupProps } from './GraphGroupProps';
 import { buildPath } from './paths/buildPath';
-import { InteractionProvider } from './providers/InteractionProvider';
-import { useZoom } from './providers/zoom/ZoomProvider';
+import { useInteraction } from './providers/interaction/InteractionProvider';
 import { ArrowDef, EdgeDef, NodeDef } from './types';
 import { isDefined } from './util';
 
@@ -30,11 +29,10 @@ const GraphGroup = memo(
       nodeShapes,
       nodeStyles,
       nodeLabels,
-      onClickNode,
       ...rest
     } = props;
 
-    const { spreadMatrix } = useZoom();
+    const { nodeOffset, spreadMatrix } = useInteraction();
 
     const nodes: NodeDef[] = useMemo(
       () =>
@@ -63,12 +61,16 @@ const GraphGroup = memo(
             if (!source || !target) return undefined;
             const sourceShape = nodeShapes[source.id];
             const targetShape = nodeShapes[target.id];
+            const sourceOffset = nodeOffset(source.id);
+            const targetOffset = nodeOffset(target.id);
             const path = buildPath(
               edge,
               source,
               sourceShape,
+              sourceOffset,
               target,
               targetShape,
+              targetOffset,
               spreadMatrix
             );
             const curve = edgeCurves[edge.id];
@@ -83,19 +85,17 @@ const GraphGroup = memo(
             };
           })
           .filter(isDefined),
-      [graph, spreadMatrix, edgeCurves, edgeStyles, edgeLabels]
+      [graph, spreadMatrix, edgeCurves, edgeStyles, edgeLabels, nodeOffset]
     );
 
     const arrows: ArrowDef[] = extractArrowHeads(Object.values(edgeStyles));
 
     return (
-      <InteractionProvider onClickNode={onClickNode}>
-        <g id={id} {...rest}>
-          <Defs arrowHeads={arrows} />
-          <NodesGroup nodes={nodes} />
-          <EdgesGroup edges={edges} />
-        </g>
-      </InteractionProvider>
+      <g id={id} {...rest}>
+        <Defs arrowHeads={arrows} />
+        <NodesGroup nodes={nodes} />
+        <EdgesGroup edges={edges} />
+      </g>
     );
   }
 );

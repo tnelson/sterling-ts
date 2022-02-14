@@ -1,23 +1,36 @@
 import { NodeDef } from '@/graph-svg';
+import { add } from '@/vector2';
 import { memo, useMemo } from 'react';
 import { applyToPoint } from 'transformation-matrix';
-import { useInteractions } from '../../providers/InteractionProvider';
-import { useZoom } from '../../providers/zoom/ZoomProvider';
+import { useInteraction } from '../../providers/interaction/InteractionProvider';
 import { NodeLabel } from '../NodeLabel/NodeLabel';
 import { Shape } from '../Shape/Shape';
 
 const NodeGroup = memo((props: NodeDef) => {
   const { id, position, shape, style, labels } = props;
-  const { spreadMatrix } = useZoom();
-  const { onClickNode } = useInteractions();
+  const {
+    onClickNode,
+    onMouseDownNode,
+    onMouseUpNode,
+    spreadMatrix,
+    nodeOffset
+  } = useInteraction();
 
+  const offset = nodeOffset(id);
   const translate = useMemo(() => {
-    const transformed = applyToPoint(spreadMatrix, position);
+    const transformed = add(applyToPoint(spreadMatrix, position), offset);
+
     return `translate(${transformed.x} ${transformed.y})`;
-  }, [position, spreadMatrix]);
+  }, [position, offset, spreadMatrix]);
 
   return (
-    <g id={id} transform={translate} onClick={() => onClickNode(id)}>
+    <g
+      id={id}
+      transform={translate}
+      onClick={(event) => onClickNode(id, event)}
+      onMouseDown={(event) => onMouseDownNode(id, event)}
+      onMouseUp={(event) => onMouseUpNode(id, event)}
+    >
       <Shape shape={shape} style={style} />
       {labels && <NodeLabel label={labels} />}
     </g>

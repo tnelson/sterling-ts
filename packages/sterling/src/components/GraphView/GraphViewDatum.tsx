@@ -1,9 +1,14 @@
 import { GraphGroup, GraphProps, GraphSVGDiv } from '@/graph-svg';
 import { DatumParsed } from '@/sterling-connection';
+import { Vector2 } from '@/vector2';
 import { throttle } from 'lodash';
 import { useCallback } from 'react';
 import { Matrix } from 'transformation-matrix';
-import { graphSpread, graphZoomed } from '../../state/graphs/graphsSlice';
+import {
+  graphSpread,
+  graphZoomed,
+  nodesOffset
+} from '../../state/graphs/graphsSlice';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { selectSpreadMatrix, selectZoomMatrix } from '../../state/selectors';
 
@@ -41,6 +46,7 @@ const GraphViewDatum = (props: GraphViewDatumProps) => {
     throttle(
       (matrix: Matrix) => {
         dispatch(graphSpread({ datum, matrix }));
+        return true;
       },
       16,
       { trailing: false }
@@ -51,6 +57,7 @@ const GraphViewDatum = (props: GraphViewDatumProps) => {
     throttle(
       (matrix: Matrix) => {
         dispatch(graphZoomed({ datum, matrix }));
+        return true;
       },
       16,
       { trailing: false }
@@ -58,13 +65,19 @@ const GraphViewDatum = (props: GraphViewDatumProps) => {
     [datum]
   );
 
+  const onSelectionMoved = useCallback(
+    (offsets: Record<string, Vector2>) => {
+      dispatch(nodesOffset({ datum, offsets }));
+    },
+    [datum]
+  );
+
   return (
     <GraphSVGDiv
       className='absolute inset-0'
-      spreadMatrix={spreadMatrix}
-      onSpreadMatrix={onSpreadMatrix}
-      zoomMatrix={zoomMatrix}
-      onZoomMatrix={onZoomMatrix}
+      callbacks={{
+        onSelectionMoved
+      }}
     >
       <GraphGroup
         id={id}

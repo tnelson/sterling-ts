@@ -1,30 +1,24 @@
 import { forwardRef, PropsWithChildren, SVGAttributes, useRef } from 'react';
 import { toString } from 'transformation-matrix';
+import { WithInteractionCallbacks } from './providers/interaction/interactionCallbacks';
 import {
-  useZoom,
-  ZoomProvider,
-  ZoomProviderProps
-} from './providers/zoom/ZoomProvider';
+  InteractionProvider,
+  useInteraction
+} from './providers/interaction/InteractionProvider';
 
 const SVG = forwardRef<SVGSVGElement>(
   (props: PropsWithChildren<SVGAttributes<SVGSVGElement>>, ref) => {
     const { children, ...rest } = props;
-    const { mouseDown, mouseMove, mouseUp, spread, zoom, zoomMatrix } =
-      useZoom();
+    const { onMouseDown, onMouseMove, onMouseUp, onWheel, zoomMatrix } =
+      useInteraction();
     return (
       <svg
         ref={ref}
         preserveAspectRatio='xMidYMid slice'
-        onMouseDown={mouseDown}
-        onMouseMove={mouseMove}
-        onMouseUp={mouseUp}
-        onWheel={(event) => {
-          if (event.shiftKey) {
-            spread(event);
-          } else {
-            zoom(event);
-          }
-        }}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onWheel={onWheel}
         {...rest}
       >
         <g transform={toString(zoomMatrix)}>{children}</g>
@@ -33,26 +27,17 @@ const SVG = forwardRef<SVGSVGElement>(
   }
 );
 
-export type GraphSVGProps = PropsWithChildren<SVGAttributes<SVGSVGElement>> &
-  Pick<
-    ZoomProviderProps,
-    'spreadMatrix' | 'zoomMatrix' | 'onSpreadMatrix' | 'onZoomMatrix'
-  >;
+export type GraphSVGProps = PropsWithChildren<
+  WithInteractionCallbacks<SVGAttributes<SVGSVGElement>>
+>;
 
 const GraphSVG = (props: GraphSVGProps) => {
-  const { spreadMatrix, zoomMatrix, onSpreadMatrix, onZoomMatrix, ...rest } =
-    props;
+  const { callbacks, ...rest } = props;
   const svgRef = useRef<SVGSVGElement>(null);
   return (
-    <ZoomProvider
-      spreadMatrix={spreadMatrix}
-      onSpreadMatrix={onSpreadMatrix}
-      zoomMatrix={zoomMatrix}
-      onZoomMatrix={onZoomMatrix}
-      svg={svgRef.current}
-    >
+    <InteractionProvider svg={svgRef.current} {...callbacks}>
       <SVG ref={svgRef} {...rest} />
-    </ZoomProvider>
+    </InteractionProvider>
   );
 };
 
