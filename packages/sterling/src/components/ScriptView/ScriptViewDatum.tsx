@@ -123,7 +123,13 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
             {stage === 'canvas' && (
               <canvas ref={canvasRef} className='w-full h-full' />
             )}
-            {stage === 'svg' && <svg ref={svgRef} className='w-full h-full' />}
+            {/* Placing the SVG element within a scrolling div will enable scrolling, 
+                provided that the SVG height/width styling is changed directly by the script. 
+                The slightly off-white background color shows the actual full SVG area.*/}
+            {stage === 'svg' && 
+              <div id='svg-container' style={{height: '100%', width: '100%', overflow: 'scroll'}}>
+                <svg ref={svgRef} style={{width:'100%', height:'100%', backgroundColor: 'snow'}}/>
+              </div>}
           </Pane>
           <Pane className='relative'>
             <ScriptEditor
