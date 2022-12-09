@@ -8,7 +8,9 @@ import { ZoomTransformSetter } from '../middleware';
  */
 const onMouseWheeledHandler = (gesture: Gesture, setZoomTransform: ZoomTransformSetter) => {
     return (state: RootState, next: AppDispatch, event: WheelEvent) => {
-
+        // Prevent further event-handlers from being called for this event. 
+        // (e.g., the handler that would cause the entire Sterling window to zoom)
+        event.stopImmediatePropagation();
         if (event.shiftKey) {
 
             // The spread matrix has to go to the store because it need to be applied to
