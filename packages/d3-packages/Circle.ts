@@ -1,6 +1,8 @@
 import {Shape} from './Shape'
-import d3 from 'd3'
+import { require as d3require } from 'd3-require';
+const d3 = require("d3")
 import { Coords } from './VisualObject';
+
 
 export class Circle extends Shape{
     radius: number;
@@ -19,7 +21,7 @@ export class Circle extends Shape{
         this.radius = radius
     }
 
-    render(svg){
+    render(svg: any){
         super.render(svg)
         d3.select(svg)
             .append('circ')

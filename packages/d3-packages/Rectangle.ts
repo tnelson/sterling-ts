@@ -1,6 +1,8 @@
 import {Shape} from './Shape'
-import d3 from 'd3'
+import { require as d3require } from 'd3-require';
+const d3 = require("d3")
 import {Coords} from './VisualObject'
+
 
 export class Rectangle extends Shape{
     height: number;
@@ -33,7 +35,7 @@ export class Rectangle extends Shape{
         }
     }
 
-    render(svg){
+    render(svg: any){
         super.render(svg)
         d3.select(svg)
             .append('rect')

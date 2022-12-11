@@ -1,4 +1,5 @@
-import d3 from 'd3'
+import { require as d3require } from 'd3-require';
+const d3 = require("d3")
 import { DEFAULT_COLOR, DEFAULT_FONT_SIZE, DEFAULT_TEXT_COLOR } from './Constants';
 import {Coords, VisualObject} from './VisualObject'
 
@@ -26,7 +27,7 @@ export class TextBox extends VisualObject{
     setFontSize(fontSize: number){this.fontSize = fontSize}
     setTextColor(color: string){this.color = color}
 
-    render(svg){
+    render(svg: any){
         d3.select(svg)
             .append('text')
             .attr('x', this.coords.y)

@@ -1,5 +1,6 @@
 import {Shape} from './Shape'
-import d3 from 'd3'
+import { require as d3require } from 'd3-require';
+const d3 = require("d3")
 import {Coords, VisualObject} from './VisualObject'
 import { DEFAULT_COLOR, DEFAULT_LINE_COLOR } from './Constants'
 
