@@ -9,8 +9,9 @@ export class Pane{
     constructor(){
         this.Children = []
     }
-    getChildren(): VisualObject[] {
-        return this.Children
+
+    addChild(addNode:VisualObject){
+        this.Children.push(addNode)
     }
 
     render(svg:any){
