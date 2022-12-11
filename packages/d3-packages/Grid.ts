@@ -1,6 +1,6 @@
-import {VisualObject, Coords} from './VisualObject.js'
-import {Line} from './Line.js'
-import {Rectangle} from './Rectangle.js'
+import {VisualObject, Coords} from './VisualObject'
+// import {Line} from './Line.js'
+import {Rectangle} from './Rectangle'
 
 interface gridProps{
     grid_location: Coords, //note: coords refers to the top left portion of the grid
@@ -36,13 +36,13 @@ export class Grid{
 
     config: gridProps
     cells: Array<Array<gridCell>>
-    gridlines: Array<Line>
+    // gridlines: Array<Line>
 
     constructor(config: gridProps){
         //todo: remove ? once we have pane functionality
         this.config = config
         this.cells = []
-        this.gridlines = []
+        // this.gridlines = []
 
         this.initialize_cells()
     }
@@ -110,33 +110,33 @@ export class Grid{
             }
         }
 
-    fill_grid_lines(){
-    /**
-     * We offer the option to have our grid have line boundaries be filled in. 
-     * 
-     * Calling this method adds these lines to be rendered (calling more than once does nothing)
-     */
-        //cols
-        for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
-            const vertLine: Line = new Line([
-                {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
-                    y:this.config.grid_location.y},
-                {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
-                    y:this.config.grid_location.y + this.config.grid_dimensions.height*this.config.cell_size.y_size}
-            ]);
-            this.gridlines.push(vertLine)
-        }
-        //rows
-        for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
-            const horizLine: Line = new Line([
-                {x:this.config.grid_location.x,
-                    y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size},
-                {x:this.config.grid_location.x+this.config.grid_dimensions.width*this.config.cell_size.x_size,
-                    y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size}
-            ]);
-            this.gridlines.push(horizLine)    
-        }
-    }
+    // fill_grid_lines(){
+    // /**
+    //  * We offer the option to have our grid have line boundaries be filled in. 
+    //  * 
+    //  * Calling this method adds these lines to be rendered (calling more than once does nothing)
+    //  */
+    //     //cols
+    //     for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
+    //         const vertLine: Line = new Line([
+    //             {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
+    //                 y:this.config.grid_location.y},
+    //             {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
+    //                 y:this.config.grid_location.y + this.config.grid_dimensions.height*this.config.cell_size.y_size}
+    //         ]);
+    //         this.gridlines.push(vertLine)
+    //     }
+    //     //rows
+    //     for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
+    //         const horizLine: Line = new Line([
+    //             {x:this.config.grid_location.x,
+    //                 y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size},
+    //             {x:this.config.grid_location.x+this.config.grid_dimensions.width*this.config.cell_size.x_size,
+    //                 y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size}
+    //         ]);
+    //         this.gridlines.push(horizLine)    
+    //     }
+    // }
 
     fill_solid(coords: Coords, color: string){
         /**
@@ -163,7 +163,7 @@ export class Grid{
          * Given a set of coords passed into a function involving the grid coordinates, we verify that
          * these coordinates are positive integers within the bounds of the coordinate size
          */
-        if(!Number.isInteger(coords.x) || Number.isInteger(coords.y)){
+        if(!Number.isInteger(coords.x) || !Number.isInteger(coords.y)){
             throw "non-integer indices given for grid coords";
         }
         if(coords.x < 0 || coords.y < 0){
