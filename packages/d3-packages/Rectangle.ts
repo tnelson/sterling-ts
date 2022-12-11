@@ -45,6 +45,6 @@ export class Rectangle extends Shape{
             .attr('height', this.height)
             .attr('stroke-width', this.borderWidth)
             .attr('stroke', this.borderColor)
-            .arrt('fill', this.color)
+            .attr('fill', this.color)
     }
 }

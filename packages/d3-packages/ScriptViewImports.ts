@@ -8,6 +8,7 @@ import { VisualObject } from "./VisualObject"
 import {Line} from "./Line"
 
 const scriptViewImports = [
+    {name: "easyfunc", value: () => 18},
     {name: "Pane", value: Pane},
     {name: "Rectangle", value: Rectangle},
     {name: "Circle", value: Circle},
