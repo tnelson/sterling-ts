@@ -174,14 +174,18 @@ export class Grid{
         }
     }
 
-    render(svg){
+    render(svg:any){
         //render gridlines
 
         //render each child in each cell
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
-                if(this.cells[x_coord][y_coord].full){
-                    this.cells[x_coord][y_coord].contents.render(svg)
+                const target_cell = this.cells[x_coord][y_coord]
+                if(target_cell.full){
+                    if(target_cell.contents){ //I don't want to have to include this code but it's necessary to make
+                    //typescript not mad
+                        target_cell.contents.render(svg)
+                    }
                 }
             }
         }

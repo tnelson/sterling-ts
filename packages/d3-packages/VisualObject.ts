@@ -28,7 +28,7 @@ export class VisualObject{
     }
 
     //question: what actually makes up an object? Is every object a collection of shapes? What about text
-    render(svg){
+    render(svg:any){
         this.children.forEach((child: VisualObject) => child.render(svg))
     }
 }
