@@ -22,7 +22,6 @@ interface gridCell{
     center: Coords,
 }
 
-
 export class Grid{
     /**
      * 

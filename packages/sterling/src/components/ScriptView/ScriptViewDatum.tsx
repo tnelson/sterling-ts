@@ -20,6 +20,7 @@ import { extractRequires } from './extractRequires';
 import { fetchLibrary } from './fetchLibrary';
 import { ScriptEditor } from './ScriptEditor';
 import { ScriptViewHeader } from './ScriptViewHeader';
+import scriptViewImports from 'd3-packages/ScriptViewImports';
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
 
 interface ScriptViewDatumProps {
@@ -74,12 +75,6 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
     dispatch(scriptTextSet(text));
   }, []);
 
-  // TODO: figure out the right way to actually import the real thing
-  const internalSterlingHelpers = [
-    {name: 'helper1', value: (x: number) => (x + 1)},
-    {name: 'helper2', value: (x: number, y: number) => (y - x)}
-  ]
-
   const onExecute = useCallback(() => {
     const text = editor?.getValue();
     if (text && stageRef && size) {
@@ -96,7 +91,7 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
             stage,
             'width',
             'height',
-            ...internalSterlingHelpers.map((v) => v.name),
+            ...scriptViewImports.map((v) => v.name),
             ...datumVariables.map((v) => v.name),
             ...libNames.map((ln) => sanitizeLibNames(ln)),
             script
@@ -105,7 +100,7 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
             stageRef,
             size.width,
             size.height,
-            ...internalSterlingHelpers.map((v) => v.value),
+            ...scriptViewImports.map((v) => v.value),
             ...datumVariables.map((v) => v.variable),
             ...libraries
           );
