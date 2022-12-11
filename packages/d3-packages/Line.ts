@@ -24,7 +24,7 @@ export class Line extends VisualObject{
 
     setColor(color: string){this.color = color}
 
-    render(svg){
+    render(svg: any){
         super.render(svg)
         d3.select(svg)
             .append('path')

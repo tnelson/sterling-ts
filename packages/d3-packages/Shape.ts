@@ -22,6 +22,6 @@ export class Shape extends VisualObject{
     }
 
     setColor(color: string){ this.color = color }
-    setStrokeWidth(borderWidth: number){ this.borderWidth = borderWidth }
+    setBorderWidth(borderWidth: number){ this.borderWidth = borderWidth }
     setBorderColor(borderColor: string){ this.borderColor = borderColor }
 }

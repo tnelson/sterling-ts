@@ -22,13 +22,14 @@ export class Circle extends Shape{
     }
 
     render(svg: any){
-        super.render(svg)
         d3.select(svg)
             .append('circ')
             .attr('cx', this.coords.y)
             .attr('cy', this.coords.x)
+            .attr('r', this.radius)
             .attr('stroke-width', this.borderWidth)
             .attr('stroke', this.borderColor)
             .attr('fill', this.color)
+        super.render(svg)
     }
 }
