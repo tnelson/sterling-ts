@@ -24,6 +24,7 @@ export class TextBox extends VisualObject{
         this.color = DEFAULT_TEXT_COLOR;
     }
 
+    setText(text: string){this.text = text}
     setFontSize(fontSize: number){this.fontSize = fontSize}
     setTextColor(color: string){this.color = color}
 
