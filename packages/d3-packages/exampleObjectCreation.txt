@@ -1,0 +1,9 @@
+const stage = new Stage()
+const mainPane = new Pane()
+const rect = new Rectangle({x:10,y:0},100,100)
+
+stage.addChild(mainPane);
+mainPane.addChild(rect)
+stage.render(svg)
+
+console.log(stage)
