@@ -41,6 +41,9 @@ export class Grid{
     constructor(config: gridProps){
         //todo: remove ? once we have pane functionality
         this.config = config
+        this.cells = []
+        this.gridlines = []
+
         this.initialize_cells()
     }
 
@@ -52,7 +55,6 @@ export class Grid{
      * do the computations as to where the centers of objects are)
      * 
      */
-        this.cells = []
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
             this.cells.push([]);
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
@@ -114,7 +116,6 @@ export class Grid{
      * 
      * Calling this method adds these lines to be rendered (calling more than once does nothing)
      */
-        this.gridlines = []
         //cols
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
             const vertLine: Line = new Line([
