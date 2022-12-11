@@ -23,7 +23,7 @@ export class Circle extends Shape{
 
     render(svg: any){
         d3.select(svg)
-            .append('circ')
+            .append('circle')
             .attr('cx', this.coords.y)
             .attr('cy', this.coords.x)
             .attr('r', this.radius)
