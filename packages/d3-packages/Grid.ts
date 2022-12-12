@@ -19,7 +19,6 @@ interface gridProps{
 interface gridCell{
     contents?: VisualObject,
     center: Coords,
-    full:boolean
 }
 
 export class Grid extends VisualObject{
@@ -58,7 +57,6 @@ export class Grid extends VisualObject{
             this.cells.push([]);
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
                 const empty_cell:gridCell = {
-                    full: false,
                     center:{
                         x:this.config.grid_location.x + this.config.cell_size.x_size*x_coord + 
                         + this.config.cell_size.x_size/2,
@@ -85,7 +83,6 @@ export class Grid extends VisualObject{
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.x_size; x_coord++){
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
                 const new_cell:gridCell = {
-                    full: this.cells[x_coord][y_coord].full,
                     center:{
                         x:this.config.grid_location.x + this.config.cell_size.x_size*x_coord + 
                         + this.config.cell_size.x_size/2,
