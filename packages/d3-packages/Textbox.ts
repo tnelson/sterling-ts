@@ -28,6 +28,7 @@ export class TextBox extends VisualObject{
     setFontSize(fontSize: number){this.fontSize = fontSize}
     setTextColor(color: string){this.color = color}
 
+
     render(svg: any){
         d3.select(svg)
             .append('text')

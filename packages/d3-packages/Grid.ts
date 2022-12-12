@@ -1,5 +1,5 @@
 import {VisualObject, Coords} from './VisualObject'
-// import {Line} from './Line.js'
+import {Line} from './Line'
 import {Rectangle} from './Rectangle'
 
 interface gridProps{
@@ -22,7 +22,7 @@ interface gridCell{
     center: Coords,
 }
 
-export class Grid{
+export class Grid extends VisualObject{
     /**
      * 
      * As one of the most common expressions of a graph is a matrix, we offer functionality
@@ -36,14 +36,13 @@ export class Grid{
 
     config: gridProps
     cells: Array<Array<gridCell>>
-    // gridlines: Array<Line>
+    gridlines: Array<Line>
 
     constructor(config: gridProps){
-        //todo: remove ? once we have pane functionality
+        super(config.grid_location)
         this.config = config
         this.cells = []
-        // this.gridlines = []
-
+        this.gridlines = []
         this.initialize_cells()
     }
 
@@ -67,8 +66,33 @@ export class Grid{
                         + this.config.cell_size.y_size/2,
                     }
                 }
-                // console.log("w: " + w + ",r: " + r + "\n x center: " + empty_cell.center.x + " y center: " + empty_cell.center.y)
                 this.cells[x_coord].push(empty_cell)
+            }
+        }
+    }
+
+    setCenter(center: Coords){
+        this.config.grid_location = {
+            x: center.x - (this.config.grid_dimensions.width/2 * this.config.cell_size.x_size),
+            y: center.y - (this.config.grid_dimensions.height/2 * this.config.cell_size.y_size)
+        }
+        for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
+            for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
+                const new_cell:gridCell = {
+                    full: this.cells[x_coord][y_coord].full,
+                    center:{
+                        x:this.config.grid_location.x + this.config.cell_size.x_size*x_coord + 
+                        + this.config.cell_size.x_size/2,
+                        y:this.config.grid_location.y + this.config.cell_size.y_size*y_coord + 
+                        + this.config.cell_size.y_size/2,
+                    }
+                }
+                if(this.cells[x_coord][y_coord].contents){
+                    const cell_concents = this.cells[x_coord][y_coord].contents
+                    new_cell.contents = cell_concents
+                    cell_concents?.setCenter(new_cell.center)
+                }
+                this.cells[x_coord][y_coord] = new_cell
             }
         }
     }
@@ -86,6 +110,7 @@ export class Grid{
      * (creating a conjoined visual object shouldn't be too tough) 
      */
         this.check_coords(coords)
+        
 
         //TODO: check for inside bounding box
 
@@ -95,12 +120,13 @@ export class Grid{
         add_object.setCenter(target_cell.center) //center object
     }
 
-    remove_cell(coords: Coords, add_object:VisualObject){
+    remove_cell(coords: Coords){
         /**
          * Given valid coordinates of our grid, we remove the object in a given cell
          * 
          * If no such object exists, we don't do anything
          */
+
             this.check_coords(coords)
         
             const target_cell: gridCell = this.cells[coords.x][coords.y]
@@ -110,41 +136,43 @@ export class Grid{
             }
         }
 
-    // fill_grid_lines(){
-    // /**
-    //  * We offer the option to have our grid have line boundaries be filled in. 
-    //  * 
-    //  * Calling this method adds these lines to be rendered (calling more than once does nothing)
-    //  */
-    //     //cols
-    //     for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
-    //         const vertLine: Line = new Line([
-    //             {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
-    //                 y:this.config.grid_location.y},
-    //             {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
-    //                 y:this.config.grid_location.y + this.config.grid_dimensions.height*this.config.cell_size.y_size}
-    //         ]);
-    //         this.gridlines.push(vertLine)
-    //     }
-    //     //rows
-    //     for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
-    //         const horizLine: Line = new Line([
-    //             {x:this.config.grid_location.x,
-    //                 y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size},
-    //             {x:this.config.grid_location.x+this.config.grid_dimensions.width*this.config.cell_size.x_size,
-    //                 y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size}
-    //         ]);
-    //         this.gridlines.push(horizLine)    
-    //     }
-    // }
+    fill_grid_lines(){
+    /**
+     * We offer the option to have our grid have line boundaries be filled in. 
+     * 
+     * Calling this method adds these lines to be rendered (calling more than once does nothing)
+     */
+        //cols
+        for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
+            const vertLine: Line = new Line([
+                {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
+                    y:this.config.grid_location.y},
+                {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
+                    y:this.config.grid_location.y + this.config.grid_dimensions.height*this.config.cell_size.y_size}
+            ]);
+            this.gridlines.push(vertLine)
+        }
+        //rows
+        for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
+            const horizLine: Line = new Line([
+                {x:this.config.grid_location.x,
+                    y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size},
+                {x:this.config.grid_location.x+this.config.grid_dimensions.width*this.config.cell_size.x_size,
+                    y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size}
+            ]);
+            this.gridlines.push(horizLine)    
+        }
+    }
 
     fill_solid(coords: Coords, color: string){
         /**
          * Given a single coordinate square of our grid, we fill that
          * square in with a given color
          */
+        
+        
         this.check_coords(coords)
-        const target_cell: gridCell = this.cells[coords.x][coords.y]
+        const target_cell: gridCell = this.cells[coords.x-1][coords.y-1]
         target_cell.full = true
 
         const addRectangle:Rectangle = new Rectangle({x:0,y:0},
@@ -164,14 +192,16 @@ export class Grid{
          * these coordinates are positive integers within the bounds of the coordinate size
          */
         if(!Number.isInteger(coords.x) || !Number.isInteger(coords.y)){
-            throw "non-integer indices given for grid coords";
+            throw `non-integer indices given for grid coords. Inputted coords: ${coords.x},${coords.y}`;
         }
         if(coords.x < 0 || coords.y < 0){
             throw "negative indices given for grid coords";
         }
-        if(coords.x > this.config.cell_size.x_size-1 || coords.y > this.config.cell_size.y_size-1){
-            throw `coordinates out of bounds. Grid is of width ${this.config.cell_size.x_size} and height ${this.config.cell_size.y_size}`
+        if(coords.x > (this.config.grid_dimensions.width-1) || coords.y > (this.config.grid_dimensions.height-1)){
+            throw `coordinates out of bounds. Grid is of width ${this.config.grid_dimensions.width} and height ${this.config.grid_dimensions.height}\n
+            Note: passing in 2 refers to index 2 which is the third element of the grid`
         }
+        
     }
 
     render(svg:any){
