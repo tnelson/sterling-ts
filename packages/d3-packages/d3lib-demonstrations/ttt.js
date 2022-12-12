@@ -13,8 +13,8 @@ const boardGridProps = {
         y_size:10
     },
     grid_dimensions:{
-        height:3,
-        width:3
+        y_size:3,
+        x_size:3
     }
 }
 
@@ -33,7 +33,7 @@ function makeNewGrid(boardAtom){
     for (r = 1; r <= 3; r++) {
         for (c = 1; c <= 3; c++) {
           const text = boardAtom.places[findAtom(r)][findAtom(c)].toString().substring(0,1)
-          const cellObject = new TextBox({x:0,y:0}, text)
+          const cellObject = new TextBox(text)
           returnGrid.add({y:r-1,x:c-1}, cellObject) 
         }
       }
@@ -50,8 +50,8 @@ const multiBoardGridProps = {
             y_size:40
         },
         grid_dimensions:{
-            height:9,
-            width:1
+            y_size:9,
+            x_size:1
         }
 }
 

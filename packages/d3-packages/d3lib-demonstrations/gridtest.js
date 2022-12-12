@@ -13,8 +13,8 @@ const bigGridConfig = {
         y_size:150
     },
     grid_dimensions:{
-        height:3,
-        width:3
+        y_size:3,
+        x_size:3
     }
 }
 
@@ -22,7 +22,7 @@ const bigGrid = new Grid(bigGridConfig)
 
 for(let i = 0; i < 3; i++){
     for(let j =0; j<3; j++){
-        const newRect = new Rectangle({x:0,y:0},140,140);
+        const newRect = new Rectangle(140,140);
         bigGrid.add({x:i,y:j}, newRect)
     }
 }
@@ -38,14 +38,14 @@ const smallGridConfig = {
         y_size:45
     },
     grid_dimensions:{
-        height:3,
-        width:3
+        y_size:3,
+        x_size:3
     }
 }
 const smallGrid = new Grid(smallGridConfig)
 for(let i = 0; i < 3; i++){
     for(let j =0; j<3; j++){
-        const newRect = new Rectangle({x:0,y:0},40,40);
+        const newRect = new Rectangle(40,40);
         smallGrid.add({x:i,y:j}, newRect)
     }
 }
@@ -62,15 +62,15 @@ const smallerGridConfig = {
         y_size:10
     },
     grid_dimensions:{
-        height:3,
-        width:3
+        y_size:3,
+        x_size:3
     }
 }
 
 const smallerGrid = new Grid(smallerGridConfig)
 for(let i = 0; i < 3; i++){
     for(let j =0; j<3; j++){
-        const newRect = new Rectangle({x:0,y:0},9,9);
+        const newRect = new Rectangle(9,9);
         smallerGrid.add({x:i,y:j}, newRect)
     }
 }

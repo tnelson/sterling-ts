@@ -9,8 +9,8 @@ interface gridProps{
         y_size:number
     },
     grid_dimensions:{
-        height:number,
-        width:number
+        x_size:number,
+        y_size:number
     },
     // outline: boolean
 
@@ -19,6 +19,7 @@ interface gridProps{
 interface gridCell{
     contents?: VisualObject,
     center: Coords,
+    full:boolean
 }
 
 export class Grid extends VisualObject{
@@ -53,10 +54,11 @@ export class Grid extends VisualObject{
      * do the computations as to where the centers of objects are)
      * 
      */
-        for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
+        for(let x_coord = 0; x_coord < this.config.grid_dimensions.x_size; x_coord++){
             this.cells.push([]);
-            for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
+            for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
                 const empty_cell:gridCell = {
+                    full: false,
                     center:{
                         x:this.config.grid_location.x + this.config.cell_size.x_size*x_coord + 
                         + this.config.cell_size.x_size/2,
@@ -78,11 +80,12 @@ export class Grid extends VisualObject{
          */
         this.config.grid_location = {
             x: center.x - (this.config.grid_dimensions.width/2 * this.config.cell_size.x_size),
-            y: center.y - (this.config.grid_dimensions.height/2 * this.config.cell_size.y_size)
+            y: center.y - (this.config.grid_dimensions.y_size/2 * this.config.cell_size.y_size)
         }
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
-            for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
+            for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
                 const new_cell:gridCell = {
+                    full: this.cells[x_coord][y_coord].full,
                     center:{
                         x:this.config.grid_location.x + this.config.cell_size.x_size*x_coord + 
                         + this.config.cell_size.x_size/2,
@@ -144,21 +147,21 @@ export class Grid extends VisualObject{
      * Calling this method adds these lines to be rendered (calling more than once does nothing)
      */
         //cols
-        for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
+        for(let x_coord = 0; x_coord < this.config.grid_dimensions.x_size; x_coord++){
             const vertLine: Line = new Line([
                 {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
                     y:this.config.grid_location.y},
                 {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
-                    y:this.config.grid_location.y + this.config.grid_dimensions.height*this.config.cell_size.y_size}
+                    y:this.config.grid_location.y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size}
             ]);
             this.gridlines.push(vertLine)
         }
         //rows
-        for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
+        for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
             const horizLine: Line = new Line([
                 {x:this.config.grid_location.x,
                     y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size},
-                {x:this.config.grid_location.x+this.config.grid_dimensions.width*this.config.cell_size.x_size,
+                {x:this.config.grid_location.x+this.config.grid_dimensions.x_size*this.config.cell_size.x_size,
                     y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size}
             ]);
             this.gridlines.push(horizLine)    
@@ -175,7 +178,7 @@ export class Grid extends VisualObject{
         this.check_coords(coords)
 
         const addRectangle:Rectangle = new Rectangle(
-            this.config.cell_size.x_size, //height
+            this.config.cell_size.x_size, //y_size
             this.config.cell_size.y_size) //width
         
         addRectangle.setColor(color)
@@ -196,8 +199,8 @@ export class Grid extends VisualObject{
         if(coords.x < 0 || coords.y < 0){
             throw "negative indices given for grid coords";
         }
-        if(coords.x > (this.config.grid_dimensions.width-1) || coords.y > (this.config.grid_dimensions.height-1)){
-            throw `coordinates out of bounds. Grid is of width ${this.config.grid_dimensions.width} and height ${this.config.grid_dimensions.height}\n
+        if(coords.x > (this.config.grid_dimensions.width-1) || coords.y > (this.config.grid_dimensions.y_size-1)){
+            throw `coordinates out of bounds. Grid is of width ${this.config.grid_dimensions.x_size} and y_size ${this.config.grid_dimensions.y_size}\n
             Note: passing in 2 refers to index 2 which is the third element of the grid`
         }
         
@@ -207,10 +210,10 @@ export class Grid extends VisualObject{
         //render gridlines
 
         //render each child in each cell
-        for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
-            for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
+        for(let x_coord = 0; x_coord < this.config.grid_dimensions.x_size; x_coord++){
+            for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
                 const target_cell = this.cells[x_coord][y_coord]
-                    if(target_cell.contents){ //I don't want to have to include this code but it's necessary to make
+                    if(target_cell.full){ //I don't want to have to include this code but it's necessary to make
                     //typescript not mad
                         target_cell.contents.render(svg)
                     }
@@ -218,15 +221,3 @@ export class Grid extends VisualObject{
         }
     }
 }
-
-const grid = new Grid({
-    grid_location: {x:0,y:0},
-    cell_size:{
-        x_size:1,
-        y_size:1
-    },
-    grid_dimensions:{
-        height:3,
-        width:4
-    },
-})
