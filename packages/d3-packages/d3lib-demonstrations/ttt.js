@@ -26,8 +26,6 @@ function findAtom(v) {
   }
 }
 
-const newTextbox = new TextBox({x:0,y:0},"")
-console.log(newTextbox)
 function makeNewGrid(boardAtom){
     let returnGrid = new Grid(boardGridProps)
     for (r = 1; r <= 3; r++) {
@@ -37,6 +35,7 @@ function makeNewGrid(boardAtom){
           returnGrid.add({y:r-1,x:c-1}, cellObject) 
         }
       }
+    console.log(returnGrid)
     return returnGrid
 }
 

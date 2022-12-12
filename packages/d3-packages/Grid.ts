@@ -79,10 +79,10 @@ export class Grid extends VisualObject{
          * and then iterate through the children elements to the table, snapping each to their new location
          */
         this.config.grid_location = {
-            x: center.x - (this.config.grid_dimensions.width/2 * this.config.cell_size.x_size),
+            x: center.x - (this.config.grid_dimensions.x_size/2 * this.config.cell_size.x_size),
             y: center.y - (this.config.grid_dimensions.y_size/2 * this.config.cell_size.y_size)
         }
-        for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
+        for(let x_coord = 0; x_coord < this.config.grid_dimensions.x_size; x_coord++){
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
                 const new_cell:gridCell = {
                     full: this.cells[x_coord][y_coord].full,
@@ -179,7 +179,7 @@ export class Grid extends VisualObject{
 
         const addRectangle:Rectangle = new Rectangle(
             this.config.cell_size.x_size, //y_size
-            this.config.cell_size.y_size) //width
+            this.config.cell_size.y_size) //x_size
         
         addRectangle.setColor(color)
 
@@ -199,8 +199,8 @@ export class Grid extends VisualObject{
         if(coords.x < 0 || coords.y < 0){
             throw "negative indices given for grid coords";
         }
-        if(coords.x > (this.config.grid_dimensions.width-1) || coords.y > (this.config.grid_dimensions.y_size-1)){
-            throw `coordinates out of bounds. Grid is of width ${this.config.grid_dimensions.x_size} and y_size ${this.config.grid_dimensions.y_size}\n
+        if(coords.x > (this.config.grid_dimensions.x_size-1) || coords.y > (this.config.grid_dimensions.y_size-1)){
+            throw `coordinates out of bounds. Grid is of x_size ${this.config.grid_dimensions.x_size} and y_size ${this.config.grid_dimensions.y_size}\n
             Note: passing in 2 refers to index 2 which is the third element of the grid`
         }
         
@@ -213,8 +213,7 @@ export class Grid extends VisualObject{
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.x_size; x_coord++){
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
                 const target_cell = this.cells[x_coord][y_coord]
-                    if(target_cell.full){ //I don't want to have to include this code but it's necessary to make
-                    //typescript not mad
+                    if(target_cell.contents){ 
                         target_cell.contents.render(svg)
                     }
             }

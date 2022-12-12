@@ -15,14 +15,13 @@ export class TextBox extends VisualObject{
     */
 
     constructor(
+        text: string,
         coords?: Coords,
-        text?: string
     ){
         if(coords){super(coords)}
-        else{super()}
+        else{super({x:0,y:0})} //quick fix. Want to get to the root of this problem
         
-        if(text){this.text = text}
-        else{this.text=""}
+        this.text = text
         this.fontSize = DEFAULT_FONT_SIZE;
         this.color = DEFAULT_TEXT_COLOR;
     }
