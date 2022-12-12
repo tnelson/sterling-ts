@@ -34,8 +34,8 @@ const smallGridConfig = {
         y:0
     },
     cell_size:{
-        x_size:20,
-        y_size:20
+        x_size:45,
+        y_size:45
     },
     grid_dimensions:{
         height:3,
@@ -45,10 +45,37 @@ const smallGridConfig = {
 const smallGrid = new Grid(smallGridConfig)
 for(let i = 0; i < 3; i++){
     for(let j =0; j<3; j++){
-        const newRect = new Rectangle({x:0,y:0},14,14);
+        const newRect = new Rectangle({x:0,y:0},40,40);
         smallGrid.fill_cell({x:i,y:j}, newRect)
     }
 }
+
+smallGrid.remove_cell({x:1,y:1})
+
+const smallerGridConfig = {
+    grid_location :{
+        x:0,
+        y:0
+    },
+    cell_size:{
+        x_size:10,
+        y_size:10
+    },
+    grid_dimensions:{
+        height:3,
+        width:3
+    }
+}
+
+const smallerGrid = new Grid(smallerGridConfig)
+for(let i = 0; i < 3; i++){
+    for(let j =0; j<3; j++){
+        const newRect = new Rectangle({x:0,y:0},9,9);
+        smallerGrid.fill_cell({x:i,y:j}, newRect)
+    }
+}
+
+smallGrid.fill_cell({x:1,y:1},smallerGrid)
 
 bigGrid.fill_cell({x:1,y:1}, smallGrid)
 
