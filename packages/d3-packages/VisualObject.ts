@@ -27,7 +27,14 @@ export class VisualObject{
         this.coords = center
     }
 
+    //getX
+    //getY
+    //transformX -> is this functionality that we actually want to offer?
+    //transformY
+    //rotate???
+
     //question: what actually makes up an object? Is every object a collection of shapes? What about text
+    //Question: do we want objects to implicitly have children? I don't actually think so
     render(svg:any){
         this.children.forEach((child: VisualObject) => child.render(svg))
     }

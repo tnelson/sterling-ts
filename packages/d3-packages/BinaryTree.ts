@@ -7,8 +7,10 @@ interface BinaryTreeParams{
 export default class BinaryTree{
     LeftChild:BinaryTree
     RightChild:BinaryTree
-    constructor(children:BinaryTreeParams){//the more natural definition
+    constructor(children:BinaryTreeParams){ //the more natural definition
         this.LeftChild = children.LeftChild
         this.RightChild = children.RightChild
     }
+
+    
 }

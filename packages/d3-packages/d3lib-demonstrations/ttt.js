@@ -34,7 +34,7 @@ function makeNewGrid(boardAtom){
         for (c = 1; c <= 3; c++) {
           const text = boardAtom.places[findAtom(r)][findAtom(c)].toString().substring(0,1)
           const cellObject = new TextBox({x:0,y:0}, text)
-          returnGrid.fill_cell({y:r-1,x:c-1}, cellObject) 
+          returnGrid.add({y:r-1,x:c-1}, cellObject) 
         }
       }
     return returnGrid
@@ -60,10 +60,10 @@ const multiBoardGrid = new Grid(multiBoardGridProps)
 for(b = 0; b <= 9; b++) {  
     if(Board.atom("Board"+b) != null){
       const newGrid = makeNewGrid(Board.atom("Board"+b))
-      multiBoardGrid.fill_cell({x:0,y:b},newGrid)
+      multiBoardGrid.add({x:0,y:b},newGrid)
     }
 }
 
-stage.addChild(mainPane);
-mainPane.addChild(multiBoardGrid)
+stage.add(mainPane);
+mainPane.add(multiBoardGrid)
 stage.render(svg)

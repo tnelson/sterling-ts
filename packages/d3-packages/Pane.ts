@@ -10,7 +10,7 @@ export class Pane{
         this.Children = []
     }
 
-    addChild(addNode:VisualObject){
+    add(addNode:VisualObject){
         this.Children.push(addNode)
     }
 

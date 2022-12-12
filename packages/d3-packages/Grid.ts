@@ -72,6 +72,12 @@ export class Grid extends VisualObject{
     }
 
     setCenter(center: Coords){
+        /**
+         * Adjust the centering of the table. We first update the "config.grid_location" variable
+         * (this tells the table where its upper left corber is)
+         * 
+         * and then iterate through the children elements to the table, snapping each to their new location
+         */
         this.config.grid_location = {
             x: center.x - (this.config.grid_dimensions.width/2 * this.config.cell_size.x_size),
             y: center.y - (this.config.grid_dimensions.height/2 * this.config.cell_size.y_size)
@@ -98,7 +104,7 @@ export class Grid extends VisualObject{
     }
 
 
-    fill_cell(coords: Coords, add_object:VisualObject){
+    add(coords: Coords, add_object:VisualObject){
     /**
      * Given valid coordinates of our grid, we add and center an object to a given
      * coordinate (note: we don't support adding multiple VisualObjects to the same frame -
@@ -120,7 +126,7 @@ export class Grid extends VisualObject{
         add_object.setCenter(target_cell.center) //center object
     }
 
-    remove_cell(coords: Coords){
+    remove(coords: Coords){
         /**
          * Given valid coordinates of our grid, we remove the object in a given cell
          * 
@@ -164,7 +170,7 @@ export class Grid extends VisualObject{
         }
     }
 
-    fill_solid(coords: Coords, color: string){
+    fill(coords: Coords, color: string){
         /**
          * Given a single coordinate square of our grid, we fill that
          * square in with a given color
@@ -181,7 +187,7 @@ export class Grid extends VisualObject{
         
         //TODO: set rectangle color (we don't have that functionality currently in Rectangle.ts)
 
-        this.fill_cell(coords, addRectangle)
+        this.add(coords, addRectangle)
     }
 
     check_coords(coords:Coords){

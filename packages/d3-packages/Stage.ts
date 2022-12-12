@@ -7,7 +7,7 @@ export class Stage{
     constructor(){
         this.Children = []
     }
-    addChild(addPane:Pane){
+    add(addPane:Pane){
         this.Children.push(addPane)
     }
     render(svg:any){

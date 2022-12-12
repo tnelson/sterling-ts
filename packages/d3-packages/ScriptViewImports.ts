@@ -7,6 +7,7 @@ import { TextBox } from "./Textbox"
 import { VisualObject } from "./VisualObject"
 import {Line} from "./Line"
 import { Grid } from "./Grid"
+import {ConjoinedObject} from './ConjoinedObject'
 
 const scriptViewImports = [
     {name: "Pane", value: Pane},
@@ -17,7 +18,8 @@ const scriptViewImports = [
     {name: "Stage", value: Stage},
     {name: "TextBox", value: TextBox},
     {name: "VisualObject", value: VisualObject},
-    {name: "Line", value: Line}
+    {name: "Line", value: Line},
+    {name: "ConjoinedObject",value:ConjoinedObject}
 ]
 
 const helperLibFilePaths = ["./Pane", "./Rectangle", "./Circle", "./Shape", "./Stage", "./Textbox", "./VisualObject", "./Line", "./Grid"]

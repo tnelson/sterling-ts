@@ -1,17 +1,23 @@
-import {VisualObject} from './VisualObject'
+import {VisualObject, Coords} from './VisualObject'
 
 
-export default class ConjoinedObject{
+export class ConjoinedObject extends VisualObject{
     /**
      * Note: this code is untested!
      */
 
     objects:VisualObject[]
-    constructor(){
+    constructor(Children?:VisualObject[]){
+        super({x:0,y:0})//TODO: fix this 
         this.objects = []
+        if(Children){
+            Children.forEach(child => {
+                this.add(child)
+            });
+        }
     }
 
-    add_object(obj:VisualObject, index:number){
+    addOrdered(obj:VisualObject, index:number){
         /**
          * Given an arbitrary visual object, inserts that object at the given
          * index. If the index is greater than the length of objects +1 an error is thrown
@@ -22,8 +28,22 @@ export default class ConjoinedObject{
         }
 
         this.objects.splice(index, 0, obj);
+    }
 
+    add(obj:VisualObject){
+        /**
+         * Ease of access feature that allows for 
+         */
+        this.addOrdered(obj,0)
+    }
 
+    setCenter(coords:Coords){
+        /**
+         * Align all the objects in the conjoined object to a single center
+         */
+        this.objects.forEach(obj => {
+            obj.setCenter(coords)
+        })
     }
 
     render(svg:any){

@@ -15,6 +15,8 @@ export class Rectangle extends Shape{
     */
 
     constructor(
+        //TODO: make coords optional to pass in and if not supplied, {x:0,y:0} are the
+        //coords that are set by default :)
         coords: Coords,
         height: number,
         width: number
