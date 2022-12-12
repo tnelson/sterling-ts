@@ -12,8 +12,11 @@ export class VisualObject{
     //iterates through each of the panes, asking each pane to render all of its children (which the pane does
     //by calling this method)
 
-    constructor(coords: Coords){
-        this.coords = coords
+    constructor(coords?: Coords){
+        if(coords){
+            this.coords = coords
+        }
+        else this.coords = {x:0,y:0}
         this.children = []
     }
 

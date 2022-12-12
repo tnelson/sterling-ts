@@ -17,7 +17,6 @@ interface gridProps{
 }
 
 interface gridCell{
-    full: boolean,
     contents?: VisualObject,
     center: Coords,
 }
@@ -58,7 +57,6 @@ export class Grid extends VisualObject{
             this.cells.push([]);
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
                 const empty_cell:gridCell = {
-                    full: false,
                     center:{
                         x:this.config.grid_location.x + this.config.cell_size.x_size*x_coord + 
                         + this.config.cell_size.x_size/2,
@@ -85,7 +83,6 @@ export class Grid extends VisualObject{
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
                 const new_cell:gridCell = {
-                    full: this.cells[x_coord][y_coord].full,
                     center:{
                         x:this.config.grid_location.x + this.config.cell_size.x_size*x_coord + 
                         + this.config.cell_size.x_size/2,
@@ -121,7 +118,6 @@ export class Grid extends VisualObject{
         //TODO: check for inside bounding box
 
         const target_cell: gridCell = this.cells[coords.x][coords.y]
-        target_cell.full = true
         target_cell.contents = add_object
         add_object.setCenter(target_cell.center) //center object
     }
@@ -136,8 +132,7 @@ export class Grid extends VisualObject{
             this.check_coords(coords)
         
             const target_cell: gridCell = this.cells[coords.x][coords.y]
-            if(target_cell.full == true){
-                target_cell.full = false
+            if(!target_cell.contents){
                 delete target_cell['contents']
             }
         }
@@ -178,14 +173,12 @@ export class Grid extends VisualObject{
         
         
         this.check_coords(coords)
-        const target_cell: gridCell = this.cells[coords.x-1][coords.y-1]
-        target_cell.full = true
 
-        const addRectangle:Rectangle = new Rectangle({x:0,y:0},
+        const addRectangle:Rectangle = new Rectangle(
             this.config.cell_size.x_size, //height
             this.config.cell_size.y_size) //width
         
-        //TODO: set rectangle color (we don't have that functionality currently in Rectangle.ts)
+        addRectangle.setColor(color)
 
         this.add(coords, addRectangle)
     }
@@ -217,12 +210,10 @@ export class Grid extends VisualObject{
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.width; x_coord++){
             for(let y_coord = 0; y_coord < this.config.grid_dimensions.height; y_coord++){
                 const target_cell = this.cells[x_coord][y_coord]
-                if(target_cell.full){
                     if(target_cell.contents){ //I don't want to have to include this code but it's necessary to make
                     //typescript not mad
                         target_cell.contents.render(svg)
                     }
-                }
             }
         }
     }

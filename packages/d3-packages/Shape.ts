@@ -13,9 +13,10 @@ export class Shape extends VisualObject{
     */
 
     constructor(
-        coords: Coords
+        coords?: Coords
     ){
-        super(coords)
+        if(coords){super(coords)}
+        else{super()}
         this.color = DEFAULT_BORDER_COLOR; 
         this.borderWidth = DEFAULT_STROKE_WIDTH;
         this.borderColor = DEFAULT_COLOR;

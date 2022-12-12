@@ -15,13 +15,12 @@ export class Rectangle extends Shape{
     */
 
     constructor(
-        //TODO: make coords optional to pass in and if not supplied, {x:0,y:0} are the
-        //coords that are set by default :)
-        coords: Coords,
         height: number,
-        width: number
+        width: number,
+        coords?: Coords,
     ){
-        super(coords)
+        if(coords){super(coords)}
+        else{super()}
         this.height = height
         this.width = width
     }
@@ -41,8 +40,8 @@ export class Rectangle extends Shape{
         super.render(svg)
         d3.select(svg)
             .append('rect')
-            .attr('x', this.coords.y)
-            .attr('y', this.coords.x)
+            .attr('x', this.coords.x)
+            .attr('y', this.coords.y)
             .attr('width', this.width)
             .attr('height', this.height)
             .attr('stroke-width', this.borderWidth)

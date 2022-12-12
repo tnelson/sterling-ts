@@ -13,18 +13,19 @@ export class Circle extends Shape{
     */
 
     constructor(
-        coords: Coords,
         radius: number,
+        coords?: Coords,
     ){
-        super(coords)
+        if(coords){super(coords)}
+        else{super()}
         this.radius = radius
     }
 
     render(svg: any){
         d3.select(svg)
             .append('circle')
-            .attr('cx', this.coords.y)
-            .attr('cy', this.coords.x)
+            .attr('cx', this.coords.x)
+            .attr('cy', this.coords.y)
             .attr('r', this.radius)
             .attr('stroke-width', this.borderWidth)
             .attr('stroke', this.borderColor)

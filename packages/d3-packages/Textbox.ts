@@ -15,11 +15,14 @@ export class TextBox extends VisualObject{
     */
 
     constructor(
-        coords: Coords,
-        text: string
+        coords?: Coords,
+        text?: string
     ){
-        super(coords)
-        this.text = text
+        if(coords){super(coords)}
+        else{super()}
+        
+        if(text){this.text = text}
+        else{this.text=""}
         this.fontSize = DEFAULT_FONT_SIZE;
         this.color = DEFAULT_TEXT_COLOR;
     }
