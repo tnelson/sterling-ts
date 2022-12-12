@@ -91,8 +91,7 @@ function selectScriptVariables(
     const visStates: ScriptVariable[] = scriptViewImports.map((visState) => ({
       name: visState.name,
       variable: visState.value,
-      type: 'Class',
-      typeURL: ''
+      type: `() => AlloySignature`
     }));
 
     const scriptVariables: ScriptVariable[] = [

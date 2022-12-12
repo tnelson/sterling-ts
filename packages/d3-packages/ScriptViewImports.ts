@@ -20,4 +20,10 @@ const scriptViewImports = [
     {name: "Line", value: Line}
 ]
 
+const helperLibFilePaths = ["./Pane", "./Rectangle", "./Circle", "./Shape", "./Stage", "./Textbox", "./VisualObject", "./Line", "./Grid"]
+
+const VariableDefs = helperLibFilePaths.map((filePath)=> {
+    
+})
+
 export default scriptViewImports;

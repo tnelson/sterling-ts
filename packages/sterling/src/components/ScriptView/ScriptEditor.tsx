@@ -57,7 +57,7 @@ const ScriptEditor = (props: ScriptEditorProps) => {
     monaco.languages.typescript.javascriptDefaults.setExtraLibs([
       {
         content: alloyDefs + '\n' + defs,
-        filePath: 'alloy.js'
+        filePath: 'alloy.js' 
       },
       {
         content: defs,
