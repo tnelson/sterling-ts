@@ -8,6 +8,7 @@ import { VisualObject } from "./VisualObject"
 import {Line} from "./Line"
 import { Grid } from "./Grid"
 import {ConjoinedObject} from './ConjoinedObject'
+import { Polygon } from "./Polygon"
 
 const scriptViewImports = [
     {name: "Pane", value: Pane},
@@ -19,13 +20,8 @@ const scriptViewImports = [
     {name: "TextBox", value: TextBox},
     {name: "VisualObject", value: VisualObject},
     {name: "Line", value: Line},
-    {name: "ConjoinedObject",value:ConjoinedObject}
+    {name: "ConjoinedObject",value:ConjoinedObject},
+    {name: "Polygon", value:Polygon}
 ]
-
-const helperLibFilePaths = ["./Pane", "./Rectangle", "./Circle", "./Shape", "./Stage", "./Textbox", "./VisualObject", "./Line", "./Grid"]
-
-const VariableDefs = helperLibFilePaths.map((filePath)=> {
-    
-})
 
 export default scriptViewImports;

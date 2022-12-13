@@ -29,13 +29,11 @@ export class Line extends VisualObject{
 
     render(svg: any){
         let path = d3.path()
-        console.log(path)
         path.moveTo(this.points[0].x, this.points[0].y)
         this.points.forEach((point: Coords) => {
             path.lineTo(point.x, point.y)
             }
         )
-        console.log(path)
         d3.select(svg)
             .append('path')
             .attr('d', path)
