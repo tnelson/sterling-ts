@@ -3,6 +3,7 @@ import { require as d3require } from 'd3-require';
 const d3 = require("d3")
 import {Coords, VisualObject} from './VisualObject'
 import { DEFAULT_COLOR, DEFAULT_LINE_COLOR, DEFAULT_STROKE_WIDTH } from './Constants'
+import { average } from '@/vector2';
 
 export class Line extends VisualObject{
     points: Coords[]
@@ -27,6 +28,18 @@ export class Line extends VisualObject{
     setColor(color: string){this.color = color}
     setWidth(width: number){this.width = width}
 
+    // Using averagePath utility to return rough center
+    center(): Coords { return averagePath(this.points) }
+
+    // Shifts points so average is at new center
+    setCenter(center: Coords): void {
+        let shift: Coords = {
+            x: center.x - this.center().x,
+            y: center.y - this.center().y
+        }
+        this.points = shiftList(this.points, shift)
+    }
+
     render(svg: any){
         let path = d3.path()
         path.moveTo(this.points[0].x, this.points[0].y)
@@ -42,4 +55,39 @@ export class Line extends VisualObject{
             .attr('fill', "transparent") // Should prob make easier in future. 
         super.render(svg)
     }
+}
+
+/**
+ * Simple method averaging the coordinate points in a series.
+ * @param points 
+ * @returns 
+ */
+export function averagePath(points: Coords[]): Coords{
+    if (points.length == 0){
+        return {x: 0, y:0}
+    }
+    //Averages the points
+    return points.reduce(
+        (previousValue: Coords, currentValue: Coords) => {return {
+            x: previousValue.x + currentValue.x / points.length,
+            y: previousValue.y + currentValue.y / points.length
+        }},
+        {x:0, y:0}
+    )
+}
+
+/**
+ * Shifts a list of points according to a shift variable
+ * @param pointList 
+ * @param shift 
+ * @returns 
+ */
+export function shiftList(pointList: Coords[], shift: Coords): Coords[] {
+    let newPoints: Coords[] = pointList.map((point: Coords): Coords => {
+        return {
+            x: point.x + shift.x,
+            y: point.y + shift.y
+        }
+    })
+    return newPoints
 }

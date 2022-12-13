@@ -1,6 +1,7 @@
+
 export interface Coords{
     x: number,
-    y: number
+    y: number;
 }
 
 export class VisualObject{
@@ -32,7 +33,7 @@ export class VisualObject{
 
     //getX
     //getY
-    //transformX -> is this functionality that we actually want to offer?
+    //transformX -> is this functionality that we actually want to offer? 
     //transformY
     //rotate???
 

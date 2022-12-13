@@ -2,6 +2,7 @@ import {Shape} from './Shape'
 import { require as d3require } from 'd3-require';
 const d3 = require("d3")
 import {Coords} from './VisualObject'
+import { averagePath, shiftList } from './Line';
 
 
 export class Polygon extends Shape{
@@ -12,6 +13,18 @@ export class Polygon extends Shape{
     ){
         super(points[0])
         this.points = points
+    }
+
+    // Using averagePath utility to return rough center
+    center(): Coords { return averagePath(this.points) }
+
+    // Shifts points so average is at new center
+    setCenter(center: Coords): void {
+        let shift: Coords = {
+            x: - this.center().x + center.x,
+            y: - this.center().y + center.y
+        }
+        this.points = shiftList(this.points, shift)
     }
 
     render(svg: any){
