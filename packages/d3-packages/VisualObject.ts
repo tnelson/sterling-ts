@@ -9,10 +9,6 @@ export class VisualObject{
     coords: Coords
     children: VisualObject[]
 
-    //idea: give each object the functionality to render themselves. When one calls "render" on the stage it
-    //iterates through each of the panes, asking each pane to render all of its children (which the pane does
-    //by calling this method)
-
     constructor(coords?: Coords){
         if(coords){
             this.coords = coords
@@ -29,6 +25,7 @@ export class VisualObject{
 
     setCenter(center: Coords){
         this.coords = center
+        this.children.forEach((child) => child.setCenter(center))
     }
 
     //getX

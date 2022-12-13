@@ -7,13 +7,14 @@ import {Coords} from './VisualObject'
 export class Rectangle extends Shape{
     height: number;
     width: number;
-    /*
-    All shapes will extend this class
 
-    Idea: want functionality to be able to conjoin two shapes (i.e. for tic-tac-toe,
-        throw an X over a square and call it a single type)
-    */
-
+    /**
+     * Creates a Rectangle object with the given height and width, placing the top left corner
+     * at the coordinate argument.
+     * @param height size in y direction
+     * @param width size in x direction
+     * @param coords top left corner
+     */
     constructor(
         height: number,
         width: number,
@@ -24,6 +25,9 @@ export class Rectangle extends Shape{
         this.height = height
         this.width = width
     }
+
+    setWidth(width: number){this.width = width}
+    setHeight(height: number){this.height = height}
 
     center(): Coords{
         return {x: this.coords.x + this.width/2, y: this.coords.y + this.height/2}
