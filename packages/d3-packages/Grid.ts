@@ -98,6 +98,8 @@ export class Grid extends VisualObject{
                 this.cells[x_coord][y_coord] = new_cell
             }
         }
+        this.gridlines = []
+        this.fill_grid_lines()
     }
 
 
@@ -144,22 +146,22 @@ export class Grid extends VisualObject{
      * Calling this method adds these lines to be rendered (calling more than once does nothing)
      */
         //cols
-        for(let x_coord = 0; x_coord < this.config.grid_dimensions.x_size; x_coord++){
+        for(let y_coord = 0; y_coord <= this.config.grid_dimensions.y_size; y_coord++){
             const vertLine: Line = new Line([
-                {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
-                    y:this.config.grid_location.y},
-                {x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size,
-                    y:this.config.grid_location.y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size}
+                {y:this.config.grid_location.x+y_coord*this.config.cell_size.x_size,
+                    x:this.config.grid_location.y},
+                {y:this.config.grid_location.x+y_coord*this.config.cell_size.x_size,
+                    x:this.config.grid_location.y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size}
             ]);
             this.gridlines.push(vertLine)
         }
         //rows
-        for(let y_coord = 0; y_coord < this.config.grid_dimensions.y_size; y_coord++){
+        for(let x_coord = 0; x_coord <= this.config.grid_dimensions.x_size; x_coord++){
             const horizLine: Line = new Line([
-                {x:this.config.grid_location.x,
-                    y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size},
-                {x:this.config.grid_location.x+this.config.grid_dimensions.x_size*this.config.cell_size.x_size,
-                    y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size}
+                {y:this.config.grid_location.x,
+                    x:this.config.grid_location.y+x_coord*this.config.cell_size.y_size},
+                {y:this.config.grid_location.x+this.config.grid_dimensions.x_size*this.config.cell_size.x_size,
+                    x:this.config.grid_location.y+x_coord*this.config.cell_size.y_size}
             ]);
             this.gridlines.push(horizLine)    
         }
@@ -200,10 +202,10 @@ export class Grid extends VisualObject{
             throw `coordinates out of bounds. Grid is of x_size ${this.config.grid_dimensions.x_size} and y_size ${this.config.grid_dimensions.y_size}\n
             Note: passing in 2 refers to index 2 which is the third element of the grid`
         }
-        
     }
 
     render(svg:any){
+        this.gridlines.forEach(elt => elt.render(svg))
         //render gridlines
 
         //render each child in each cell
