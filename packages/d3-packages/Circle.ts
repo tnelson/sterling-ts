@@ -21,6 +21,8 @@ export class Circle extends Shape{
         this.radius = radius
     }
 
+    setRadius(radius: number){this.radius = radius}
+
     render(svg: any){
         d3.select(svg)
             .append('circle')

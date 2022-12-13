@@ -25,6 +25,8 @@ export class Polygon extends Shape{
             y: - this.center().y + center.y
         }
         this.points = shiftList(this.points, shift)
+        
+        super.setCenter(center)
     }
 
     render(svg: any){
