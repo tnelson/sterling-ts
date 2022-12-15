@@ -1,4 +1,3 @@
-import {Pane} from './Pane'
 import { require as d3require } from 'd3-require';
 import { VisualObject } from './VisualObject';
 const d3 = require("d3")

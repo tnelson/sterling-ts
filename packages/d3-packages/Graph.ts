@@ -13,15 +13,35 @@ interface check_add_set_response{
     neighbors_not_found_in_set: string[]
 }
 
+interface nodes_overlapping_response{
+    success:boolean,
+    neighbors_overlapping: Node[]
+}
 
-export class Graph{
+interface Range{
+    x_range:
+    {low:number,
+    high:number}
+    y_range:{
+        low:number,
+        high:number
+    }
+}
+
+
+export class Graph extends VisualObject{
     nodes: Node[]
     node_radius:number
     fixed_nodes:number
+    graph_dimensions:number //aside: we build our graphs in a square box by convention
+    //and so this need only be a single number
+
     node_to_location:any //a map from strings to coordinates
     
-    constructor(fixed_nodes?:number,node_radius?:number, ){
+    constructor(coords?:Coords, graph_dimensions?:number,fixed_nodes?:number,node_radius?:number,){
+        super(coords)
         this.nodes = []
+        this.graph_dimensions = graph_dimensions ?? SCREEN_WIDTH
         this.node_radius = node_radius ?? DEFAULT_NODE_RADIUS
         this.fixed_nodes = fixed_nodes ?? DEFAULT_GRAPH_FIXED_NODES
         this.node_to_location = {}
@@ -58,7 +78,7 @@ export class Graph{
 
         const malleable_nodes = this.nodes.slice(this.fixed_nodes) //the nodes we are are going to be changing the locations of
         malleable_nodes.forEach(node => { //set initial locations (center of screen)
-            this.node_to_location[node.name] = {x: SCREEN_WIDTH/2, y: SCREEN_WIDTH/2}
+            this.node_to_location[node.name] = {x:this.graph_dimensions /2, y: this.graph_dimensions/2}
         })
 
         for(let ignored = 0; ignored<1000; ignored++){
@@ -74,13 +94,13 @@ export class Graph{
          * SCREENWIDTH
          */
         const n = Nodes.length
-        const r =  SCREEN_WIDTH/2 //radius
+        const r =  this.graph_dimensions/2 //radius
         let i = 0
         Nodes.forEach((node) => {
             i++
             this.node_to_location[node.name] = {
-                x: SCREEN_WIDTH/2 + r*Math.cos(i*(2*Math.PI)/n),
-                y: SCREEN_WIDTH/2 + r*Math.sin(i*(2*Math.PI)/n)
+                x: this.graph_dimensions/2 + r*Math.cos(i*(2*Math.PI)/n),
+                y: this.graph_dimensions/2 + r*Math.sin(i*(2*Math.PI)/n)
             }
         })
     }
@@ -122,26 +142,32 @@ export class Graph{
         }
     }
 
-    default_node_radius(num_nodes:number):number{
-        return 20
-    }
 
     render_lines(svg, connections:string[][]){
         connections.forEach(connection => {
             const points = [
-                {x: this.node_to_location[connection[0]].x,
-                y: this.node_to_location[connection[0]].y},
-                {x: this.node_to_location[connection[1]].x,
-                y: this.node_to_location[connection[1]].y},
+                {x: this.node_to_location[connection[0]].x + this.coords.x,
+                y: this.node_to_location[connection[0]].y + this.coords.y},
+                {x: this.node_to_location[connection[1]].x + this.coords.x,
+                y: this.node_to_location[connection[1]].y + this.coords.y},
             ]
             const connectionLine = new Line(points)
             connectionLine.render(svg)
         })
     }
+    setCenter(center:Coords){
+        this.coords = {
+            x: center.x - this.graph_dimensions/2,
+            y: center.y - this.graph_dimensions/2
+        }
+    }
 
     render_nodes(svg){
         this.nodes.forEach(node => {
-            const nodeCircle = new Circle(DEFAULT_NODE_RADIUS, this.node_to_location[node.name], "red", undefined, 
+            const nodeCircle = new Circle(this.node_radius, {
+                x:this.node_to_location[node.name].x + this.coords.x,
+                y: this.node_to_location[node.name].y + this.coords.y
+            }, "red", undefined, 
                 undefined, node.name)
             nodeCircle.render(svg)
         })
@@ -164,8 +190,7 @@ export class Graph{
         });
 
         this.render_lines(svg, connections)
-        this.render_nodes(svg)
-        
+        this.render_nodes(svg)        
     }
 
 
