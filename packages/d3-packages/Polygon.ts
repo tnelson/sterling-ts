@@ -19,7 +19,7 @@ export class Polygon extends Shape{
     ){
         super(points[0], color, borderWidth, borderColor, label, labelColor, labelSize)
         this.points = points
-        this.label.setCenter(this.center)
+        this.label.setCenter(this.center())
     }
 
     // Using averagePath utility to return rough center
