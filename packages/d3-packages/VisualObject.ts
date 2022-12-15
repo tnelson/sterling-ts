@@ -10,10 +10,7 @@ export class VisualObject{
     children: VisualObject[]
 
     constructor(coords?: Coords){
-        if(coords){
-            this.coords = coords
-        }
-        else{this.coords = {x:0,y:0}}
+        this.coords = coords ?? {x: 0, y: 0};
         this.children = []
     }
 

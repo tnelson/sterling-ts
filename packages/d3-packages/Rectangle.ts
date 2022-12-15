@@ -29,13 +29,14 @@ export class Rectangle extends Shape{
         super(coords, color, borderWidth, borderColor, label, labelColor, labelSize)
         this.height = height
         this.width = width
+        this.label.setCenter(this.center)
     }
 
     setWidth(width: number){this.width = width}
     setHeight(height: number){this.height = height}
 
     center(): Coords{
-        return {x: this.coords.x + this.width/2, y: this.coords.y + this.height/2}
+        return {x: this.coords.x + (this.width ?? 0)/2, y: this.coords.y + (this.height ?? 0)/2} //shitfix
     }
 
     setCenter(center: Coords){
@@ -46,7 +47,6 @@ export class Rectangle extends Shape{
     }
 
     render(svg: any){
-        super.render(svg)
         d3.select(svg)
             .append('rect')
             .attr('x', this.coords.x)
@@ -56,5 +56,6 @@ export class Rectangle extends Shape{
             .attr('stroke-width', this.borderWidth)
             .attr('stroke', this.borderColor)
             .attr('fill', this.color)
+        super.render(svg)
     }
 }
