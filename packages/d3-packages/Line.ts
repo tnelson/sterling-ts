@@ -36,7 +36,7 @@ export class Line extends VisualObject{
     center(): Coords { return averagePath(this.points) }
 
     // Shifts points so average is at new center
-    setCenter(center: Coords): void {
+    override setCenter(center: Coords): void {
         let shift: Coords = {
             x: center.x - this.center().x,
             y: center.y - this.center().y
@@ -44,7 +44,7 @@ export class Line extends VisualObject{
         this.points = shiftList(this.points, shift)
     }
 
-    render(svg: any){
+    override render(svg: any){
         let path = d3.path()
         path.moveTo(this.points[0].x, this.points[0].y)
         this.points.forEach((point: Coords) => {

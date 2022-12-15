@@ -3,29 +3,9 @@ import {DEFAULT_GRAPH_FIXED_NODES, DEFAULT_NODE_RADIUS, SCREEN_WIDTH} from './Co
 import { Line } from './Line'
 import {Circle} from './Circle'
 
-interface Node{
+export interface Node{
     name: string,
     neighbors: string[]
-}
-
-interface check_add_set_response{
-    success: boolean,
-    neighbors_not_found_in_set: string[]
-}
-
-interface nodes_overlapping_response{
-    success:boolean,
-    neighbors_overlapping: Node[]
-}
-
-interface Range{
-    x_range:
-    {low:number,
-    high:number}
-    y_range:{
-        low:number,
-        high:number
-    }
 }
 
 
@@ -33,18 +13,46 @@ export class Graph extends VisualObject{
     nodes: Node[]
     node_radius:number
     fixed_nodes:number
-    graph_dimensions:number //aside: we build our graphs in a square box by convention
+    graph_dimensions:number 
+    //aside: we build our graphs in a square box by convention
     //and so this need only be a single number
 
-    node_to_location:any //a map from strings to coordinates
+    node_to_location:any //a map from node names to the "coordinates" of that node (we use this to track where our nodes our)
+    //note that for the simplicity of our algorithm, node_to_location refers to the coordinates of the node WHERE (0,0) IS THE
+    //TOP LEFT OF OUR GRAPH GRAPHIC SQUARE. Offset is handled in the rendering of the objects
     
     constructor(coords?:Coords, graph_dimensions?:number,fixed_nodes?:number,node_radius?:number,){
+        /**
+         * 
+         * @param coords: the location of the square containing the entire graph visual
+         * @param graph_dimensions: the height/width of the graph visual square (for simplicity graph is always
+         * visualized in a square)
+         * @param fixed_nodes: the number of nodes we want graphically distributed on the edges of our graphic (if
+         * you don't care about this it should just be 4)
+         * @param node_radius: the graphical size of each node
+         */
         super(coords)
         this.nodes = []
         this.graph_dimensions = graph_dimensions ?? SCREEN_WIDTH
         this.node_radius = node_radius ?? DEFAULT_NODE_RADIUS
         this.fixed_nodes = fixed_nodes ?? DEFAULT_GRAPH_FIXED_NODES
         this.node_to_location = {}
+    }
+
+    override setCenter(center:Coords){
+        /**
+         * As the graph is just represented as a square, this is a copy of the method setCenter for the rectangle
+         */
+        this.coords = {
+            x: center.x - this.graph_dimensions/2,
+            y: center.y - this.graph_dimensions/2
+        }
+    }
+    override center(){
+        return {
+            x: this.coords.x + this.graph_dimensions/2,
+            y: this.coords.y + this.graph_dimensions/2
+        }
     }
 
     add(Nodes: Node[]){
@@ -62,10 +70,7 @@ export class Graph extends VisualObject{
          * graph won't look terrible
          */
         this.nodes = this.nodes.concat(Nodes)
-        const check_nodes = this.check_add_set(Nodes) 
-        if(!check_nodes.success){ //TODO
-            throw `Some suggested neighbors not found within set of node names. These are as follows: ${check_nodes.neighbors_not_found_in_set.join(",")}`
-        }
+        this.check_add_set(this.nodes) 
 
         this.nodes.sort((a,b) => { //we the n nodes of highest relevance for our corner nodes
             if(a.neighbors.length > b.neighbors.length) {return 1}
@@ -88,10 +93,9 @@ export class Graph extends VisualObject{
     }
 
 
-    set_fixed_nodes(Nodes:Node[]){
+    private set_fixed_nodes(Nodes:Node[]){
         /**
-         * We distribute the location of our fixed nodes evenly across the circle of radius
-         * SCREENWIDTH
+         * We distribute the location of our fixed nodes evenly across the circle of our specified radius
          */
         const n = Nodes.length
         const r =  this.graph_dimensions/2 //radius
@@ -105,18 +109,21 @@ export class Graph extends VisualObject{
         })
     }
 
-    set_malleable_nodes(malleable_nodes:Node[]){
+    private set_malleable_nodes(malleable_nodes:Node[]){
         /**
          * One iteration of our algorithm to align the points
+         * 
+         * Given a set of non-fixed nodes (see add method for description of this algo), set each nodes
+         * location to the avg location of its neighbors
          */
         let newLocations = {}
 
-        malleable_nodes.forEach((node) => {
+        malleable_nodes.forEach((node) => { //iterate over malleable nodes
             const neighbor_locations:Coords[] = node.neighbors.map(neighbor => {
                 return {x:this.node_to_location[neighbor].x, y: this.node_to_location[neighbor].y}
             })
 
-            let sum_neighbor_x = 0
+            let sum_neighbor_x = 0 //compute avg location of neighbors
             let sum_neighbor_y = 0
             neighbor_locations.forEach((location) => {
                 sum_neighbor_x += location.x;
@@ -134,47 +141,40 @@ export class Graph extends VisualObject{
 
 
     
-    check_add_set(Nodes:Node[]):check_add_set_response{
-        //also check uniqueness!
-        return {
-            success:true,
-            neighbors_not_found_in_set: []
-        }
-    }
+    private check_add_set(Nodes:Node[]){
+        /**
+         * Given a set of nodes, we verify that these nodes satisfy the following conditions:
+         * 
+         * 1. No node is named twice (i.e. we can't have two nodes named 'i')
+         * 2. Each neighbor of the node is a valid node (i.e. if we have node i such that
+         * i.neighbors = ['j','k','m'], then we also have nodes 'j','k','m' in our set)
+         */
+        const node_names = new Set([])
 
-
-    render_lines(svg, connections:string[][]){
-        connections.forEach(connection => {
-            const points = [
-                {x: this.node_to_location[connection[0]].x + this.coords.x,
-                y: this.node_to_location[connection[0]].y + this.coords.y},
-                {x: this.node_to_location[connection[1]].x + this.coords.x,
-                y: this.node_to_location[connection[1]].y + this.coords.y},
-            ]
-            const connectionLine = new Line(points)
-            connectionLine.render(svg)
+        Nodes.forEach(node => { //build up our set of node names, checking for duplicates in the process
+            if(node_names.has(node.name)){
+                const error = `Repeat node. Found duplicate of node ${node.name}`
+                throw error
+            }
+            node_names.add(node.name)
         })
-    }
-    setCenter(center:Coords){
-        this.coords = {
-            x: center.x - this.graph_dimensions/2,
-            y: center.y - this.graph_dimensions/2
-        }
-    }
 
-    render_nodes(svg){
-        this.nodes.forEach(node => {
-            const nodeCircle = new Circle(this.node_radius, {
-                x:this.node_to_location[node.name].x + this.coords.x,
-                y: this.node_to_location[node.name].y + this.coords.y
-            }, "red", undefined, 
-                undefined, node.name)
-            nodeCircle.render(svg)
+        Nodes.forEach(node => { //check that each of the neighbors listed by our nodes is in the above node_names set
+            node.neighbors.forEach(neighbor => {
+                if(!node_names.has(neighbor)){
+                    const error = `Neighbor not found. Was unable to find node ${neighbor} in set of nodes`
+                    throw error
+                }
+            })
         })
+
+
+        
     }
 
-    render(svg){
-        const unparseableConnections = new Set<string>()
+    override render(svg){
+        const unparseableConnections = new Set<string>() //find all UNIQUE connections (if A -> B and B -> A we don't want
+        //two different lines)
         this.nodes.forEach(node => {
             node.neighbors.forEach(neighbor => {
                 const connection = node.name + "," + neighbor
@@ -191,6 +191,39 @@ export class Graph extends VisualObject{
 
         this.render_lines(svg, connections)
         this.render_nodes(svg)        
+    }
+
+
+    private render_lines(svg, connections:string[][]){
+        /**
+         * Render each of the connections (our connections are given by the set of all unique
+         * paths, which we compute in the render phase)
+         */
+        connections.forEach(connection => {
+            const points = [
+                {x: this.node_to_location[connection[0]].x + this.coords.x,
+                y: this.node_to_location[connection[0]].y + this.coords.y},
+                {x: this.node_to_location[connection[1]].x + this.coords.x,
+                y: this.node_to_location[connection[1]].y + this.coords.y},
+            ]
+            const connectionLine = new Line(points)
+            connectionLine.render(svg)
+        })
+    }
+
+
+    private render_nodes(svg){
+        /**
+         * Iterate over each of our nodes, rendering each as a circle using the node_to_location dict
+         */
+        this.nodes.forEach(node => {
+            const nodeCircle = new Circle(this.node_radius, {
+                x:this.node_to_location[node.name].x + this.coords.x,
+                y: this.node_to_location[node.name].y + this.coords.y
+            }, "red", undefined, 
+                undefined, node.name)
+            nodeCircle.render(svg)
+        })
     }
 
 

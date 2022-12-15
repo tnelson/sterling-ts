@@ -39,7 +39,7 @@ export class Circle extends Shape{
     }
     setRadius(radius: number){this.radius = radius}
 
-    render(svg: any){
+    override render(svg: any){
         d3.select(svg)
             .append('circle')
             .attr('cx', this.coords.x)

@@ -37,7 +37,7 @@ export class ConjoinedObject extends VisualObject{
         this.addOrdered(obj,0)
     }
 
-    setCenter(coords:Coords){
+    override setCenter(coords:Coords){
         /**
          * Align all the objects in the conjoined object to a single center
          */
@@ -46,7 +46,7 @@ export class ConjoinedObject extends VisualObject{
         })
     }
 
-    render(svg:any){
+    override render(svg:any){
         /**
          * We render each of our objects. Note that this is done in inverse order of the list,
          * as the first element in the list should be the frontmost element
