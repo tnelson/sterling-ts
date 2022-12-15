@@ -9,6 +9,7 @@ import {Line} from "./Line"
 import { Grid } from "./Grid"
 import {ConjoinedObject} from './ConjoinedObject'
 import { Polygon } from "./Polygon"
+import {Graph} from './Graph'
 
 interface scriptViewImport{
     name: string;
@@ -33,7 +34,8 @@ const scriptViewImports: scriptViewImport[] = [
     {name: "TextBox", value: TextBox},
     {name: "Line", value: Line},
     {name: "ConjoinedObject",value:ConjoinedObject},
-    {name: "Polygon", value:Polygon}
+    {name: "Polygon", value:Polygon},
+    {name: "Graph", value:Graph}
 ]
 
 export {scriptViewImports};

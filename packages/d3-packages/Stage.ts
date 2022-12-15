@@ -1,14 +1,15 @@
 import {Pane} from './Pane'
 import { require as d3require } from 'd3-require';
+import { VisualObject } from './VisualObject';
 const d3 = require("d3")
 
 export class Stage{
-    Children: Pane[]
+    Children: VisualObject[]
     constructor(){
         this.Children = []
     }
-    add(addPane:Pane){
-        this.Children.push(addPane)
+    add(addObject:VisualObject){
+        this.Children.push(addObject)
     }
     render(svg:any, document?:any){
         d3.selectAll("svg > *").remove();
