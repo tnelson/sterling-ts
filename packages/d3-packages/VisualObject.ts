@@ -13,7 +13,7 @@ export class VisualObject{
         if(coords){
             this.coords = coords
         }
-        else this.coords = {x:0,y:0}
+        else{this.coords = {x:0,y:0}}
         this.children = []
     }
 
