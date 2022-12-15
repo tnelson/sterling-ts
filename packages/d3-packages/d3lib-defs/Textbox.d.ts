@@ -3,7 +3,7 @@ export declare class TextBox extends VisualObject {
     text: string;
     fontSize: number;
     color: string;
-    constructor(text: string, coords?: Coords);
+    constructor(text: string, coords?: Coords, color?: string, fontSize?: number);
     setText(text: string): void;
     setFontSize(fontSize: number): void;
     setTextColor(color: string): void;

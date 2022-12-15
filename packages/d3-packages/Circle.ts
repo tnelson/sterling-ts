@@ -15,9 +15,14 @@ export class Circle extends Shape{
     constructor(
         radius: number,
         coords?: Coords,
+        color?: string,
+        borderWidth?: number,
+        borderColor?: string,
+        label?: string,
+        labelColor?: string,
+        labelSize?: number
     ){
-        if(coords){super(coords)}
-        else{super()}
+        super(coords, color, borderWidth, borderColor, label, labelColor, labelSize)
         this.radius = radius
     }
 

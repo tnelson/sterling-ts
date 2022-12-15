@@ -21,7 +21,8 @@ class asdf{
         "TextBox",
         "Line",
         "ConjoinedObject",
-        "Polygon"
+        "Polygon",
+        "Graph"
     );
     List<String> allFiles = new ArrayList<>(List.of("export const D3_TOTAL_DEFS: string = `"));
     for (String title: titles){

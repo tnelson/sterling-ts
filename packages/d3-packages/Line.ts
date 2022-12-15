@@ -17,11 +17,13 @@ export class Line extends VisualObject{
 
     constructor(
         points: Coords[],
+        color?: string,
+        width?: number,
     ){
         super(points[0])
         this.points = points
-        this.color = DEFAULT_LINE_COLOR
-        this.width = DEFAULT_STROKE_WIDTH
+        this.color = color ?? DEFAULT_LINE_COLOR
+        this.width = width ??DEFAULT_STROKE_WIDTH
     }
 
     setColor(color: string){this.color = color}

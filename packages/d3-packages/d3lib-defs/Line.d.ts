@@ -3,7 +3,7 @@ export declare class Line extends VisualObject {
     points: Coords[];
     color: string;
     width: number;
-    constructor(points: Coords[]);
+    constructor(points: Coords[], color?: string, width?: number);
     setColor(color: string): void;
     setWidth(width: number): void;
     center(): Coords;

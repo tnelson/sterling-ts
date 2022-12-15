@@ -10,7 +10,7 @@ export declare class Rectangle extends Shape {
      * @param width size in x direction
      * @param coords top left corner
      */
-    constructor(height: number, width: number, coords?: Coords);
+    constructor(height: number, width: number, coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
     setWidth(width: number): void;
     setHeight(height: number): void;
     center(): Coords;

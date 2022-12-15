@@ -9,9 +9,15 @@ export class Polygon extends Shape{
     points: Coords[]
 
     constructor(
-        points: Coords[]
+        points: Coords[],
+        color?: string,
+        borderWidth?: number,
+        borderColor?: string,
+        label?: string,
+        labelColor?: string,
+        labelSize?: number
     ){
-        super(points[0])
+        super(points[0], color, borderWidth, borderColor, label, labelColor, labelSize)
         this.points = points
     }
 

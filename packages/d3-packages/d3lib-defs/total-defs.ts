@@ -19,7 +19,7 @@ declare class Shape extends VisualObject {
     borderWidth: number;
     borderColor: string;
     label: TextBox;
-    constructor(coords?: Coords);
+    constructor(coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
     setCenter(center: Coords): void;
     setColor(color: string): void;
     setBorderWidth(borderWidth: number): void;
@@ -87,7 +87,7 @@ declare class Rectangle extends Shape {
      * @param width size in x direction
      * @param coords top left corner
      */
-    constructor(height: number, width: number, coords?: Coords);
+    constructor(height: number, width: number, coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
     setWidth(width: number): void;
     setHeight(height: number): void;
     center(): Coords;
@@ -97,7 +97,7 @@ declare class Rectangle extends Shape {
 //# sourceMappingURL=Rectangle.d.ts.map
 declare class Circle extends Shape {
     radius: number;
-    constructor(radius: number, coords?: Coords);
+    constructor(radius: number, coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
     setRadius(radius: number): void;
     render(svg: any): void;
 }
@@ -106,14 +106,14 @@ declare class Stage {
     Children: Pane[];
     constructor();
     add(addPane: Pane): void;
-    render(svg: any): void;
+    render(svg: any, document?: any): void;
 }
 //# sourceMappingURL=Stage.d.ts.map
 declare class TextBox extends VisualObject {
     text: string;
     fontSize: number;
     color: string;
-    constructor(text: string, coords?: Coords);
+    constructor(text: string, coords?: Coords, color?: string, fontSize?: number);
     setText(text: string): void;
     setFontSize(fontSize: number): void;
     setTextColor(color: string): void;
@@ -124,7 +124,7 @@ declare class Line extends VisualObject {
     points: Coords[];
     color: string;
     width: number;
-    constructor(points: Coords[]);
+    constructor(points: Coords[], color?: string, width?: number);
     setColor(color: string): void;
     setWidth(width: number): void;
     center(): Coords;
@@ -159,7 +159,7 @@ declare class ConjoinedObject extends VisualObject {
 //# sourceMappingURL=ConjoinedObject.d.ts.map
 declare class Polygon extends Shape {
     points: Coords[];
-    constructor(points: Coords[]);
+    constructor(points: Coords[], color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
     center(): Coords;
     setCenter(center: Coords): void;
     render(svg: any): void;

@@ -19,9 +19,14 @@ export class Rectangle extends Shape{
         height: number,
         width: number,
         coords?: Coords,
+        color?: string,
+        borderWidth?: number,
+        borderColor?: string,
+        label?: string,
+        labelColor?: string,
+        labelSize?: number
     ){
-        if(coords){super(coords)}
-        else{super()}
+        super(coords, color, borderWidth, borderColor, label, labelColor, labelSize)
         this.height = height
         this.width = width
     }

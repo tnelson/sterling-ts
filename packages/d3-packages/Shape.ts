@@ -9,14 +9,22 @@ export class Shape extends VisualObject{
     public label: TextBox;
 
     constructor(
-        coords?: Coords
+        coords?: Coords,
+        color?: string,
+        borderWidth?: number,
+        borderColor?: string,
+        label?: string,
+        labelColor?: string,
+        labelSize?: number
     ){
         if(coords){super(coords)}
         else{super()}
-        this.color = DEFAULT_BORDER_COLOR; 
-        this.borderWidth = DEFAULT_STROKE_WIDTH;
-        this.borderColor = DEFAULT_COLOR;
-        this.label = new TextBox("", coords)
+        this.color = color ?? DEFAULT_BORDER_COLOR; 
+        this.borderWidth = borderWidth ?? DEFAULT_STROKE_WIDTH;
+        this.borderColor = borderColor ?? DEFAULT_COLOR;
+        this.label = new TextBox(label ?? "", this.center());
+        this.label.setTextColor(labelColor ?? DEFAULT_TEXT_COLOR);
+        this.label.setFontSize(labelSize ?? DEFAULT_FONT_SIZE);
         this.children.push(this.label)
     }
 

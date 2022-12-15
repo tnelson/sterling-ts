@@ -5,7 +5,7 @@ export declare class Shape extends VisualObject {
     borderWidth: number;
     borderColor: string;
     label: TextBox;
-    constructor(coords?: Coords);
+    constructor(coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
     setCenter(center: Coords): void;
     setColor(color: string): void;
     setBorderWidth(borderWidth: number): void;
