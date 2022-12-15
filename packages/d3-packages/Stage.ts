@@ -10,8 +10,13 @@ export class Stage{
     add(addPane:Pane){
         this.Children.push(addPane)
     }
-    render(svg:any){
+    render(svg:any, document?:any){
         d3.selectAll("svg > *").remove();
         this.Children.forEach(pane => pane.render(svg))
+        if(document){
+            const svgContainer = document.getElementById('svg-container')
+            svgContainer.getElementsByTagName('svg')[0].style.height = '200%'
+            svgContainer.getElementsByTagName('svg')[0].style.width = '200%'
+        }
     }
 }

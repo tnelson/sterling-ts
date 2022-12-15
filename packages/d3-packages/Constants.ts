@@ -7,3 +7,6 @@ export const DEFAULT_FONT_SIZE: number = 15;
 export const DEFAULT_TEXT_COLOR: string = "rgb(0, 0, 0)"
 
 export const DEFAULT_LINE_COLOR: string = "rgb(0, 0, 0)"
+
+export const SCREEN_WIDTH: number = 490
+export const SCREEN_HEIGHT:number = 700 //these can be adjusted - the settings that I saw on my machine
