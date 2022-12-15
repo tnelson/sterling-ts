@@ -147,23 +147,23 @@ export class Grid extends VisualObject{
      */
         //cols
         for(let y_coord = 0; y_coord <= this.config.grid_dimensions.y_size; y_coord++){
-            const vertLine: Line = new Line([
-                {y:this.config.grid_location.x+y_coord*this.config.cell_size.x_size,
-                    x:this.config.grid_location.y},
-                {y:this.config.grid_location.x+y_coord*this.config.cell_size.x_size,
-                    x:this.config.grid_location.y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size}
+            const horizLine: Line = new Line([
+                {y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size,
+                    x:this.config.grid_location.x},
+                {y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size,
+                    x:this.config.grid_location.x + this.config.grid_dimensions.x_size*this.config.cell_size.x_size}
             ]);
-            this.gridlines.push(vertLine)
+            this.gridlines.push(horizLine)
         }
         //rows
         for(let x_coord = 0; x_coord <= this.config.grid_dimensions.x_size; x_coord++){
-            const horizLine: Line = new Line([
-                {y:this.config.grid_location.x,
-                    x:this.config.grid_location.y+x_coord*this.config.cell_size.y_size},
-                {y:this.config.grid_location.x+this.config.grid_dimensions.x_size*this.config.cell_size.x_size,
-                    x:this.config.grid_location.y+x_coord*this.config.cell_size.y_size}
+            const vertLine: Line = new Line([
+                {y:this.config.grid_location.y,
+                    x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size},
+                {y:this.config.grid_location.y+this.config.grid_dimensions.y_size*this.config.cell_size.y_size,
+                    x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size}
             ]);
-            this.gridlines.push(horizLine)    
+            this.gridlines.push(vertLine)    
         }
     }
 

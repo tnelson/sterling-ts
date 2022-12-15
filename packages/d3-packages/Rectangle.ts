@@ -20,6 +20,9 @@ export class Rectangle extends Shape{
         width: number,
         coords?: Coords,
     ){
+        if(!height.valueOf){
+            throw ""
+        }
         if(coords){super(coords)}
         else{super()}
         this.height = height
