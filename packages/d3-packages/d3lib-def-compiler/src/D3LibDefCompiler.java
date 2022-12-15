@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-class asdf{
+class d3LibDefCompiler{
   public static void main(String[] args) throws IOException {
     final List<String> titles = List.of(
         "VisualObject",
