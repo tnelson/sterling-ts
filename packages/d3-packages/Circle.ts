@@ -1,7 +1,7 @@
 import {Shape} from './Shape'
 import { require as d3require } from 'd3-require';
 const d3 = require("d3")
-import { Coords } from './VisualObject';
+import { BoundingBox, Coords } from './VisualObject';
 
 export class Circle extends Shape{
     radius: number;
@@ -31,6 +31,12 @@ export class Circle extends Shape{
         this.radius = radius
     }
 
+    boundingBox(): BoundingBox {
+        return {
+            top_left: {x: this.coords.x - this.radius, y: this.coords.y - this.radius},
+            bottom_right: {x: this.coords.x + this.radius, y: this.coords.y + this.radius}
+        }
+    }
     setRadius(radius: number){this.radius = radius}
 
     render(svg: any){

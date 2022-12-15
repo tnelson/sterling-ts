@@ -44,7 +44,9 @@ export class VisualObject{
         this.children = []
     }
 
-    boundingBox(){}
+    boundingBox(): BoundingBox{
+        return {top_left:{x:0, y:0}, bottom_right:{x:0, y:0}}
+    }
 
     /**
      * Returns the center of the object 

@@ -1,8 +1,8 @@
 import {Shape} from './Shape'
 import { require as d3require } from 'd3-require';
 const d3 = require("d3")
-import {Coords} from './VisualObject'
-import { averagePath, shiftList } from './Line';
+import {BoundingBox, Coords} from './VisualObject'
+import { averagePath, boundsOfList, shiftList } from './Line';
 
 /**
  * Class Representing Polygonal objects. Takes the form of any
@@ -33,6 +33,10 @@ export class Polygon extends Shape{
         super(points[0], color, borderWidth, borderColor, label, labelColor, labelSize)
         this.points = points
         this.label.setCenter(this.center())
+    }
+
+    boundingBox(): BoundingBox {
+        return boundsOfList(this.points)
     }
 
     // Using averagePath utility to return rough center

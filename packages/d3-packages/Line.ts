@@ -1,7 +1,7 @@
 import {Shape} from './Shape'
 import { require as d3require } from 'd3-require';
 const d3 = require("d3")
-import {Coords, VisualObject} from './VisualObject'
+import {BoundingBox, Coords, VisualObject} from './VisualObject'
 import { DEFAULT_COLOR, DEFAULT_LINE_COLOR, DEFAULT_STROKE_WIDTH } from './Constants'
 
 export class Line extends VisualObject{
@@ -26,6 +26,9 @@ export class Line extends VisualObject{
         this.width = width ??DEFAULT_STROKE_WIDTH
     }
 
+    boundingBox(): BoundingBox {
+        return boundsOfList(this.points)
+    }
     setColor(color: string){this.color = color}
     setWidth(width: number){this.width = width}
 
@@ -91,4 +94,26 @@ export function shiftList(pointList: Coords[], shift: Coords): Coords[] {
         }
     })
     return newPoints
+}
+
+/**
+ * Utility function returning bounding box for a list of points
+ * @param pointList list of points as coords
+ * @returns bounding box
+ */
+export function boundsOfList(pointList: Coords[]): BoundingBox {
+    let x_min = Infinity
+    let y_min = Infinity
+    let x_max = -Infinity
+    let y_max = -Infinity
+    pointList.forEach((point) => {
+        x_min = Math.min(x_min, point.x)
+        x_max = Math.max(x_max, point.x)
+        y_min = Math.min(y_min, point.y)
+        y_max = Math.max(y_max, point.y)
+    })
+    return {
+        top_left:{x: x_min, y: y_min},
+        bottom_right: {x: x_max, y: y_max}
+    }
 }

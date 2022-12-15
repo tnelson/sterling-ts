@@ -1,7 +1,7 @@
 import {Shape} from './Shape'
 import { require as d3require } from 'd3-require';
 const d3 = require("d3")
-import {Coords} from './VisualObject'
+import {BoundingBox, Coords} from './VisualObject'
 
 
 export class Rectangle extends Shape{
@@ -37,6 +37,12 @@ export class Rectangle extends Shape{
         this.label.setCenter(this.center()) //TODO: FIX THIS
     }
 
+    boundingBox(): BoundingBox {
+        return {
+            top_left: {x:this.coords.x, y: this.coords.y},
+            bottom_right: {x:this.coords.x + this.width, y: this.coords.y + this.height}
+        }
+    }
     setWidth(width: number){this.width = width}
     setHeight(height: number){this.height = height}
 

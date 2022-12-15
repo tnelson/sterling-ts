@@ -1,7 +1,7 @@
 import { require as d3require } from 'd3-require';
 const d3 = require("d3")
 import { DEFAULT_COLOR, DEFAULT_FONT_SIZE, DEFAULT_TEXT_COLOR } from './Constants';
-import {Coords, VisualObject} from './VisualObject'
+import {BoundingBox, Coords, VisualObject} from './VisualObject'
 
 export class TextBox extends VisualObject{
     text: string;
@@ -26,7 +26,19 @@ export class TextBox extends VisualObject{
         this.fontSize = fontSize ?? DEFAULT_FONT_SIZE;
         this.color = color ?? DEFAULT_TEXT_COLOR;
     }
-
+    
+    boundingBox(): BoundingBox {
+        return {
+            top_left: { // No easy solution here. Just returning a square of the text's size. 
+                x: this.coords.x - (this.fontSize / 2),
+                y: this.coords.y - (this.fontSize / 2)
+            },
+            bottom_right: { // No easy solution here. Just returning a square of the text's size. 
+                x: this.coords.x + (this.fontSize / 2),
+                y: this.coords.y + (this.fontSize / 2)
+            }
+        }
+    }
     setText(text: string){this.text = text}
     setFontSize(fontSize: number){this.fontSize = fontSize}
     setTextColor(color: string){this.color = color}
