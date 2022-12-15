@@ -22,10 +22,16 @@ export interface Coords{
     y: number;
 }
 
+<<<<<<< HEAD
 /**
  * Generic props for representing a box around an object. 
  */
 export interface BoundingBox{
+=======
+export interface BoundingBox{ 
+    //just give me the top left and bottom right points
+    //of the rectangle bounding box
+>>>>>>> 2d501f7 (style: added a bunch of overrides to make inheritance more clear and made some of my method private. Maybe this will break everything I sure hope not.)
     top_left: Coords,
     bottom_right:Coords
 }

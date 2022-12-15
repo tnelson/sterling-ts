@@ -1,9 +1,7 @@
-import {VisualObject, Coords} from './VisualObject'
+import {VisualObject, Coords, BoundingBox} from './VisualObject'
 import {Line} from './Line'
 import {Rectangle} from './Rectangle'
 
-//TODO: optional parameters suck kinda, visual objects have children???, nodes overlapping (uhhhh), nodes on same plane (uhhhhhhhhhh),
-//bounding boxes (going to give a warning!)
 
 interface gridProps{
     grid_location: Coords, //note: coords refers to the top left portion of the grid
@@ -49,7 +47,7 @@ export class Grid extends VisualObject{
     }
 
 
-    initialize_cells(){
+    private initialize_cells(){
     /**
      * 
      * Fill in the cells of the grid with blank objects (note: this is where we
@@ -72,7 +70,14 @@ export class Grid extends VisualObject{
         }
     }
 
-    setCenter(center: Coords){
+    override center(){
+        return {
+            x: this.coords.x + this.config.grid_dimensions.x_size*this.config.cell_size.x_size/2,
+            y: this.coords.y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size/2
+        }
+    }
+
+    override setCenter(center: Coords){
         /**
          * Adjust the centering of the table. We first update the "config.grid_location" variable
          * (this tells the table where its upper left corber is)
@@ -105,9 +110,36 @@ export class Grid extends VisualObject{
         this.fill_grid_lines()
     }
 
+    private check_bounding_box(proposed_bounding_box:BoundingBox){
+        /**
+         * A check to verify that, when adding an object to a grid cell, that object will fit inside
+         * the grid cell (the bounding box of that grid is smaller than the size of the cell).
+         * 
+         * Note: calling grid.add({x:...,y:...},...,true) will hide this error
+         */
+        const bounding_box_width = proposed_bounding_box.bottom_right.x - proposed_bounding_box.top_left.x
+        const bounding_box_height = proposed_bounding_box.bottom_right.y - proposed_bounding_box.top_left.y
 
-    add(coords: Coords, add_object:VisualObject){
-        throw "AHH"
+        if(bounding_box_height > this.config.cell_size.y_size){
+            const error = `Proposed object to add is taller than grid cells. Add "true" as the last parameter to
+            grid.add() to hide this error.
+            Grid cells are ${this.config.cell_size.y_size}
+            units tall, while the object you want to add is ${bounding_box_height} units tall`
+            throw error
+        }
+        if(bounding_box_width > this.config.cell_size.x_size){
+            const error = `Proposed object to add is wider than grid cells. Add "true" as the last parameter to
+            grid.add() to hide this error.
+            Grid cells are ${this.config.cell_size.x_size}
+            units tall, while the object you want to add is ${bounding_box_width} units tall`
+            throw error
+        }
+
+    }
+
+
+    add(coords: Coords, add_object:VisualObject, ignore_warning?:boolean){
+        
     /**
      * Given valid coordinates of our grid, we add and center an object to a given
      * coordinate (note: we don't support adding multiple VisualObjects to the same frame -
@@ -119,10 +151,9 @@ export class Grid extends VisualObject{
      * (creating a conjoined visual object shouldn't be too tough) 
      */
         this.check_coords(coords)
+
+        // if(!ignore_warning){this.check_bounding_box}
         
-
-        //TODO: check for inside bounding box
-
         const target_cell: gridCell = this.cells[coords.x][coords.y]
         target_cell.contents = add_object
         add_object.setCenter(target_cell.center) //center object
@@ -189,7 +220,7 @@ export class Grid extends VisualObject{
         this.add(coords, addRectangle)
     }
 
-    check_coords(coords:Coords){
+    private check_coords(coords:Coords){
         /**
          * (This function ensures validity of inputted coords)
          * 
@@ -208,9 +239,9 @@ export class Grid extends VisualObject{
         }
     }
 
-    render(svg:any){
-        this.gridlines.forEach(elt => elt.render(svg))
+    override render(svg:any){
         //render gridlines
+        this.gridlines.forEach(elt => elt.render(svg))
 
         //render each child in each cell
         for(let x_coord = 0; x_coord < this.config.grid_dimensions.x_size; x_coord++){

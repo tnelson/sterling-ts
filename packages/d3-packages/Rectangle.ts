@@ -40,11 +40,11 @@ export class Rectangle extends Shape{
     setWidth(width: number){this.width = width}
     setHeight(height: number){this.height = height}
 
-    center(): Coords{
+    override center(): Coords{
         return {x: this.coords.x + (this.width ?? 0)/2, y: this.coords.y + (this.height ?? 0)/2} //shitfix
     }
 
-    setCenter(center: Coords){
+    override setCenter(center: Coords){
         this.coords = {
             x: center.x - this.width/2,
             y: center.y - this.height/2

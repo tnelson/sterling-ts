@@ -9,8 +9,8 @@ const boardGridProps = {
         y:0
     },
     cell_size: {
-        x_size:10,
-        y_size:10
+        x_size:15,
+        y_size:15
     },
     grid_dimensions:{
         y_size:3,
@@ -41,16 +41,16 @@ function makeNewGrid(boardAtom){
 
 const multiBoardGridProps = {
         grid_location: {
-            x: 0,
+            x: 75,
             y:0
         },
         cell_size: {
-            x_size:40,
-            y_size:40
+            x_size:60,
+            y_size:60
         },
         grid_dimensions:{
             y_size:9,
-            x_size:1
+            x_size:2
         }
 }
 
@@ -58,11 +58,16 @@ const multiBoardGrid = new Grid(multiBoardGridProps)
 
 for(b = 0; b <= 9; b++) {  
     if(Board.atom("Board"+b) != null){
+
+      const gridLabel = new TextBox(`Board ${b+1}`)
       const newGrid = makeNewGrid(Board.atom("Board"+b))
       multiBoardGrid.add({x:0,y:b},newGrid)
+      multiBoardGrid.add({x:1,y:b},gridLabel)
     }
 }
 
 stage.add(mainPane);
 mainPane.add(multiBoardGrid)
 stage.render(svg)
+
+

@@ -32,7 +32,7 @@ export class TextBox extends VisualObject{
     setTextColor(color: string){this.color = color}
 
 
-    render(svg: any){
+    override render(svg: any){
         d3.select(svg)
             .append('text')
             .attr('x', this.coords.x)
