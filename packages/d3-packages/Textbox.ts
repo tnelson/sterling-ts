@@ -34,8 +34,8 @@ export class TextBox extends VisualObject{
     render(svg: any){
         d3.select(svg)
             .append('text')
-            .attr('x', this.coords.y)
-            .attr('y', this.coords.x)
+            .attr('x', this.coords.x)
+            .attr('y', this.coords.y)
             .attr('text-anchor', 'middle')
             .attr("alignment-baseline", "central")
             .attr('font-size', this.fontSize)

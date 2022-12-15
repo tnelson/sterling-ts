@@ -1,9 +1,11 @@
 import {VisualObject, Coords} from './VisualObject'
 import {DEFAULT_GRAPH_FIXED_NODES, DEFAULT_NODE_RADIUS, SCREEN_WIDTH} from './Constants'
+import { Line } from './Line'
+import {Circle} from './Circle'
 
 interface Node{
     name: string,
-    neighors: string[]
+    neighbors: string[]
 }
 
 interface check_add_set_response{
@@ -18,7 +20,7 @@ export class Graph{
     fixed_nodes:number
     node_to_location:any //a map from strings to coordinates
     
-    constructor(node_radius?:number, fixed_nodes?:number){
+    constructor(fixed_nodes?:number,node_radius?:number, ){
         this.nodes = []
         this.node_radius = node_radius ?? DEFAULT_NODE_RADIUS
         this.fixed_nodes = fixed_nodes ?? DEFAULT_GRAPH_FIXED_NODES
@@ -46,8 +48,8 @@ export class Graph{
         }
 
         this.nodes.sort((a,b) => { //we the n nodes of highest relevance for our corner nodes
-            if(a.neighors.length > b.neighors.length) {return 1}
-            else if(b.neighors.length > a.neighors.length) {return -1}
+            if(a.neighbors.length > b.neighbors.length) {return 1}
+            else if(b.neighbors.length > a.neighbors.length) {return -1}
             else{return 0}
         })
 
@@ -76,9 +78,9 @@ export class Graph{
         let i = 0
         Nodes.forEach((node) => {
             i++
-            this.node_to_location = {
-                x: r*Math.cos(i*(2*Math.PI)/n),
-                y: r*Math.sin(i*(2*Math.PI)/n)
+            this.node_to_location[node.name] = {
+                x: SCREEN_WIDTH/2 + r*Math.cos(i*(2*Math.PI)/n),
+                y: SCREEN_WIDTH/2 + r*Math.sin(i*(2*Math.PI)/n)
             }
         })
     }
@@ -90,7 +92,7 @@ export class Graph{
         let newLocations = {}
 
         malleable_nodes.forEach((node) => {
-            const neighbor_locations:Coords[] = node.neighors.map(neighbor => {
+            const neighbor_locations:Coords[] = node.neighbors.map(neighbor => {
                 return {x:this.node_to_location[neighbor].x, y: this.node_to_location[neighbor].y}
             })
 
@@ -105,10 +107,8 @@ export class Graph{
                 y: sum_neighbor_y/neighbor_locations.length
             }
         })
-        this.node_to_location.forEach(element => {
-            if(newLocations[element.name]) {
-                element.name = newLocations[element.name]
-            }
+        malleable_nodes.forEach(element => {
+            this.node_to_location[element.name] = newLocations[element.name]
         });
     }
 
@@ -124,6 +124,48 @@ export class Graph{
 
     default_node_radius(num_nodes:number):number{
         return 20
+    }
+
+    render_lines(svg, connections:string[][]){
+        connections.forEach(connection => {
+            const points = [
+                {x: this.node_to_location[connection[0]].x,
+                y: this.node_to_location[connection[0]].y},
+                {x: this.node_to_location[connection[1]].x,
+                y: this.node_to_location[connection[1]].y},
+            ]
+            const connectionLine = new Line(points)
+            connectionLine.render(svg)
+        })
+    }
+
+    render_nodes(svg){
+        this.nodes.forEach(node => {
+            const nodeCircle = new Circle(DEFAULT_NODE_RADIUS, this.node_to_location[node.name], "red", undefined, 
+                undefined, node.name)
+            nodeCircle.render(svg)
+        })
+    }
+
+    render(svg){
+        const unparseableConnections = new Set<string>()
+        this.nodes.forEach(node => {
+            node.neighbors.forEach(neighbor => {
+                const connection = node.name + "," + neighbor
+                if(!unparseableConnections.has(neighbor + "," + node.name)){
+                    unparseableConnections.add(connection)
+                }
+            })
+        })
+        
+        const connections:string[][] = []
+        unparseableConnections.forEach(connection => {
+            connections.push(connection.split(","))
+        });
+
+        this.render_lines(svg, connections)
+        this.render_nodes(svg)
+        
     }
 
 

@@ -29,7 +29,7 @@ export class Rectangle extends Shape{
         super(coords, color, borderWidth, borderColor, label, labelColor, labelSize)
         this.height = height
         this.width = width
-        this.label.setCenter(this.center)
+        this.label.setCenter(this.center()) //TODO: FIX THIS
     }
 
     setWidth(width: number){this.width = width}
