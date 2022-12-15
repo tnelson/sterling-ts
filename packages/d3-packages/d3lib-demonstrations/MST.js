@@ -28,10 +28,35 @@ function buildGraph(primNum){
         }
         nodes.push(newNode)
     })
-    console.log(nodes)
-    return nodes
+    const returnGraph = new Graph({x:0,y:0},200,4,15)
+    returnGraph.add(nodes)
+
+    return returnGraph
 }
 
-const prim2set = buildGraph(2)
-const coolGraph = new Graph()
-coolGraph.addAll(prim2set)
+
+
+const gridConfig = {
+        grid_location: {
+            x: 50,
+            y:50
+        },
+        cell_size: {
+            x_size:200,
+            y_size:250
+        },
+        grid_dimensions:{
+            y_size:9,
+            x_size:1
+        }
+}
+const graphsGrid = new Grid(gridConfig)
+let primState = 0
+while(Prim.atom("Prim"+primState.toString())!=null){
+    graphsGrid.add({x:0,y:primState}, buildGraph(primState))
+    primState++
+}
+
+stage.add(graphsGrid)
+stage.render(svg, document)
+

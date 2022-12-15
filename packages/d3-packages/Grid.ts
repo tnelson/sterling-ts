@@ -2,6 +2,9 @@ import {VisualObject, Coords} from './VisualObject'
 import {Line} from './Line'
 import {Rectangle} from './Rectangle'
 
+//TODO: optional parameters suck kinda, visual objects have children???, nodes overlapping (uhhhh), nodes on same plane (uhhhhhhhhhh),
+//bounding boxes (going to give a warning!)
+
 interface gridProps{
     grid_location: Coords, //note: coords refers to the top left portion of the grid
     cell_size:{
