@@ -20,7 +20,7 @@ import { extractRequires } from './extractRequires';
 import { fetchLibrary } from './fetchLibrary';
 import { ScriptEditor } from './ScriptEditor';
 import { ScriptViewHeader } from './ScriptViewHeader';
-import scriptViewImports from 'd3-packages/ScriptViewImports';
+import { scriptViewImports} from './../../../../d3-packages/ScriptViewImports'
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
 
 interface ScriptViewDatumProps {
