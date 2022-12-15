@@ -4,7 +4,7 @@ export interface Coords{
     y: number;
 }
 
-export interface BoundingBoxReturn{ //just give me the top left and bottom right points
+export interface BoundingBox{ //just give me the top left and bottom right points
     //of the rectangle bounding box
     top_left: Coords,
     bottom_right:Coords

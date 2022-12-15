@@ -107,6 +107,7 @@ export class Grid extends VisualObject{
 
 
     add(coords: Coords, add_object:VisualObject){
+        throw "AHH"
     /**
      * Given valid coordinates of our grid, we add and center an object to a given
      * coordinate (note: we don't support adding multiple VisualObjects to the same frame -
