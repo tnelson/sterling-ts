@@ -7,13 +7,14 @@ export class TextBox extends VisualObject{
     text: string;
     fontSize: number;
     color: string;
-    /*
-    All shapes will extend this class
 
-    Idea: want functionality to be able to conjoin two shapes (i.e. for tic-tac-toe,
-        throw an X over a square and call it a single type)
-    */
-
+    /**
+     * Displays given text. 
+     * @param text text to display
+     * @param coords location for center of text
+     * @param color text color
+     * @param fontSize size of the text
+     */
     constructor(
         text: string,
         coords?: Coords,

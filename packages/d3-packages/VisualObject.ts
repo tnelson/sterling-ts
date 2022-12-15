@@ -1,11 +1,15 @@
-
+/**
+ * Interface that will be used generically to represent locations within a given svg
+ */
 export interface Coords{
     x: number,
     y: number;
 }
 
-export interface BoundingBox{ //just give me the top left and bottom right points
-    //of the rectangle bounding box
+/**
+ * Generic props for representing a box around an object. 
+ */
+export interface BoundingBox{
     top_left: Coords,
     bottom_right:Coords
 }
@@ -15,6 +19,10 @@ export class VisualObject{
     coords: Coords
     children: VisualObject[]
 
+    /**
+     * Top level class, which all other visual objects will extend.
+     * @param coords position of the object on screen. 
+     */
     constructor(coords?: Coords){
         this.coords = coords ?? {x: 0, y: 0};
         this.children = []
@@ -22,23 +30,27 @@ export class VisualObject{
 
     boundingBox(){}
 
+    /**
+     * Returns the center of the object 
+     * @returns coordinates of center
+     */
     center(): Coords{
         return this.coords
     }
 
+    /**
+     * Shifts object to have new given center
+     * @param center new center of the object
+     */
     setCenter(center: Coords){
         this.coords = center
         this.children.forEach((child) => child.setCenter(center))
     }
 
-    //getX
-    //getY
-    //transformX -> is this functionality that we actually want to offer? 
-    //transformY
-    //rotate???
-
-    //question: what actually makes up an object? Is every object a collection of shapes? What about text
-    //Question: do we want objects to implicitly have children? I don't actually think so
+    /**
+     * Renders the object to the screen.
+     * @param svg HTML Svg object to which the object should be rendered. 
+     */
     render(svg:any){
         this.children.forEach((child: VisualObject) => child.render(svg))
     }

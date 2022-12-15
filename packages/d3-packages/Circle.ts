@@ -5,13 +5,18 @@ import { Coords } from './VisualObject';
 
 export class Circle extends Shape{
     radius: number;
-    /*
-    All shapes will extend this class
 
-    Idea: want functionality to be able to conjoin two shapes (i.e. for tic-tac-toe,
-        throw an X over a square and call it a single type)
-    */
-
+    /**
+     * Creates a circle object at the given location
+     * @param radius radius of circle
+     * @param coords coordinates of circle's center
+     * @param color color of interior
+     * @param borderWidth width border
+     * @param borderColor color for border
+     * @param label text for label
+     * @param labelColor color of label
+     * @param labelSize size of label
+     */
     constructor(
         radius: number,
         coords?: Coords,

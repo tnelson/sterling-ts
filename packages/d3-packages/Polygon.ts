@@ -4,10 +4,23 @@ const d3 = require("d3")
 import {Coords} from './VisualObject'
 import { averagePath, shiftList } from './Line';
 
-
+/**
+ * Class Representing Polygonal objects. Takes the form of any
+ * series of points, and will form a polygon with said points as the boundary.
+ */
 export class Polygon extends Shape{
     points: Coords[]
 
+    /**
+     * Constructs a polygon object
+     * @param points list of points forming outside
+     * @param color color of interior
+     * @param borderWidth width of the border
+     * @param borderColor color of the border
+     * @param label text to label with
+     * @param labelColor color of label text
+     * @param labelSize size of the label
+     */
     constructor(
         points: Coords[],
         color?: string,

@@ -9,11 +9,16 @@ export class Rectangle extends Shape{
     width: number;
 
     /**
-     * Creates a Rectangle object with the given height and width, placing the top left corner
-     * at the coordinate argument.
-     * @param height size in y direction
-     * @param width size in x direction
-     * @param coords top left corner
+     * Creates a logical rectangle object
+     * @param height height (y direction)
+     * @param width width (x direction)
+     * @param coords coordinates of the top-left point
+     * @param color color for interior
+     * @param borderWidth width of border
+     * @param borderColor color of border
+     * @param label text for label
+     * @param labelColor color for label text
+     * @param labelSize size of label text
      */
     constructor(
         height: number,

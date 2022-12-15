@@ -8,13 +8,13 @@ export class Line extends VisualObject{
     points: Coords[]
     color: string
     width: number
-    /*
-    All shapes will extend this class
 
-    Idea: want functionality to be able to conjoin two shapes (i.e. for tic-tac-toe,
-        throw an X over a square and call it a single type)
-    */
-
+    /**
+     * Creates a line on the given poitns. 
+     * @param points list of points for the line to pass through
+     * @param color color of line
+     * @param width width of line
+     */
     constructor(
         points: Coords[],
         color?: string,
