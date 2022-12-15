@@ -1,5 +1,5 @@
 
-export const d3LibDefs: string = `
+export const D3_TOTAL_DEFS: string = `
 interface Coords {
     x: number;
     y: number;

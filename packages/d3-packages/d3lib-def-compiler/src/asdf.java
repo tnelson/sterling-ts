@@ -23,7 +23,7 @@ class asdf{
         "ConjoinedObject",
         "Polygon"
     );
-    List<String> allFiles = new ArrayList<>(List.of("export const d3LibDefs: string = `"));
+    List<String> allFiles = new ArrayList<>(List.of("export const D3_TOTAL_DEFS: string = `"));
     for (String title: titles){
       List<String> file = new ArrayList<String>();
       String fileName = "../d3lib-defs/" + title + ".d.ts";
