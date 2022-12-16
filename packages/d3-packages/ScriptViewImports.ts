@@ -1,4 +1,3 @@
-import {Pane} from "./Pane"
 import {Rectangle} from "./Rectangle"
 import {Circle} from "./Circle"
 import {Shape} from "./Shape"
@@ -10,6 +9,7 @@ import { Grid } from "./Grid"
 import {ConjoinedObject} from './ConjoinedObject'
 import { Polygon } from "./Polygon"
 import {Graph} from './Graph'
+import {Tree} from './Tree'
 
 interface scriptViewImport{
     name: string;
@@ -26,7 +26,6 @@ export const d3LibDefs: string = `
 const scriptViewImports: scriptViewImport[] = [
     {name: "VisualObject", value: VisualObject},
     {name: "Shape", value: Shape},
-    {name: "Pane", value: Pane},
     {name: "Grid", value: Grid},
     {name: "Rectangle", value: Rectangle},
     {name: "Circle", value: Circle},
@@ -35,7 +34,8 @@ const scriptViewImports: scriptViewImport[] = [
     {name: "Line", value: Line},
     {name: "ConjoinedObject",value:ConjoinedObject},
     {name: "Polygon", value:Polygon},
-    {name: "Graph", value:Graph}
+    {name: "Graph", value:Graph},
+    {name: "Tree", value:Tree}
 ]
 
 export {scriptViewImports};

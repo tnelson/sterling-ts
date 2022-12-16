@@ -141,13 +141,16 @@ export class Graph extends VisualObject{
 
 
     
-    private check_add_set(Nodes:Node[]){
+    check_add_set(Nodes:Node[]){
         /**
          * Given a set of nodes, we verify that these nodes satisfy the following conditions:
          * 
          * 1. No node is named twice (i.e. we can't have two nodes named 'i')
          * 2. Each neighbor of the node is a valid node (i.e. if we have node i such that
          * i.neighbors = ['j','k','m'], then we also have nodes 'j','k','m' in our set)
+         * 
+         * 
+         * As an aside, we want this method to be private, except that it's used in the Tree class
          */
         const node_names = new Set([])
 
@@ -159,14 +162,14 @@ export class Graph extends VisualObject{
             node_names.add(node.name)
         })
 
-        Nodes.forEach(node => { //check that each of the neighbors listed by our nodes is in the above node_names set
-            node.neighbors.forEach(neighbor => {
-                if(!node_names.has(neighbor)){
-                    const error = `Neighbor not found. Was unable to find node ${neighbor} in set of nodes`
-                    throw error
-                }
-            })
-        })
+        // Nodes.forEach(node => { //check that each of the neighbors listed by our nodes is in the above node_names set
+        //     node.neighbors.forEach(neighbor => {
+        //         if(!node_names.has(neighbor)){
+        //             const error = `Neighbor not found. Was unable to find node ${neighbor} in set of nodes`
+        //             throw error
+        //         }
+        //     })
+        // })
 
 
         
@@ -194,7 +197,7 @@ export class Graph extends VisualObject{
     }
 
 
-    private render_lines(svg, connections:string[][]){
+    render_lines(svg, connections:string[][]){
         /**
          * Render each of the connections (our connections are given by the set of all unique
          * paths, which we compute in the render phase)
@@ -212,7 +215,7 @@ export class Graph extends VisualObject{
     }
 
 
-    private render_nodes(svg){
+    render_nodes(svg){
         /**
          * Iterate over each of our nodes, rendering each as a circle using the node_to_location dict
          */

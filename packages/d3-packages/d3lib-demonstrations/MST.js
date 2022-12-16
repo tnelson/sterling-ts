@@ -42,7 +42,7 @@ const gridConfig = {
             y:50
         },
         cell_size: {
-            x_size:200,
+            x_size:250,
             y_size:250
         },
         grid_dimensions:{
@@ -57,6 +57,7 @@ while(Prim.atom("Prim"+primState.toString())!=null){
     primState++
 }
 
+graphsGrid.fill_grid_lines()
 stage.add(graphsGrid)
 stage.render(svg, document)
 
