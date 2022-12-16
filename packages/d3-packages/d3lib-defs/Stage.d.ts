@@ -1,8 +1,8 @@
-import { Pane } from './Pane';
+import { VisualObject } from './VisualObject';
 export declare class Stage {
-    Children: Pane[];
+    Children: VisualObject[];
     constructor();
-    add(addPane: Pane): void;
+    add(addObject: VisualObject): void;
     render(svg: any, document?: any): void;
 }
 //# sourceMappingURL=Stage.d.ts.map

@@ -22,7 +22,8 @@ class d3LibDefCompiler{
         "Line",
         "ConjoinedObject",
         "Polygon",
-        "Graph"
+        "Graph",
+        "Tree"
     );
     List<String> allFiles = new ArrayList<>(List.of("export const D3_TOTAL_DEFS: string = `"));
     for (String title: titles){

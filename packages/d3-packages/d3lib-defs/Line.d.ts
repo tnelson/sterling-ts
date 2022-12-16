@@ -1,9 +1,16 @@
-import { Coords, VisualObject } from './VisualObject';
+import { BoundingBox, Coords, VisualObject } from './VisualObject';
 export declare class Line extends VisualObject {
     points: Coords[];
     color: string;
     width: number;
+    /**
+     * Creates a line on the given poitns.
+     * @param points list of points for the line to pass through
+     * @param color color of line
+     * @param width width of line
+     */
     constructor(points: Coords[], color?: string, width?: number);
+    boundingBox(): BoundingBox;
     setColor(color: string): void;
     setWidth(width: number): void;
     center(): Coords;
@@ -23,4 +30,10 @@ export declare function averagePath(points: Coords[]): Coords;
  * @returns
  */
 export declare function shiftList(pointList: Coords[], shift: Coords): Coords[];
+/**
+ * Utility function returning bounding box for a list of points
+ * @param pointList list of points as coords
+ * @returns bounding box
+ */
+export declare function boundsOfList(pointList: Coords[]): BoundingBox;
 //# sourceMappingURL=Line.d.ts.map

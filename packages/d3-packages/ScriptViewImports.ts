@@ -9,7 +9,7 @@ import { Grid } from "./Grid"
 import {ConjoinedObject} from './ConjoinedObject'
 import { Polygon } from "./Polygon"
 import {Graph} from './Graph'
-import {Tree} from './Tree'
+import {Tree, VisTree} from './Tree'
 
 interface scriptViewImport{
     name: string;

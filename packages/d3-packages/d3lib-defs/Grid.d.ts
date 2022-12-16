@@ -30,13 +30,18 @@ export declare class Grid extends VisualObject {
     cells: Array<Array<gridCell>>;
     gridlines: Array<Line>;
     constructor(config: gridProps);
-    initialize_cells(): void;
+    private initialize_cells;
+    center(): {
+        x: number;
+        y: number;
+    };
     setCenter(center: Coords): void;
-    add(coords: Coords, add_object: VisualObject): void;
+    private check_bounding_box;
+    add(coords: Coords, add_object: VisualObject, ignore_warning?: boolean): void;
     remove(coords: Coords): void;
     fill_grid_lines(): void;
     fill(coords: Coords, color: string): void;
-    check_coords(coords: Coords): void;
+    private check_coords;
     render(svg: any): void;
 }
 export {};

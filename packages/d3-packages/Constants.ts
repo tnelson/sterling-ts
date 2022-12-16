@@ -17,3 +17,10 @@ export const SCREEN_HEIGHT:number = 700 //these can be adjusted - the settings t
 export const DEFAULT_GRAPH_FIXED_NODES:number = 4;
 export const DEFAULT_NODE_RADIUS:number = 20;
 export const NODE_OFFSET:number = 20;
+
+/**
+ * Tree related Constants
+ */
+
+export const DEFAULT_TREE_LINE_COLOR: string = "black"
+export const DEFAULT_TREE_LINE_WIDTH: number = 2
