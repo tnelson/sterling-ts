@@ -164,14 +164,14 @@ export class Graph extends VisualObject{
             node_names.add(node.name)
         })
 
-        // Nodes.forEach(node => { //check that each of the neighbors listed by our nodes is in the above node_names set
-        //     node.neighbors.forEach(neighbor => {
-        //         if(!node_names.has(neighbor)){
-        //             const error = `Neighbor not found. Was unable to find node ${neighbor} in set of nodes`
-        //             throw error
-        //         }
-        //     })
-        // })
+        Nodes.forEach(node => { //check that each of the neighbors listed by our nodes is in the above node_names set
+            node.neighbors.forEach(neighbor => {
+                if(!node_names.has(neighbor)){
+                    const error = `Neighbor not found. Was unable to find node ${neighbor} in set of nodes`
+                    throw error
+                }
+            })
+        })
 
 
         
