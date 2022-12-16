@@ -44,12 +44,16 @@ export class Shape extends VisualObject{
             labelColor ?? DEFAULT_TEXT_COLOR,
             labelSize ?? DEFAULT_FONT_SIZE
             );
-        this.children.push(this.label)
     }
 
     setCenter(center: Coords){
         this.label.setCenter(center)
         super.setCenter(center)
+    }
+
+    render(svg: any): void {
+        super.render(svg)
+        this.label.render(svg)
     }
 
     setColor(color: string){ this.color = color }

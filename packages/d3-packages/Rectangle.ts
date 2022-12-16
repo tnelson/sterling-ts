@@ -55,6 +55,7 @@ export class Rectangle extends Shape{
             x: center.x - this.width/2,
             y: center.y - this.height/2
         }
+        this.label.setCenter(center)
     }
 
     render(svg: any){

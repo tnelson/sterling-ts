@@ -94,6 +94,18 @@ export class Tree extends VisualObject{
         })
     }
 
+    setCenter(center: Coords){
+        this.coords = {
+            x: center.x - this.width/2,
+            y: center.y - this.height/2
+        }
+        this.root.visualObject.setCenter({
+            x: this.coords.x + this.width / 2,
+            y: this.coords.y
+        })
+        this.setUpSubtrees()
+    }
+
     setLineColor(color: string){
         this.lines.forEach((line) => line.setColor(color))
         this.subTrees.forEach(subTree => subTree.setLineColor(color))
