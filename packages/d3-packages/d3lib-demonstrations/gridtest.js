@@ -1,7 +1,5 @@
-require('d3')
-
 const stage = new Stage()
-const mainPane = new Pane()
+
 
 const bigGridConfig = {
     grid_location :{
@@ -79,8 +77,7 @@ smallGrid.add({x:1,y:1},smallerGrid)
 
 bigGrid.add({x:1,y:1}, smallGrid)
 
-stage.add(mainPane)
-mainPane.add(bigGrid)
+stage.add(bigGrid)
 
 stage.render(svg)
 

@@ -1,8 +1,5 @@
 require('d3')
-
-
 const stage = new Stage()
-const mainPane = new Pane()
 const boardGridProps = {
     grid_location: {
         x: 0,
@@ -66,8 +63,7 @@ for(b = 0; b <= 9; b++) {
     }
 }
 
-stage.add(mainPane);
-mainPane.add(multiBoardGrid)
+stage.add(multiBoardGrid);
 stage.render(svg)
 
 

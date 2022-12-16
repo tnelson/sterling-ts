@@ -40,7 +40,7 @@ function buildGraph(primNum){
     //for computing this value given n nodes)
     const num_fixed_nodes = Math.max(Math.floor(Math.sqrt(nodeAtoms.length)),3)
     
-    const returnGraph = new Graph({x:0,y:0},200,num_fixed_nodes,15)
+    const returnGraph = new Graph({x:0,y:0},150,num_fixed_nodes,15)
     returnGraph.add(nodes)
 
     return returnGraph
@@ -52,8 +52,8 @@ const gridConfig = {
             y:50
         },
         cell_size: {
-            x_size:250,
-            y_size:250
+            x_size:200,
+            y_size:200
         },
         grid_dimensions:{
             y_size:2,
