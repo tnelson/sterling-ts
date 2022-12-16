@@ -2,6 +2,8 @@ import {VisualObject, Coords} from './VisualObject'
 import {DEFAULT_GRAPH_FIXED_NODES, DEFAULT_NODE_RADIUS, SCREEN_WIDTH} from './Constants'
 import { Line } from './Line'
 import {Circle} from './Circle'
+import {TextBox} from './Textbox'
+import {ConjoinedObject} from './ConjoinedObject'
 
 export interface Node{
     name: string,
@@ -86,7 +88,7 @@ export class Graph extends VisualObject{
             this.node_to_location[node.name] = {x:this.graph_dimensions /2, y: this.graph_dimensions/2}
         })
 
-        for(let ignored = 0; ignored<1000; ignored++){
+        for(let ignored = 0; ignored<10000; ignored++){
             this.set_malleable_nodes(malleable_nodes)
         }
 
@@ -215,19 +217,29 @@ export class Graph extends VisualObject{
     }
 
 
+
     render_nodes(svg){
         /**
          * Iterate over each of our nodes, rendering each as a circle using the node_to_location dict
          */
         this.nodes.forEach(node => {
             const nodeCircle = new Circle(this.node_radius, {
+                x:0,
+                y:0
+            }, "red")
+            const circleLabel = new TextBox(node.name,{x:0,y:0},"black",this.node_radius/2)
+            const conj = new ConjoinedObject([nodeCircle,circleLabel])
+            conj.setCenter({x:this.node_to_location[node.name].x + this.coords.x, y:this.node_to_location[node.name].y+this.coords.y})
+            conj.render(svg)
+        })
+    }
+    /*
+    const nodeCircle = new Circle(this.node_radius, {
                 x:this.node_to_location[node.name].x + this.coords.x,
                 y: this.node_to_location[node.name].y + this.coords.y
             }, "red", undefined, 
                 undefined, node.name)
-            nodeCircle.render(svg)
-        })
-    }
+    */
 
 
 }

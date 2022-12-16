@@ -5,7 +5,6 @@ import {VisualObject, Coords} from './VisualObject'
 import {TextBox} from './Textbox'
 import {Line} from "./Line"
 import { Children } from 'react';
-import { TransformRequestFunction } from 'mapbox-gl';
 import { DEFAULT_TREE_LINE_COLOR, DEFAULT_TREE_LINE_WIDTH } from './Constants';
 
 /**
