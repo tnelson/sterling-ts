@@ -32,7 +32,7 @@ export class ConjoinedObject extends VisualObject{
 
     add(obj:VisualObject){
         /**
-         * Ease of access feature that allows for 
+         * Ease of access feature by which the visual object that we want to add is added to the front of the visualization
          */
         this.addOrdered(obj,0)
     }

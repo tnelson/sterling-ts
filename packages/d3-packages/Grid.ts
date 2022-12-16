@@ -44,6 +44,16 @@ export class Grid extends VisualObject{
         this.cells = []
         this.gridlines = []
         this.initialize_cells()
+        this.fill_grid_lines()
+    }
+    override boundingBox(){
+        return {
+            top_left: this.coords,
+            bottom_right: {
+                x: this.coords.x + this.config.cell_size.x_size*this.config.grid_dimensions.x_size,
+                y: this.coords.y + this.config.cell_size.y_size*this.config.grid_dimensions.y_size,
+            }
+        }
     }
 
 
@@ -152,7 +162,7 @@ export class Grid extends VisualObject{
      */
         this.check_coords(coords)
 
-        // if(!ignore_warning){this.check_bounding_box}
+        if(!ignore_warning){this.check_bounding_box(add_object.boundingBox())}
         
         const target_cell: gridCell = this.cells[coords.x][coords.y]
         target_cell.contents = add_object
@@ -173,8 +183,8 @@ export class Grid extends VisualObject{
                 delete target_cell['contents']
             }
         }
-
-    fill_grid_lines(){
+    
+    private fill_grid_lines(){
     /**
      * We offer the option to have our grid have line boundaries be filled in. 
      * 
@@ -200,6 +210,10 @@ export class Grid extends VisualObject{
             ]);
             this.gridlines.push(vertLine)    
         }
+    }
+
+    hide_grid_lines(){
+        this.gridlines = []
     }
 
     fill(coords: Coords, color: string){
