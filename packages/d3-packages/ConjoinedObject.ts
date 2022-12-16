@@ -8,7 +8,7 @@ export class ConjoinedObject extends VisualObject{
 
     objects:VisualObject[]
     constructor(Children?:VisualObject[]){
-        super({x:0,y:0})//TODO: fix this 
+        super()
         this.objects = []
         if(Children){
             Children.forEach(child => {
