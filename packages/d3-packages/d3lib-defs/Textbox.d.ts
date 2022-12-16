@@ -17,4 +17,4 @@ export declare class TextBox extends VisualObject {
     setTextColor(color: string): void;
     render(svg: any): void;
 }
-//# sourceMappingURL=Textbox.d.ts.map
+//# sourceMappingURL=TextBox.d.ts.map

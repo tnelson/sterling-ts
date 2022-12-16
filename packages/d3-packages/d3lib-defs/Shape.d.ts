@@ -1,5 +1,5 @@
 import { VisualObject, Coords } from './VisualObject';
-import { TextBox } from './Textbox';
+import { TextBox } from './TextBox';
 /**
  * Generic class for a large suite of "shape"-like objects.
  * Generally includes anything with an inside and an outside.
@@ -24,6 +24,7 @@ export declare class Shape extends VisualObject {
      */
     constructor(coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
     setCenter(center: Coords): void;
+    render(svg: any): void;
     setColor(color: string): void;
     setBorderWidth(borderWidth: number): void;
     setBorderColor(borderColor: string): void;

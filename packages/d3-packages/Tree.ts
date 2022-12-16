@@ -2,7 +2,7 @@ import { max } from 'lodash';
 import { Circle } from './Circle';
 import {Graph, Node} from './Graph'
 import {VisualObject, Coords} from './VisualObject'
-import {TextBox} from './Textbox'
+import {TextBox} from './TextBox'
 import {Line} from "./Line"
 import { Children } from 'react';
 import { DEFAULT_TREE_LINE_COLOR, DEFAULT_TREE_LINE_WIDTH } from './Constants';

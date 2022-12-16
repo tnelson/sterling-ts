@@ -76,6 +76,7 @@ declare class Shape extends VisualObject {
      */
     constructor(coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
     setCenter(center: Coords): void;
+    render(svg: any): void;
     setColor(color: string): void;
     setBorderWidth(borderWidth: number): void;
     setBorderColor(borderColor: string): void;
@@ -121,6 +122,13 @@ declare class Grid extends VisualObject {
     cells: Array<Array<gridCell>>;
     gridlines: Array<Line>;
     constructor(config: gridProps);
+    boundingBox(): {
+        top_left: Coords;
+        bottom_right: {
+            x: number;
+            y: number;
+        };
+    };
     private initialize_cells;
     center(): {
         x: number;
@@ -130,7 +138,8 @@ declare class Grid extends VisualObject {
     private check_bounding_box;
     add(coords: Coords, add_object: VisualObject, ignore_warning?: boolean): void;
     remove(coords: Coords): void;
-    fill_grid_lines(): void;
+    private fill_grid_lines;
+    hide_grid_lines(): void;
     fill(coords: Coords, color: string): void;
     private check_coords;
     render(svg: any): void;
@@ -205,7 +214,7 @@ declare class TextBox extends VisualObject {
     setTextColor(color: string): void;
     render(svg: any): void;
 }
-//# sourceMappingURL=Textbox.d.ts.map
+//# sourceMappingURL=TextBox.d.ts.map
 declare class Line extends VisualObject {
     points: Coords[];
     color: string;
@@ -327,6 +336,7 @@ declare class Tree extends VisualObject {
      */
     constructor(root: VisTree, height: number, width: number, coords?: Coords, edgeColor?: string, edgeWidth?: number);
     private setUpSubtrees;
+    setCenter(center: Coords): void;
     setLineColor(color: string): void;
     setLineWidth(width: number): void;
     renderNodes(svg: any): void;

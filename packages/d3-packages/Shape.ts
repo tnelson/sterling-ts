@@ -1,6 +1,6 @@
 import {VisualObject, Coords} from './VisualObject'
 import {DEFAULT_BORDER_COLOR, DEFAULT_COLOR, DEFAULT_FONT_SIZE, DEFAULT_STROKE_WIDTH, DEFAULT_TEXT_COLOR} from './Constants'
-import { TextBox } from './Textbox';
+import { TextBox } from './TextBox';
 
 /**
  * Generic class for a large suite of "shape"-like objects. 

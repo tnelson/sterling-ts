@@ -22,6 +22,7 @@ export declare class Tree extends VisualObject {
      */
     constructor(root: VisTree, height: number, width: number, coords?: Coords, edgeColor?: string, edgeWidth?: number);
     private setUpSubtrees;
+    setCenter(center: Coords): void;
     setLineColor(color: string): void;
     setLineWidth(width: number): void;
     renderNodes(svg: any): void;

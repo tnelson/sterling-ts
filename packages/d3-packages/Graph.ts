@@ -2,7 +2,7 @@ import {VisualObject, Coords} from './VisualObject'
 import {DEFAULT_GRAPH_FIXED_NODES, DEFAULT_NODE_RADIUS, SCREEN_WIDTH} from './Constants'
 import { Line } from './Line'
 import {Circle} from './Circle'
-import {TextBox} from './Textbox'
+import {TextBox} from './TextBox'
 import {ConjoinedObject} from './ConjoinedObject'
 
 export interface Node{
