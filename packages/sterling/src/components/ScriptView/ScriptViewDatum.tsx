@@ -110,15 +110,33 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
             ...libraries
           );
         } catch (e) {
-          toast({
-            variant: 'top-accent',
-            position: 'bottom-right',
-            title: e instanceof Error ? e.name : 'Error',
-            description: e instanceof Error ? e.message : `${e}`,
-            status: 'error',
-            duration: 10000,
-            isClosable: true
-          });
+          if (e instanceof SyntaxError) {
+            toast({
+              variant: 'top-accent',
+              position: 'bottom-right',
+              title: e instanceof Error ? e.name : 'Error',
+              description: `${e.message}` ,
+              status: 'error',
+              duration: 10000,
+              isClosable: true
+            })}
+           else {
+            if (e instanceof Error) {
+              if (e.stack != undefined){
+              let errorStack = e.stack;
+              let stackArray = errorStack.split(":")
+              console.log(stackArray)
+              toast({
+                variant: 'top-accent',
+                position: 'bottom-right',
+                title: e instanceof Error ? e.name : 'Error',
+                description: `${e.message} at line ${+stackArray[3] - 2}` ,
+                status: 'error',
+                duration: 10000,
+                isClosable: true
+              });}
+            }
+          }
         }
       });
     }
