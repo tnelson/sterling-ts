@@ -125,8 +125,18 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
               if (e.stack != undefined){
               let errorStack = e.stack;
               let stackArray = errorStack.split(":")
-              console.log(stackArray)
-              toast({
+              let lineNumber = parseInt(stackArray[3])
+              if (lineNumber == NaN){
+                toast({
+                variant: 'top-accent',
+                position: 'bottom-right',
+                title: e instanceof Error ? e.name : 'Error',
+                description: `${e.message}` ,
+                status: 'error',
+                duration: 10000,
+                isClosable: true
+              });} else {
+                toast({
                 variant: 'top-accent',
                 position: 'bottom-right',
                 title: e instanceof Error ? e.name : 'Error',
@@ -134,7 +144,7 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
                 status: 'error',
                 duration: 10000,
                 isClosable: true
-              });}
+              });}}
             }
           }
         }
