@@ -1,5 +1,3 @@
-import { add } from "lodash"
-
 export let langMap: Map<string, Map<string, Error>>
 
 export function addLang(lang: string){
