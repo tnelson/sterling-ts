@@ -1,10 +1,14 @@
-export let langMap: Map<string, Map<string, Error>>
+
+//Map that has languages as keys and Maps with IDs and Errors as the values
+//Each language will have its own internal state of errors for each command
+export let langMap: Map<string, Map<string, (a: Array<any>) => Error >>
 
 export function addLang(lang: string){
-    langMap.set(lang, new Map<string, Error>)
+    langMap.set(lang, new Map<string,  (a: Array<any>) => Error>)
 }
 
-export function addError(lang: string, id: string, err: Error){
+
+export function addError(lang: string, id: string, err: (a: Array<any>) => Error){
     if (langMap.has(lang)){
         let langErr = langMap.get(lang)
         if(langErr != undefined){
@@ -15,7 +19,7 @@ export function addError(lang: string, id: string, err: Error){
     }
 }
 
-export function addAllError(id: string, errList: Map<string, Error>){
+export function addAllError(id: string, errList: Map<string,  (a: Array<any>) => Error>){
     if (idInMap(id)){
         throw new ArgsError(ArgsError.ID_EXISTS)
     } 
