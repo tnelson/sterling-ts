@@ -1,28 +1,28 @@
-let circ1 = new Circle(10, undefined, "red", 2, "black","1")
-let circ2 = new Circle(10, undefined, "red", 2, "black","2")
-let circ3 = new Circle(10, undefined, "red", 2, "black","3")
-let circ4 = new Circle(10, undefined, "red", 2, "black","4")
-let circ5 = new Circle(10, undefined, "red", 2, "black","5")
-let circ6 = new Circle(10, undefined, "red", 2, "black","6")
-let circ7 = new Circle(10, undefined, "blue", 2, "black","7")
-let circ8 = new Circle(10, undefined, "blue", 2, "black","8")
+let obj1 = new Circle(10, undefined, "red", 2, "black","1")
+let obj2 = new Circle(10, undefined, "red", 2, "black","2")
+let obj3 = new Circle(10, undefined, "red", 2, "black","3")
+let obj4 = new Circle(10, undefined, "red", 2, "black","4")
+let obj5 = new Circle(10, undefined, "red", 2, "black","5")
+let obj6 = new Circle(10, undefined, "red", 2, "black","6")
+let obj7 = new Circle(10, undefined, "blue", 2, "black","7")
+let obj8 = new Circle(10, undefined, "blue", 2, "black","8")
 
 let visTree = {
-    visualObject: circ1,
+    visualObject: obj1,
     children: [
         {
-            visualObject: circ2,
+            visualObject: obj2,
             children: [
-                {visualObject: circ4, children: []},
-                {visualObject: circ5, children: [
-                    {visualObject: circ8, children: []}
+                {visualObject: obj4, children: []},
+                {visualObject: obj5, children: [
+                    {visualObject: obj8, children: []}
                 ]},
-                {visualObject: circ7, children: []}
+                {visualObject: obj7, children: []}
             ]
         },
         {
-            visualObject: circ3,
-            children: [{visualObject: circ6, children: []}]
+            visualObject: obj3,
+            children: [{visualObject: obj6, children: []}]
         }
     ]
 }

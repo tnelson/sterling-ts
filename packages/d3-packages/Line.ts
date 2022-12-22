@@ -67,6 +67,9 @@ export class Line extends VisualObject{
  * @returns 
  */
 export function averagePath(points: Coords[]): Coords{
+    if (points == undefined){
+        return {x:0, y:0}
+    }
     if (points.length == 0){
         return {x: 0, y:0}
     }
