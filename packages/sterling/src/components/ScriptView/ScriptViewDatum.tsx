@@ -155,19 +155,32 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
   );
 };
 
+/**
+ * Line numbers are being reported slightly off by the browser
+ */
+const LINE_OFFSET = 2
+
 function buildErrorDescription(e: any): string {
   // If it's not an Error class, use the value itself, converted to a string
   if(!(e instanceof Error)) return `${e}`
 
-  // Otherwise, try to extract the error's line number
-  if (e.stack != undefined) {
-    let errorStack = e.stack;
-    let stackArray = errorStack.split(":")
-    let lineNumber: number = parseInt(stackArray[3])
-    return `${e.message} at line ${+stackArray[3] - 2}`
-  } else {
-    return `${e.message}`
+  console.log(`Error stack: ${e.stack}`)
+
+  // Is there a lineNumber field?
+  if('lineNumber' in e && typeof(e.lineNumber) === 'number') {
+    return `${e.message} near line ${e.lineNumber - LINE_OFFSET} (obtained via lineNumber field)`
   }
+
+  // Otherwise, try to extract the error's line number from the stack 
+  // Firefox (Function:x:y) / Chrome (<anonymous>:x:y) patterns
+  if (e.stack != undefined && e.stack.match(new RegExp('.*(Function|<anonymous>):[0-9]+:[0-9]+.*'))) {
+    let stackArray = e.stack.split(":")
+    if(stackArray.length >= 4)
+      return `${e.message} near line ${+stackArray[3] - LINE_OFFSET} (computed via stack)`
+  } 
+  
+  // Default to the error message by itself (Safari, as of Jan 2023; some syntax errors also)
+  return `${e.message} (location information was not provided by the browser)`
 }
 
 export { ScriptViewDatum };
