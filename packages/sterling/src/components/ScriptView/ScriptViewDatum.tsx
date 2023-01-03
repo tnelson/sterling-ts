@@ -104,44 +104,16 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
             ...datumVariables.map((v) => v.variable),
             ...libraries
           );
-        } catch (e) {
-          if (e instanceof SyntaxError) {
+        } catch (e) {                                  
             toast({
               variant: 'top-accent',
               position: 'bottom-right',
               title: e instanceof Error ? e.name : 'Error',
-              description: `${e.message}` ,
+              description: buildErrorDescription(e),
               status: 'error',
               duration: 10000,
               isClosable: true
-            })}
-           else {
-            if (e instanceof Error) {
-              if (e.stack != undefined){
-              let errorStack = e.stack;
-              let stackArray = errorStack.split(":")
-              let lineNumber = parseInt(stackArray[3])
-              if (lineNumber == NaN){
-                toast({
-                variant: 'top-accent',
-                position: 'bottom-right',
-                title: e instanceof Error ? e.name : 'Error',
-                description: `${e.message}` ,
-                status: 'error',
-                duration: 10000,
-                isClosable: true
-              });} else {
-                toast({
-                variant: 'top-accent',
-                position: 'bottom-right',
-                title: e instanceof Error ? e.name : 'Error',
-                description: `${e.message} at line ${+stackArray[3] - 2}` ,
-                status: 'error',
-                duration: 10000,
-                isClosable: true
-              });}}
-            }
-          }
+            })            
         }
       });
     }
@@ -183,4 +155,20 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
   );
 };
 
+function buildErrorDescription(e: any): string {
+  // If it's not an Error class, use the value itself, converted to a string
+  if(!(e instanceof Error)) return `${e}`
+
+  // Otherwise, try to extract the error's line number
+  if (e.stack != undefined) {
+    let errorStack = e.stack;
+    let stackArray = errorStack.split(":")
+    let lineNumber: number = parseInt(stackArray[3])
+    return `${e.message} at line ${+stackArray[3] - 2}`
+  } else {
+    return `${e.message}`
+  }
+}
+
 export { ScriptViewDatum };
+
