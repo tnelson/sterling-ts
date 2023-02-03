@@ -20,6 +20,7 @@ import { extractRequires } from './extractRequires';
 import { fetchLibrary } from './fetchLibrary';
 import { ScriptEditor } from './ScriptEditor';
 import { ScriptViewHeader } from './ScriptViewHeader';
+import { scriptViewImports} from './../../../../d3-packages/ScriptViewImports'
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
 
 interface ScriptViewDatumProps {
@@ -74,12 +75,6 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
     dispatch(scriptTextSet(text));
   }, []);
 
-  // TODO: figure out the right way to actually import the real thing
-  const internalSterlingHelpers = [
-    {name: 'helper1', value: (x: number) => (x + 1)},
-    {name: 'helper2', value: (x: number, y: number) => (y - x)}
-  ]
-
   const onExecute = useCallback(() => {
     const text = editor?.getValue();
     if (text && stageRef && size) {
@@ -96,7 +91,7 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
             stage,
             'width',
             'height',
-            ...internalSterlingHelpers.map((v) => v.name),
+            ...scriptViewImports.map((v) => v.name),
             ...datumVariables.map((v) => v.name),
             ...libNames.map((ln) => sanitizeLibNames(ln)),
             script
@@ -105,20 +100,20 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
             stageRef,
             size.width,
             size.height,
-            ...internalSterlingHelpers.map((v) => v.value),
+            ...scriptViewImports.map((v) => v.value),
             ...datumVariables.map((v) => v.variable),
             ...libraries
           );
-        } catch (e) {
-          toast({
-            variant: 'top-accent',
-            position: 'bottom-right',
-            title: e instanceof Error ? e.name : 'Error',
-            description: e instanceof Error ? e.message : `${e}`,
-            status: 'error',
-            duration: 10000,
-            isClosable: true
-          });
+        } catch (e) {                                  
+            toast({
+              variant: 'top-accent',
+              position: 'bottom-right',
+              title: e instanceof Error ? e.name : 'Error',
+              description: buildErrorDescription(e),
+              status: 'error',
+              duration: 10000,
+              isClosable: true
+            })            
         }
       });
     }
@@ -160,4 +155,33 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
   );
 };
 
+/**
+ * Line numbers are being reported slightly off by the browser
+ */
+const LINE_OFFSET = 2
+
+function buildErrorDescription(e: any): string {
+  // If it's not an Error class, use the value itself, converted to a string
+  if(!(e instanceof Error)) return `${e}`
+
+  console.log(`Error stack: ${e.stack}`)
+
+  // Is there a lineNumber field?
+  if('lineNumber' in e && typeof(e.lineNumber) === 'number') {
+    return `${e.message} near line ${e.lineNumber - LINE_OFFSET} (obtained via lineNumber field)`
+  }
+
+  // Otherwise, try to extract the error's line number from the stack 
+  // Firefox (Function:x:y) / Chrome (<anonymous>:x:y) patterns
+  if (e.stack != undefined && e.stack.match(new RegExp('.*(Function|<anonymous>):[0-9]+:[0-9]+.*'))) {
+    let stackArray = e.stack.split(":")
+    if(stackArray.length >= 4)
+      return `${e.message} near line ${+stackArray[3] - LINE_OFFSET} (computed via stack)`
+  } 
+  
+  // Default to the error message by itself (Safari, as of Jan 2023; some syntax errors also)
+  return `${e.message} (location information was not provided by the browser)`
+}
+
 export { ScriptViewDatum };
+

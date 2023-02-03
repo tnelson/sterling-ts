@@ -233,7 +233,7 @@ class AlloyTypedSet extends AlloySet {
   types(): AlloySignature[];
 }
 
-class AlloyField extends AlloyTypedSet {
+export class AlloyField extends AlloyTypedSet {
   private readonly _id;
 
   /**

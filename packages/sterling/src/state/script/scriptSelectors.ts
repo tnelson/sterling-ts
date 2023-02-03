@@ -1,6 +1,7 @@
 import { isAlloyDatumTrace } from '@/alloy-instance';
 import { DatumParsed, isDatumAlloy } from '@/sterling-connection';
 import { Projection } from '@/sterling-theme';
+import {scriptViewImports} from '../../../../d3-packages/ScriptViewImports'
 import { isDatumRaw } from '../../../../sterling-connection/src/parse/raw';
 import { AlloyAtom } from '../../components/ScriptView/alloy-proxy/AlloyAtom';
 import { AlloyInstance } from '../../components/ScriptView/alloy-proxy/AlloyInstance';
@@ -87,6 +88,11 @@ function selectScriptVariables(
       type: 'AlloySkolem',
       typeUrl: SKOLEM_URL
     }));
+    const visStates: ScriptVariable[] = scriptViewImports.map((visState) => ({
+      name: visState.name,
+      variable: visState.value,
+      type: ``
+    }));
 
     const scriptVariables: ScriptVariable[] = [
       {
@@ -98,7 +104,8 @@ function selectScriptVariables(
       ...sigs,
       ...atoms,
       ...fields,
-      ...skolems
+      ...skolems,
+      ...visStates
     ];
 
     if (isAlloyDatumTrace(datum.parsed)) {

@@ -1,3 +1,4 @@
+import { D3_TOTAL_DEFS } from 'd3-packages/d3lib-defs/total-defs';
 import { editor } from 'monaco-editor';
 import { useCallback, useEffect, useState } from 'react';
 import MonacoEditor, { monaco } from 'react-monaco-editor';
@@ -56,8 +57,12 @@ const ScriptEditor = (props: ScriptEditorProps) => {
     const defs = generateAlloyVariablesModel(variables);
     monaco.languages.typescript.javascriptDefaults.setExtraLibs([
       {
+        content: D3_TOTAL_DEFS,
+        filePath: `helpers.ts`
+      },
+      {
         content: alloyDefs + '\n' + defs,
-        filePath: 'alloy.js'
+        filePath: 'alloy.js' 
       },
       {
         content: defs,
