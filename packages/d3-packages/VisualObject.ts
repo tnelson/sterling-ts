@@ -29,7 +29,7 @@ export interface BoundingBox {
 }
 
 export interface ExperimentalBoundingBox {
-  lambda: (Coords, radians: number) => number;
+  lambda: (radians: number) => Coords;
 }
 
 export class VisualObject {
@@ -52,8 +52,8 @@ export class VisualObject {
   getExperimentalBoundingBox(): ExperimentalBoundingBox {
     //NOT functional NOT functional NOT functional
     return {
-      lambda: (coords, r) => {
-        return 0;
+      lambda: (r) => {
+        return {x:0,y:0};
       }
     };
   }

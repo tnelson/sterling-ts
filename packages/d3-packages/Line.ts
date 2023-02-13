@@ -42,7 +42,7 @@ export class Line extends VisualObject {
   }
 
   // Shifts points so average is at new center
-  override setCenter(center: Coords): void {
+  setCenter(center: Coords): void {
     let shift: Coords = {
       x: center.x - this.center().x,
       y: center.y - this.center().y
