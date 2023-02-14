@@ -35,6 +35,7 @@ export interface ExperimentalBoundingBox {
 export class VisualObject {
   coords: Coords;
   children: VisualObject[];
+  dependents: VisualObject[];
 
   /**
    * Top level class, which all other visual objects will extend.
@@ -46,7 +47,21 @@ export class VisualObject {
   }
 
   boundingBox(): BoundingBox {
-    return { top_left: { x: 0, y: 0 }, bottom_right: { x: 0, y: 0 } };
+    if (this.children.length != 0) {
+      return {top_left: { x: 0, y: 0 }, bottom_right: { x: 0, y: 0 }}
+    } else {
+      // Defaults to returning bounding box of all children. 
+      return {
+        top_left: {
+          x: Math.min(...this.children.map((child: VisualObject): number => {return child.boundingBox().top_left.x })),
+          y: Math.min(...this.children.map((child: VisualObject): number => {return child.boundingBox().top_left.y }))
+        },
+        bottom_right: {
+          x: Math.max(...this.children.map((child: VisualObject): number => {return child.boundingBox().bottom_right.x })),
+          y: Math.max(...this.children.map((child: VisualObject): number => {return child.boundingBox().bottom_right.y }))
+        }
+      }
+    }
   }
 
   getExperimentalBoundingBox(): ExperimentalBoundingBox {
@@ -82,4 +97,79 @@ export class VisualObject {
   render(svg: any) {
     this.children.forEach((child: VisualObject) => child.render(svg));
   }
+
+  /**
+   * Updates data about all objects that are effected by this object. 
+   * Note: This actually implements topological sorting. More shallow "update()"
+   * method exists for use within this method, and should never be called on its own.
+   * 
+   * Note: Maybe factor the algorithmic beef into helper?
+   */
+  deepUpdate() {
+    // We are using Kohn's algorithm for topological sorting. Unforunately,
+    // The algorithm does not work in sorting a specific part of the graph,
+    // so we begin by isolating out the edges and visObjs that are actually
+    // going to be updated. We do this with dfs
+    let relevantObj: VisualObject[] = []
+    let toSearch: VisualObject[] = [this]
+    let edges: Map<VisualObject, VisualObject[]> = new Map<VisualObject, VisualObject[]>()
+
+    while (toSearch.length != 0) {
+      let curr = toSearch.pop()
+      edges.set(curr, new Array<VisualObject>())
+      curr.dependents.forEach((dependent: VisualObject) => {
+        if (!toSearch.includes(dependent) && !relevantObj.includes(dependent)) {
+          toSearch.push(dependent)
+        }
+        edges.get(curr).push(dependent)
+      })
+      relevantObj.push(curr)
+    }
+
+    // We now create an inverted version of edges (this will speed things up later)
+
+    let inverseEdges: Map<VisualObject, VisualObject[]> = new Map<VisualObject, VisualObject[]>()
+    relevantObj.forEach((relObj: VisualObject) => {
+      inverseEdges.set(relObj, new Array<VisualObject>())
+    })
+    edges.forEach((sinks: VisualObject[], source: VisualObject) => {
+      sinks.forEach((sink: VisualObject) => {
+         inverseEdges.get(sink).push(source)
+      })
+    })
+
+    // Now for the main event, kohn's algorithm
+    // Lists to keep track
+    let sorted: VisualObject[] = []
+    let noIncoming: VisualObject[] = [this] // Probably better as set, but some issues
+
+    while (noIncoming.length != 0) {
+      let curr = noIncoming.pop()
+      sorted.push(curr)
+
+      while (edges.get(curr).length != 0) {
+        let sink = edges.get(curr).pop()
+
+        // Very basic js function missing (removing elt of list)
+        const index = inverseEdges.get(sink).indexOf(curr)
+        if (index > -1) {
+          inverseEdges.get(sink).splice(index, 1)
+        }
+
+        if (inverseEdges.get(sink).length != 0) {
+          noIncoming.push(sink)
+        }
+      }
+    }
+
+    //Actually updating!
+    sorted.forEach((o: VisualObject) => {
+      o.update()
+    })
+  }
+
+  /**
+   * Updates necessary information about an object.
+   */
+  update() {}
 }

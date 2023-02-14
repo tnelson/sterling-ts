@@ -50,6 +50,7 @@ export class Shape extends VisualObject {
       labelColor ?? DEFAULT_TEXT_COLOR,
       labelSize ?? DEFAULT_FONT_SIZE
     );
+    this.children.push(this.label)
   }
 
   setCenter(center: Coords) {
@@ -80,6 +81,4 @@ export class Shape extends VisualObject {
   setLabelSize(labelSize: number) {
     this.label.setFontSize(labelSize);
   }
-
-  //getBoundingBox()
 }
