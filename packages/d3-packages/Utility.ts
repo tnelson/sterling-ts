@@ -71,17 +71,17 @@ export function averagePath(points: Coords[]): Coords {
   }
   
   /**
-   * Shifts a list of points according to a shift variable
+   * Shifts a function list of points according to a shift variable
    * @param pointList
    * @param shift
    * @returns
    */
-  export function shiftList(pointList: Coords[], shift: Coords): Coords[] {
-    let newPoints: Coords[] = pointList.map((point: Coords): Coords => {
-      return {
-        x: point.x + shift.x,
-        y: point.y + shift.y
-      };
+  export function shiftList(pointList: (() => Coords)[], shift: () => Coords): (() => Coords)[] {
+    let newPoints: (() => Coords)[] = pointList.map((pointFn: () => Coords): (() => Coords) => {
+      return () => { return {
+        x: pointFn().x - shift().x,
+        y: pointFn().y - shift().y
+      }} ;
     });
     return newPoints;
   }
