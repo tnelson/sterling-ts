@@ -90,31 +90,26 @@ function bounding_box_to_lambda(
       let yval: number;
       if (barrierAngle < Math.PI) {
         yval = topLeft[1] + (Math.tan(r) * width) / 2;
-      }
-      else{
-        yval = topLeft[1] + height/2 + (Math.tan(r) * width) / 2;
+      } else {
+        yval = topLeft[1] + height / 2 + (Math.tan(r) * width) / 2;
       }
 
       return { x: xval, y: yval };
     }
     //Case 4: 2pi - barrierAngle < r < 2pi
     else if (Math.PI + barrierAngle < r || r < 2 * Math.PI - barrierAngle) {
-      let xval:number;
+      let xval: number;
       const yval = bottomRight[1];
 
-      if(barrierAngle < 3*Math.PI/2){
-        xval = bottomRight[0] - (width/2 + height / (2 * Math.tan(r)));
+      if (barrierAngle < (3 * Math.PI) / 2) {
+        xval = bottomRight[0] - (width / 2 + height / (2 * Math.tan(r)));
+      } else {
+        xval = bottomRight[0] - height / (2 * Math.tan(r));
       }
-      else{
-        xval = bottomRight[0] -  (height / (2 * Math.tan(r)));
-      }
-      return {x: xval, y:yval;}
-
-    } 
-    else {
+      return { x: xval, y: yval };
+    } else {
       throw 'not supposed to get to this case. Error in geometricHelpers.ts';
     }
-
   };
 }
 

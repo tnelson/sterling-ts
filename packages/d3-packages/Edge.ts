@@ -1,7 +1,7 @@
 import { Line } from './Line';
 import { Shape } from './Shape';
 import { TextBox } from './Textbox';
-import { distance, mid_point, get_minimum_distance} from './geometricHelpers';
+import { distance, mid_point, get_minimum_distance } from './geometricHelpers';
 import { VisualObject, ExperimentalBoundingBox, Coords } from './VisualObject';
 
 export interface EdgeParams {
@@ -44,6 +44,8 @@ export class Edge extends VisualObject {
     obj: VisualObject,
     precision: number
   ): Coords {
+    //want a way to check if any object has a specific function
+    //if(func)
     const boundary_points: Coords[] = [];
     for (let i = 1; i <= precision; i++) {
       const boundary_point: Coords = obj
