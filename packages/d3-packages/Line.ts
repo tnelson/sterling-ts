@@ -58,6 +58,7 @@ export class Line extends VisualObject {
     });
     d3.select(svg)
       .append('path')
+      .attr('id', 'arrow')
       .attr('d', path)
       .attr('stroke-width', this.width)
       .attr('stroke', this.color)

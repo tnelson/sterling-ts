@@ -1,6 +1,7 @@
 import { Line } from './Line';
 import { Shape } from './Shape';
 import { TextBox } from './Textbox';
+import { distance, mid_point, get_minimum_distance} from './geometricHelpers';
 import { VisualObject, ExperimentalBoundingBox, Coords } from './VisualObject';
 
 export interface EdgeParams {
@@ -25,12 +26,11 @@ export class Edge extends VisualObject {
     this.obj2 = params.obj2;
     this.text = params.text;
 
-
     this.compute_points(360);
   }
 
   compute_points(precision) {
-    const target_point: Coords = this.mid_point(
+    const target_point: Coords = mid_point(
       //we set a point to optimize distance from
       this.obj1.center(),
       this.obj2.center()
@@ -54,52 +54,23 @@ export class Edge extends VisualObject {
 
     this.visible_points = boundary_points;
 
-    return this.get_minimum_distance(target_point, boundary_points);
-  }
-  get_minimum_distance(target_point: Coords, compare_points: Coords[]): Coords {
-    let curr_min_point: Coords = compare_points[0];
-    if (compare_points.length == 0) {
-      throw "Error: no points to compare. Talk to Sidney about this one I'd say. Problem in Edge.ts";
-    }
-    compare_points.forEach((p) => {
-      if (
-        this.distance(p, target_point) <
-        this.distance(curr_min_point, target_point)
-      ) {
-        curr_min_point = p;
-      }
-    });
-    return curr_min_point;
-  }
-  distance(
-    p1: Coords,
-    p2: Coords //a helper in the compute_points method in which we compute the distance between two points
-  ): number {
-    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+    return get_minimum_distance(target_point, boundary_points);
   }
 
-  mid_point(p1: Coords, p2: Coords): Coords {
-    //given a line, finds the midpoint of that line
-    return {
-      x: (p1.x + p2.x) / 2,
-      y: (p1.y + p2.y) / 2
-    };
-  }
   render(svg) {
     const makeLine = new Line([this.obj1Coords, this.obj2Coords]);
     makeLine.render(svg);
     if (this.text) {
       const makeText = new TextBox(
         this.text,
-        this.mid_point(
+        mid_point(
           //we set a point to optimize distance from
           this.obj1.center(),
           this.obj2.center()
         )
       );
-      makeText.render(svg)
+      makeText.render(svg);
     }
-
   }
 }
 
