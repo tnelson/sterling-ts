@@ -1,12 +1,12 @@
 import {Shape} from './Shape'
 import { require as d3require } from 'd3-require';
 const d3 = require("d3")
-import {BoundingBox, Coords} from './VisualObject'
+import {BoundingBox, Coords, toFunc} from './Utility'
 
 
 export class Rectangle extends Shape{
-    height: number;
-    width: number;
+    height: () => number;
+    width: () => number;
 
     /**
      * Creates a logical rectangle object
@@ -21,53 +21,54 @@ export class Rectangle extends Shape{
      * @param labelSize size of label text
      */
     constructor(
-        height: number,
-        width: number,
-        coords?: Coords,
-        color?: string,
-        borderWidth?: number,
-        borderColor?: string,
-        label?: string,
-        labelColor?: string,
-        labelSize?: number
+        height: number | (() => number),
+        width: number | (() => number),
+        coords?: Coords | (() => Coords),
+        color?: string | (() => string),
+        borderWidth?: number | (() => number),
+        borderColor?: string | (() => string),
+        label?: string | (() => string),
+        labelColor?: string | (() => string),
+        labelSize?: number | (() => number)
     ){
         super(coords, color, borderWidth, borderColor, label, labelColor, labelSize)
-        this.height = height
-        this.width = width
-        this.label.setCenter(this.center()) //TODO: FIX THIS
+        this.height = toFunc(0, height)
+        this.width = toFunc(0, width) //TODO: FIX THIS
+        let coordsFunc = toFunc({x: 0, y:0}, coords)
+        this.center = () => {
+            return {
+                x: coordsFunc().x + (this.width() / 2),
+                y: coordsFunc().y + (this.height() / 2)
+            }
+        }
     }
 
     boundingBox(): BoundingBox {
         return {
-            top_left: {x:this.coords.x, y: this.coords.y},
-            bottom_right: {x:this.coords.x + this.width, y: this.coords.y + this.height}
+            top_left: {
+                x:this.center().x - this.width() / 2, 
+                y: this.center().y - this.height() / 2
+            },
+            bottom_right: {
+                x:this.center().x + this.width() / 2, 
+                y: this.center().y + this.height() / 2
+            }
         }
     }
-    setWidth(width: number){this.width = width}
-    setHeight(height: number){this.height = height}
 
-    override center(): Coords{
-        return {x: this.coords.x + (this.width ?? 0)/2, y: this.coords.y + (this.height ?? 0)/2} //shitfix
-    }
-
-    override setCenter(center: Coords){
-        this.coords = {
-            x: center.x - this.width/2,
-            y: center.y - this.height/2
-        }
-        this.label.setCenter(center)
-    }
+    setWidth(width: number | (() => number)){this.width = toFunc(this.width(), width)}
+    setHeight(height: number | (() => number)){this.height = toFunc(this.height(), height)}
 
     render(svg: any){
         d3.select(svg)
             .append('rect')
-            .attr('x', this.coords.x)
-            .attr('y', this.coords.y)
-            .attr('width', this.width)
-            .attr('height', this.height)
-            .attr('stroke-width', this.borderWidth)
-            .attr('stroke', this.borderColor)
-            .attr('fill', this.color)
+            .attr('x', this.center().x - this.width()/2)
+            .attr('y', this.center().y - this.height()/2)
+            .attr('width', this.width())
+            .attr('height', this.height())
+            .attr('stroke-width', this.borderWidth())
+            .attr('stroke', this.borderColor())
+            .attr('fill', this.color())
         super.render(svg)
     }
 }
