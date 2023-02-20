@@ -1,6 +1,6 @@
 import { Line } from './Line';
 import { Shape } from './Shape';
-import { TextBox } from './Textbox';
+import { TextBox } from './TextBox';
 import { VisualObject, ExperimentalBoundingBox, Coords } from './VisualObject';
 
 export interface EdgeParams {

@@ -15,7 +15,7 @@ const favIconPath = path.resolve(
   __dirname,
   'packages/sterling/src/public',
   'favicon.png'
-);
+); 
 
 module.exports = (env, argv) => {
   const mode = argv.mode;
