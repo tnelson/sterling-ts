@@ -41,11 +41,11 @@ class AlloyProxy {
 
                     if (match) {
                         const left = _sets.get(match[1]);
-                        if (!left) throw AlloyError.error('Join', `No set ${match[1]}`);
+                        if (!left) throw AlloyError.error('Join', `No set ${match[1]} (or no such object field)`);
                         join = left.join(target);
                     } else {
                         const right = _sets.get(prop);
-                        if (!right) throw AlloyError.error('Join', `No set ${prop}`);
+                        if (!right) throw AlloyError.error('Join', `No set ${prop} (or no such object field)`);
                         join = target.join(right);
                     }
 

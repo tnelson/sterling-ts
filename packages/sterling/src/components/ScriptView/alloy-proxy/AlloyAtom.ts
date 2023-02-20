@@ -25,24 +25,25 @@ class AlloyAtom extends AlloySet {
 
     }
 
+    /**
+     * An atom is invariant across instances (i.e., states) in a trace. This supports 
+     * the semantics of the Alloy evaluator: if asked whether X = next_state X (where X is an atom ID)
+     * the evaluator produces *true*. However, the general expectation of clone() is for it to return
+     * a new object (x.clone() != x), so invoking this method is forbidden.
+     */
     clone (proxy?: AlloyProxy): AlloyAtom {
-
-        return new AlloyAtom(this.id(), proxy);
-
+        //return new AlloyAtom(this.id(), proxy);
+        throw new Error( 'AlloyAtom objects cannot be cloned.')
     }
 
     id (): string {
-
         return this._id;
-
     }
 
     static fromElement (element: Element, proxy?: AlloyProxy): AlloyAtom {
-
         const label = element.getAttribute('label');
         if (!label) throw AlloyError.missingAttribute('AlloyAtom', 'label');
         return new AlloyAtom(label, proxy);
-
     }
 
 }

@@ -89,10 +89,16 @@ class AlloyInstance {
         'Cannot clone an instance without univ signature'
       );
 
+    // Clone all signatures, rather than using the baseline signature objects,
+    // because in a temporal model sigs may be "var" and change over time.
     const univClone = univ.clone(proxy);
 
+    // "univ" is defined, as are all subsignatures (recursively computed)
     const signatures = [univClone, ...univClone.subSignatures(true)];
+
+    // Atoms should be canonical, though; the atom with id "X" is fixed, even if unused in this instance
     const atoms = univClone.atoms(true);
+
     const fields = this.fields().map((field) => field.clone(signatures, proxy));
     const skolems = this.skolems().map((skolem) =>
       skolem.clone(signatures, proxy)

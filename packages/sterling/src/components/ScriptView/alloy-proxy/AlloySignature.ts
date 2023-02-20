@@ -41,8 +41,7 @@ class AlloySignature extends AlloySet {
      * @param id The atom ID
      * @returns An atom or null if there is no atom with the specified ID
      */
-    atom (id: string): AlloyAtom | null {
-
+    atom (id: string): AlloyAtom | null {        
         return this.atoms(true).find(atom => atom.id() === id) || null;
 
     }
@@ -71,7 +70,9 @@ class AlloySignature extends AlloySet {
 
         const clone = new AlloySignature(
             this.id(),
-            this.atoms().map(atom => atom.clone(proxy)),
+            // Atoms should not be cloned (see the docs for AlloyAtom.clone())
+            //this.atoms().map(atom => atom.clone(proxy)),
+            this.atoms(),
             proxy
         );
 
