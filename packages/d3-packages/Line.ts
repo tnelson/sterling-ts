@@ -1,6 +1,8 @@
 import {Shape} from './Shape'
-import { require as d3require } from 'd3-require';
-const d3 = require("d3")
+//import { require as d3require } from 'd3-require';
+// This wasn't using d3require anyway, just old-style require, which caused d3 to have type "any"
+//const d3 = require("d3")
+import * as d3 from 'd3';
 import {BoundingBox, Coords, VisualObject} from './VisualObject'
 import { DEFAULT_COLOR, DEFAULT_LINE_COLOR, DEFAULT_STROKE_WIDTH } from './Constants'
 
@@ -51,9 +53,12 @@ export class Line extends VisualObject{
             path.lineTo(point.x, point.y)
             }
         )
+        
+        // TypeScript will now enforce that we're passing the proper type to attr. 
+        // attr doesn't take Paths, but string will work.
         d3.select(svg)
-            .append('path')
-            .attr('d', path)
+            .append('path')            
+            .attr('d', path.toString())
             .attr('stroke-width', this.width)
             .attr('stroke', this.color)
             .attr('fill', "transparent") // Should prob make easier in future. 
