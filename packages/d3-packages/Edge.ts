@@ -1,7 +1,7 @@
 import { Line } from './Line';
 import { Shape } from './Shape';
 import { TextBox } from './Textbox';
-import { distance, mid_point, get_minimum_distance } from './geometricHelpers';
+import { distance, mid_point, get_minimum_distance, bounding_box_to_lambda } from './geometricHelpers';
 import { VisualObject, ExperimentalBoundingBox, Coords } from './VisualObject';
 
 export interface EdgeParams {
@@ -47,10 +47,17 @@ export class Edge extends VisualObject {
     //want a way to check if any object has a specific function
     //if(func)
     const boundary_points: Coords[] = [];
+    let boundingBoxLam: (r) => any; //this should be number. But typescript...
+
+    if(obj.boundingBox){
+      boundingBoxLam = obj.boundingBox;
+    }
+    else{
+      boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
+    }
+    
     for (let i = 1; i <= precision; i++) {
-      const boundary_point: Coords = obj
-        .getExperimentalBoundingBox()
-        .lambda(((2 * Math.PI) / precision) * i);
+      const boundary_point: Coords = boundingBoxLam(((2 * Math.PI) / precision) * i);
       boundary_points.push(boundary_point);
     }
 

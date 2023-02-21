@@ -63,16 +63,6 @@ export class VisualObject {
       }
     }
   }
-
-  getExperimentalBoundingBox(): ExperimentalBoundingBox {
-    //NOT functional NOT functional NOT functional
-    return {
-      lambda: (r) => {
-        return {x:0,y:0};
-      }
-    };
-  }
-
   /**
    * Returns the center of the object
    * @returns coordinates of center

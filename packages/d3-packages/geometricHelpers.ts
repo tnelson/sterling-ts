@@ -60,7 +60,7 @@ function bounding_box_to_lambda(
     //should be arcTan!!!!!!!
     //this gives the angle(in radians of the bisecting line going from
     //bottom left to top right)
-    const barrierAngle = Math.tan(height / width);
+    const barrierAngle = Math.atan(height / width);
 
     //Case 1: 0 <= r <= barrierAngle
     if (2 * Math.PI - barrierAngle <= r || r <= barrierAngle) {
@@ -113,4 +113,4 @@ function bounding_box_to_lambda(
   };
 }
 
-export { distance, mid_point, get_minimum_distance };
+export { distance, mid_point, get_minimum_distance, bounding_box_to_lambda};

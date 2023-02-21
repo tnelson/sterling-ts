@@ -5,6 +5,7 @@ import { BoundingBox, Coords, ExperimentalBoundingBox } from './VisualObject';
 
 export class Circle extends Shape {
   radius: number;
+  bounding_box_lam: (r: number) => Coords;
 
   /**
    * Creates a circle object at the given location
@@ -37,6 +38,13 @@ export class Circle extends Shape {
       labelSize
     );
     this.radius = radius;
+
+    this.bounding_box_lam = (radians: number) => {
+      return {
+        x: this.radius * Math.cos(radians) + this.coords.x,
+        y: this.radius * Math.sin(radians) + this.coords.y
+      };
+    };
   }
 
   boundingBox(): BoundingBox {
@@ -53,17 +61,6 @@ export class Circle extends Shape {
   }
   setRadius(radius: number) {
     this.radius = radius;
-  }
-
-  getExperimentalBoundingBox(): ExperimentalBoundingBox {
-    return {
-      lambda: (radians: number) => {
-        return {
-          x: this.radius * Math.cos(radians) + this.coords.x,
-          y: this.radius * Math.sin(radians) + this.coords.y
-        };
-      }
-    };
   }
 
   override render(svg: any) {
