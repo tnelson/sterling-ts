@@ -48,50 +48,57 @@ function bounding_box_to_lambda(
   //2 bisecting lines from opposite pairs of corners
   return (rinp: number) => {
     //shrink our radians down to the following
-    const r = (rinp % 2) * Math.PI;
+    const r = rinp % (2* Math.PI);
+    // const s = r + " , "+ rinp;
+    // throw s;
 
-    //unfold the data a bit (note: each of these is [x,y])
+    //unfold the data a bit (note: each of these is a coords object)
     const topLeft: Coords = boundingBox.top_left;
     const bottomRight: Coords = boundingBox.bottom_right;
 
-    const height = Math.abs(topLeft[1] - bottomRight[1]);
-    const width = Math.abs(topLeft[0] - bottomRight[0]);
+    const height = Math.abs(topLeft.y - bottomRight.y);
+    const width = Math.abs(topLeft.x - bottomRight.x);
 
     //should be arcTan!!!!!!!
     //this gives the angle(in radians of the bisecting line going from
     //bottom left to top right)
     const barrierAngle = Math.atan(height / width);
 
+    // throw barrierAngle;
+
     //Case 1: 0 <= r <= barrierAngle
     if (2 * Math.PI - barrierAngle <= r || r <= barrierAngle) {
-      const xval = bottomRight[0];
+      const xval = bottomRight.x;
       let yval: number;
-      if (barrierAngle > 0) {
-        yval = bottomRight[1] - (Math.tan(r) * width) / 2;
+      if (r > Math.PI) {
+        yval = bottomRight.y - (height / 2) + (Math.tan(2*Math.PI - r) * width) / 2;
       } else {
-        yval = bottomRight[1] - (height / 2 + (Math.tan(r) * width) / 2);
+        yval = bottomRight.y - (height) + (Math.tan(r) * width) / 2 ;
+
       }
       return { x: xval, y: yval };
     }
     //Case 2: barrierAngle < r < pi - barrierAngle
-    else if (barrierAngle < r || r <= Math.PI - barrierAngle) {
+    else if (barrierAngle < r && r <= Math.PI - barrierAngle) {
       let xval: number;
-      if (barrierAngle < Math.PI) {
-        xval = topLeft[0] - (width / 2 + height / (2 * Math.tan(r)));
+      if (r > Math.PI/2) {
+        xval = topLeft.x + height/(2*Math.tan(r - Math.PI/4));
       } else {
-        xval = topLeft[0] - height / (2 * Math.tan(r));
+        xval = topLeft.x + width/2 + height/(2*Math.tan(r));
       }
-      const yval = topLeft[1];
+      const yval = topLeft.y;
       return { x: xval, y: yval };
     }
     //Case 3: pi - barrierAngle <= r <= pi + barrierAngle
-    else if (Math.PI - barrierAngle < r || r < Math.PI + barrierAngle) {
-      const xval: number = topLeft[0];
+    else if (Math.PI - barrierAngle < r && r < Math.PI + barrierAngle) {
+      const xval: number = topLeft.x;
       let yval: number;
-      if (barrierAngle < Math.PI) {
-        yval = topLeft[1] + (Math.tan(r) * width) / 2;
+      if (r < Math.PI) {
+        yval = topLeft.y + height/2 - (width*Math.tan(Math.PI - r)/2)
+
+        // yval = topLeft.y + height/2 - (width*Math.tan(Math.PI - r)/2)
       } else {
-        yval = topLeft[1] + height / 2 + (Math.tan(r) * width) / 2;
+        yval = topLeft.y + height/2 + Math.abs((Math.tan(r - Math.PI) * width)) / 2;
       }
 
       return { x: xval, y: yval };
@@ -99,12 +106,12 @@ function bounding_box_to_lambda(
     //Case 4: 2pi - barrierAngle < r < 2pi
     else if (Math.PI + barrierAngle < r || r < 2 * Math.PI - barrierAngle) {
       let xval: number;
-      const yval = bottomRight[1];
+      const yval = bottomRight.y;
 
-      if (barrierAngle < (3 * Math.PI) / 2) {
-        xval = bottomRight[0] - (width / 2 + height / (2 * Math.tan(r)));
+      if (r < (3 * Math.PI) / 2) {
+        xval = (bottomRight.x - width) + height * (Math.tan(3*Math.PI/2 - r))/2;
       } else {
-        xval = bottomRight[0] - height / (2 * Math.tan(r));
+        xval = (bottomRight.x - width/2) + height * (Math.tan(r - 3*Math.PI/2))/2;
       }
       return { x: xval, y: yval };
     } else {

@@ -28,6 +28,7 @@ export class Edge extends VisualObject {
   text: string;
   points: Coords[];
   visible_points: Coords[];
+  boundary_points: Coords[];
 
   //the simplest design of this is as a pointer between two objects
   constructor(params: EdgeParams) {
@@ -40,20 +41,12 @@ export class Edge extends VisualObject {
   }
 
   compute_points(precision) {
-    if(this.obj1.center()){
-      throw this.obj1.center().x
-      throw"center exists"
-    }
-    else{
-      throw "center nexists"
-    }
     const target_point: Coords = mid_point(
       //we set a point to optimize distance from
       this.obj1.center(),
       this.obj2.center()
     );
 
-    throw "no error with center"
     this.obj2Coords = this.opt_points(target_point, this.obj2, precision);
     this.obj1Coords = this.opt_points(target_point, this.obj1, precision);
   }
@@ -68,15 +61,13 @@ export class Edge extends VisualObject {
     const boundary_points: Coords[] = [];
     let boundingBoxLam: (r) => Coords; //this should be number. But typescript...
 
-    throw "cmon man"
     if(obj.bounding_box_lam){
-      throw "hola"
       boundingBoxLam = obj.bounding_box_lam;
     }
     else{
-      throw "hey";
-      boundingBoxLam = bounding_box_lam(obj.boundingBox());
+      boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
     }
+
 
     for (let i = 1; i <= precision; i++) {
       const boundary_point = boundingBoxLam(((2 * Math.PI) / precision) * i);
@@ -88,6 +79,7 @@ export class Edge extends VisualObject {
     }
 
     this.visible_points = boundary_points;
+    this.boundary_points = boundary_points;
 
     return get_minimum_distance(target_point, boundary_points);
   }
