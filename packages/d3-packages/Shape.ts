@@ -48,7 +48,7 @@ export class Shape extends VisualObject {
     this.borderColor = toFunc(DEFAULT_COLOR, borderColor);
     this.label = new TextBox(
       label,
-      this.center, // Wacky little trick, saves so much time
+      () => {return this.center()}, // Wacky little trick, saves so much time
       labelColor,
       labelSize
     );

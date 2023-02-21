@@ -46,12 +46,12 @@ export class Rectangle extends Shape{
     boundingBox(): BoundingBox {
         return {
             top_left: {
-                x:this.center().x - this.width() / 2, 
-                y: this.center().y - this.height() / 2
+                x:this.center().x - (this.width() / 2), 
+                y: this.center().y - (this.height() / 2)
             },
             bottom_right: {
-                x:this.center().x + this.width() / 2, 
-                y: this.center().y + this.height() / 2
+                x: this.center().x + (this.width() / 2), 
+                y: this.center().y + (this.height() / 2)
             }
         }
     }

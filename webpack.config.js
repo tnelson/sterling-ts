@@ -26,7 +26,8 @@ module.exports = (env, argv) => {
     mode: isDev ? 'development' : 'production',
     context: __dirname,
     devServer: {
-      hot: true
+      hot: true,
+      port: 8081
     },
     entry: './packages/sterling/src/index.tsx',
     output: {
