@@ -1,14 +1,24 @@
 import { Line } from './Line';
 import { Shape } from './Shape';
-import { TextBox } from './Textbox';
-import { distance, mid_point, get_minimum_distance, bounding_box_to_lambda } from './geometricHelpers';
-import { VisualObject, ExperimentalBoundingBox, Coords } from './VisualObject';
+import { TextBox } from './TextBox';
+import {
+  distance,
+  mid_point,
+  get_minimum_distance,
+  bounding_box_to_lambda
+} from './geometricHelpers';
+import { VisualObject, Coords } from './VisualObject';
 
 export interface EdgeParams {
   obj1: VisualObject;
   obj2: VisualObject;
   text?: string;
 }
+
+function instanceOfCoords(object: any): object is Coords {
+  return 'x' in object && 'y' in object;
+}
+
 export class Edge extends VisualObject {
   obj1: VisualObject;
   obj2: VisualObject;
@@ -30,11 +40,20 @@ export class Edge extends VisualObject {
   }
 
   compute_points(precision) {
+    if(this.obj1.center()){
+      throw this.obj1.center().x
+      throw"center exists"
+    }
+    else{
+      throw "center nexists"
+    }
     const target_point: Coords = mid_point(
       //we set a point to optimize distance from
       this.obj1.center(),
       this.obj2.center()
     );
+
+    throw "no error with center"
     this.obj2Coords = this.opt_points(target_point, this.obj2, precision);
     this.obj1Coords = this.opt_points(target_point, this.obj1, precision);
   }
@@ -47,18 +66,25 @@ export class Edge extends VisualObject {
     //want a way to check if any object has a specific function
     //if(func)
     const boundary_points: Coords[] = [];
-    let boundingBoxLam: (r) => any; //this should be number. But typescript...
+    let boundingBoxLam: (r) => Coords; //this should be number. But typescript...
 
-    if(obj.boundingBox){
-      boundingBoxLam = obj.boundingBox;
+    throw "cmon man"
+    if(obj.bounding_box_lam){
+      throw "hola"
+      boundingBoxLam = obj.bounding_box_lam;
     }
     else{
-      boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
+      throw "hey";
+      boundingBoxLam = bounding_box_lam(obj.boundingBox());
     }
-    
+
     for (let i = 1; i <= precision; i++) {
-      const boundary_point: Coords = boundingBoxLam(((2 * Math.PI) / precision) * i);
-      boundary_points.push(boundary_point);
+      const boundary_point = boundingBoxLam(((2 * Math.PI) / precision) * i);
+      if (instanceOfCoords(boundary_point)) {
+        boundary_points.push(boundary_point);
+      } else {
+        throw 'returned bounding box response not of type coords. Issue in edge.ts';
+      }
     }
 
     this.visible_points = boundary_points;

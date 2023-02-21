@@ -28,20 +28,22 @@ export interface BoundingBox {
   bottom_right: Coords;
 }
 
-export interface ExperimentalBoundingBox {
-  lambda: (radians: number) => Coords;
-}
-
 export class VisualObject {
   coords: Coords;
   children: VisualObject[];
   dependents: VisualObject[];
+
+  //note: for non-circle objects, we leave the below
+  //uninitialized! Bad typescript sorry :((
+  bounding_box_lam: (r: number) => Coords;
+
 
   /**
    * Top level class, which all other visual objects will extend.
    * @param coords position of the object on screen.
    */
   constructor(coords?: Coords) {
+    this.bounding_box_lam = undefined;
     this.coords = coords ?? { x: 0, y: 0 };
     this.children = [];
   }
@@ -78,6 +80,10 @@ export class VisualObject {
   setCenter(center: Coords) {
     this.coords = center;
     this.children.forEach((child) => child.setCenter(center));
+  }
+
+  getLam(): ()=>Coords{
+    return this.bounding_box_lam;
   }
 
   /**

@@ -1,5 +1,5 @@
 import { VisualObject, BoundingBox } from './VisualObject';
-import { Coords, ExperimentalBoundingBox } from './VisualObject';
+import { Coords } from './VisualObject';
 
 function distance(
   //computes the distance between two given points

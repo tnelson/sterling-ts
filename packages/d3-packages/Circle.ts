@@ -1,7 +1,7 @@
 import { Shape } from './Shape';
 import { require as d3require } from 'd3-require';
 const d3 = require('d3');
-import { BoundingBox, Coords, ExperimentalBoundingBox } from './VisualObject';
+import { BoundingBox, Coords  } from './VisualObject';
 
 export class Circle extends Shape {
   radius: number;
