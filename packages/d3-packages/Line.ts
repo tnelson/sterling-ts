@@ -13,17 +13,20 @@ export class Line extends VisualObject {
   pointsRelative: (() => Coords)[];
   color: () => string;
   width: () => number;
+  opacity: () => number;
 
   /**
    * Creates a line on the given poitns.
    * @param points list of points for the line to pass through
    * @param color color of line
    * @param width width of line
+   * @param opacity of the line
    */
   constructor(
       points: Coords[] | (() => Coords)[], 
       color?: string | (() => string), 
-      width?: number | (() => number)) {
+      width?: number | (() => number),
+      opacity?: number | (() => number)) {
 
     let pointsUnshifted: (() => Coords)[] = points.map(
         (point): (() => Coords) => toFunc({x: 0, y: 0}, point))
@@ -32,9 +35,11 @@ export class Line extends VisualObject {
       return averagePath(pointsUnshifted.map((coordFunc) => coordFunc()))
       });
 
+    
     this.pointsRelative = shiftList(pointsUnshifted, this.center)
     this.color = toFunc(DEFAULT_LINE_COLOR, color);
     this.width = toFunc(DEFAULT_STROKE_WIDTH, width);
+    this.opacity = toFunc(1, opacity)
   }
 
   boundingBox(): BoundingBox {
@@ -44,13 +49,9 @@ export class Line extends VisualObject {
     }}));
   }
 
-  setColor(color: string | (() => string)) {
-    this.color = toFunc(this.color(), color);
-  }
-
-  setWidth(width: number | (() => number)) {
-    this.width = toFunc(this.width(), width);
-  }
+  setColor(color: string | (() => string)) { this.color = toFunc(this.color(), color); }
+  setWidth(width: number | (() => number)) { this.width = toFunc(this.width(), width); }
+  setOpacity(opacity: number | (() => number)) {this.opacity = toFunc(this.opacity(), opacity)}
 
   override render(svg: any) {
     let truePoints: Coords[] = this.pointsRelative.map((pointFn): Coords => {return {
@@ -68,6 +69,7 @@ export class Line extends VisualObject {
       .attr('d', path)
       .attr('stroke-width', this.width())
       .attr('stroke', this.color())
+      .attr('opacity', this.opacity())
       .attr('fill', 'transparent'); // Should prob make easier in future.
     super.render(svg);
   }

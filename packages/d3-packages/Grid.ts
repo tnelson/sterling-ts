@@ -34,7 +34,7 @@ export class Grid extends VisualObject{
      *  Note: grid size is fixed! You can't change the size of a grid once it's created
      * 
      */
-    private const coords: () => Coords // For easier math
+    private coords: () => Coords // For easier math
     config: gridProps
     cells: Array<Array<VisualObject>>
     gridlines: Array<Line>
@@ -120,10 +120,10 @@ export class Grid extends VisualObject{
         if(!ignore_warning){this.check_bounding_box(add_object.boundingBox())}
         
         this.children.push(add_object)
-        add_object.center = this.center_func(coords) //center object
+        add_object.center = this.center_helper(coords) //center object
     }
 
-    private center_func(coords: Coords): (() => Coords) {
+    private center_helper(coords: Coords): (() => Coords) {
         return () => {
             return {
                 x: this.coords().x + this.config.cell_size.x_size * coords.x,
@@ -156,34 +156,36 @@ export class Grid extends VisualObject{
      */
         //cols
         for(let y_coord = 0; y_coord <= this.config.grid_dimensions.y_size; y_coord++){
-            let firstPoint: () => Coords = () => {
-                return {
-                    x: this.coords().x,
-                    y: this.coords().y + y_coord * this.config.cell_size
-                }
-            }
-            const horizLine: Line = new Line([
-                {y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size,
-                    x:this.config.grid_location.x},
-                {y:this.config.grid_location.y+y_coord*this.config.cell_size.y_size,
-                    x:this.config.grid_location.x + this.config.grid_dimensions.x_size*this.config.cell_size.x_size}
-            ]);
+            let newLine: (() => Coords)[] = [() => { return {
+                x: this.coords().x,
+                y: this.coords().y + y_coord * this.config.cell_size.y_size
+            }}, () => { return {
+                x: this.coords().x + this.config.grid_dimensions.x_size*this.config.cell_size.x_size,
+                y: this.coords().y + y_coord * this.config.cell_size.y_size
+            }}]
+            const horizLine: Line = new Line(newLine);
             this.gridlines.push(horizLine)
+            this.children.push(horizLine)
         }
         //rows
         for(let x_coord = 0; x_coord <= this.config.grid_dimensions.x_size; x_coord++){
-            const vertLine: Line = new Line([
-                {y:this.config.grid_location.y,
-                    x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size},
-                {y:this.config.grid_location.y+this.config.grid_dimensions.y_size*this.config.cell_size.y_size,
-                    x:this.config.grid_location.x+x_coord*this.config.cell_size.x_size}
-            ]);
-            this.gridlines.push(vertLine)    
+            let newLine: (() => Coords)[] = [() => {return {
+                x: this.coords().x + x_coord*this.config.cell_size.x_size,
+                y: this.coords().y
+            }}, () => { return {
+                x: this.coords().x + x_coord*this.config.cell_size.x_size,
+                y: this.coords().y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size
+            }}]
+            
+            const vertLine: Line = new Line(newLine);
+            this.gridlines.push(vertLine)
+            this.children.push(vertLine)    
         }
     }
 
-    hide_grid_lines(){
-        this.gridlines = []
+    hide_grid_lines(){ // A bit easier to keep the lines around logically - maybe make
+        // this a boolean in the constructor in future?
+        this.gridlines.forEach((line: Line) => {line.setOpacity(0)})
     }
 
     fill(coords: Coords, color: string){
