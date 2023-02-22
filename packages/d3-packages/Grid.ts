@@ -17,12 +17,6 @@ interface gridProps{
     // outline: boolean
 }
 
-// I don't think we need this atm
-// interface gridCell{
-//     contents?: VisualObject,
-//     center: Coords,
-// }
-
 export class Grid extends VisualObject{
     /**
      * 
@@ -67,15 +61,7 @@ export class Grid extends VisualObject{
         this.fill_grid_lines()
     }
 
-    override boundingBox(){
-        return {
-            top_left: this.coords(),
-            bottom_right: {
-                x: this.center().x + this.config.cell_size.x_size*this.config.grid_dimensions.x_size,
-                y: this.center().y + this.config.cell_size.y_size*this.config.grid_dimensions.y_size
-            }
-        }
-    }
+    // Note: shouldn't need to override boundingbox, as will just be union of children objects
 
     private check_bounding_box(proposed_bounding_box:BoundingBox){
         /**
@@ -104,17 +90,16 @@ export class Grid extends VisualObject{
     }
 
     add(coords: Coords, add_object:VisualObject, ignore_warning?:boolean){
-        
-    /**
-     * Given valid coordinates of our grid, we add and center an object to a given
-     * coordinate (note: we don't support adding multiple VisualObjects to the same frame -
-     * they must be conjoined)
-     * 
-     * TODO: add feature that, when we add a new object to a cell in the grid that already has
-     * object, we make a new VisualObject that is that object conjoined with the new object
-     * 
-     * (creating a conjoined visual object shouldn't be too tough) 
-     */
+        /**
+         * Given valid coordinates of our grid, we add and center an object to a given
+         * coordinate (note: we don't support adding multiple VisualObjects to the same frame -
+         * they must be conjoined)
+         * 
+         * TODO: add feature that, when we add a new object to a cell in the grid that already has
+         * object, we make a new VisualObject that is that object conjoined with the new object
+         * 
+         * (creating a conjoined visual object shouldn't be too tough) 
+         */
         this.check_coords(coords)
 
         if(!ignore_warning){this.check_bounding_box(add_object.boundingBox())}
@@ -124,12 +109,10 @@ export class Grid extends VisualObject{
     }
 
     private center_helper(coords: Coords): (() => Coords) {
-        return () => {
-            return {
-                x: this.coords().x + this.config.cell_size.x_size * coords.x,
-                y: this.coords().y + this.config.cell_size.y_size * coords.y
-            }
-        }
+        return () => { return {
+            x: this.coords().x + this.config.cell_size.x_size * (coords.x + .5),
+            y: this.coords().y + this.config.cell_size.y_size * (coords.y + .5)
+        }}
     }
 
     // TODO: Figure out what to do for this in functional case. 
@@ -223,6 +206,4 @@ export class Grid extends VisualObject{
             Note: passing in 2 refers to index 2 which is the third element of the grid`
         }
     }
-
-    // Render for grid only renders children, so shouldn't be necessary here. 
 }
