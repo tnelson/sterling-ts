@@ -62,6 +62,7 @@ export class Line extends VisualObject {
       .attr('d', path)
       .attr('stroke-width', this.width)
       .attr('stroke', this.color)
+      .attr("marker-end", "url(#arrow)")
       .attr('fill', 'transparent'); // Should prob make easier in future.
     super.render(svg);
   }
