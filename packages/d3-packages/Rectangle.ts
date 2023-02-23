@@ -49,6 +49,9 @@ export class Rectangle extends Shape{
     override center(): Coords{
         return {x: this.coords.x + (this.width ?? 0)/2, y: this.coords.y + (this.height ?? 0)/2} //shitfix
     }
+    // override center(): Coords{
+    //     return {x: this.coords.x + (this.width)/2, y: this.coords.y + this.height/2} 
+    // }
 
     override setCenter(center: Coords){
         this.coords = {

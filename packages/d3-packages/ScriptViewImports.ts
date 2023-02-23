@@ -10,6 +10,7 @@ import {ConjoinedObject} from './ConjoinedObject'
 import { Polygon } from "./Polygon"
 import {Graph} from './Graph'
 import {Tree, VisTree} from './Tree'
+import {Edge} from './Edge'
 
 interface scriptViewImport{
     name: string;
@@ -35,7 +36,8 @@ const scriptViewImports: scriptViewImport[] = [
     {name: "ConjoinedObject",value:ConjoinedObject},
     {name: "Polygon", value:Polygon},
     {name: "Graph", value:Graph},
-    {name: "Tree", value:Tree}
+    {name: "Tree", value:Tree},
+    {name: "Edge", value:Edge}
 ]
 
 export {scriptViewImports};
