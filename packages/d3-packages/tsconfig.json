@@ -16,6 +16,8 @@
     "outDir": "d3-defs",
     // go to js file when using IDE functions like
     // "Go to Definition" in VSCode
-    "declarationMap": true
+    "declarationMap": true,
+    // We want to include strict checking (useful for VSCode, too)
+    "strict": true,
   }
 }

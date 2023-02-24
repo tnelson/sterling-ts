@@ -9,14 +9,14 @@ export declare class Edge extends VisualObject {
     obj2: VisualObject;
     obj1Coords: Coords;
     obj2Coords: Coords;
-    text: String;
+    midpoint: Coords;
+    text: string;
     points: Coords[];
+    visible_points: Coords[];
+    boundary_points: Coords[];
     constructor(params: EdgeParams);
     compute_points(precision: any): void;
     opt_points(target_point: Coords, obj: VisualObject, precision: number): Coords;
-    get_minimum_distance(target_point: Coords, compare_points: Coords[]): Coords;
-    distance(p1: Coords, p2: Coords): number;
-    mid_point(p1: Coords, p2: Coords): Coords;
     render(svg: any): void;
 }
 /**

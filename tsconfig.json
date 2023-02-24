@@ -23,6 +23,9 @@
         "@/alloy-instance": [
           "alloy-instance/index.ts"
         ],
+        // "@/d3-packages": [
+        //   "d3-packages/index.ts"
+        // ],
         "@/graph-lib": [
           "graph-lib/index.ts"
         ],

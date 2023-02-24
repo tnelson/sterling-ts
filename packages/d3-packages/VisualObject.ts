@@ -28,6 +28,8 @@ export interface BoundingBox {
   bottom_right: Coords;
 }
 
+export type BoundingBoxGenerator = (r: number) => Coords;
+
 export class VisualObject {
   coords: Coords;
   children: VisualObject[];
@@ -35,17 +37,18 @@ export class VisualObject {
 
   //note: for non-circle objects, we leave the below
   //uninitialized! Bad typescript sorry :((
-  bounding_box_lam: (r: number) => Coords;
+  bounding_box_lam: BoundingBoxGenerator;
 
 
   /**
    * Top level class, which all other visual objects will extend.
    * @param coords position of the object on screen.
    */
-  constructor(coords?: Coords) {
-    this.bounding_box_lam = undefined;
+  constructor(coords?: Coords) {    
     this.coords = coords ?? { x: 0, y: 0 };
+    this.bounding_box_lam = (r: number) => this.coords;
     this.children = [];
+    this.dependents = [];
   }
 
   boundingBox(): BoundingBox {
@@ -82,7 +85,7 @@ export class VisualObject {
     this.children.forEach((child) => child.setCenter(center));
   }
 
-  getLam(): ()=>Coords{
+  getLam(): BoundingBoxGenerator {
     return this.bounding_box_lam;
   }
 
@@ -112,12 +115,14 @@ export class VisualObject {
 
     while (toSearch.length != 0) {
       let curr = toSearch.pop()
+      if(curr === undefined) { console.assert(curr, "curr was undefined"); return; }
       edges.set(curr, new Array<VisualObject>())
       curr.dependents.forEach((dependent: VisualObject) => {
         if (!toSearch.includes(dependent) && !relevantObj.includes(dependent)) {
           toSearch.push(dependent)
         }
-        edges.get(curr).push(dependent)
+        if(curr === undefined) { console.assert(curr, "curr was undefined"); return; }        
+        edges.get(curr)?.push(dependent)
       })
       relevantObj.push(curr)
     }
@@ -129,8 +134,8 @@ export class VisualObject {
       inverseEdges.set(relObj, new Array<VisualObject>())
     })
     edges.forEach((sinks: VisualObject[], source: VisualObject) => {
-      sinks.forEach((sink: VisualObject) => {
-         inverseEdges.get(sink).push(source)
+      sinks.forEach((sink: VisualObject) => {        
+        inverseEdges.get(sink)?.push(source)
       })
     })
 
@@ -141,18 +146,19 @@ export class VisualObject {
 
     while (noIncoming.length != 0) {
       let curr = noIncoming.pop()
+      if(curr === undefined) { console.assert(curr, "curr was undefined"); return; }
       sorted.push(curr)
 
-      while (edges.get(curr).length != 0) {
-        let sink = edges.get(curr).pop()
-
+      while (edges.get(curr)?.length != 0) {
+        let sink: VisualObject | undefined = edges.get(curr)?.pop()
+        if(sink === undefined) { console.assert(curr, "sink was undefined"); return; }
         // Very basic js function missing (removing elt of list)
-        const index = inverseEdges.get(sink).indexOf(curr)
-        if (index > -1) {
-          inverseEdges.get(sink).splice(index, 1)
+        const index = inverseEdges.get(sink)?.indexOf(curr)
+        if (index != undefined && index > -1) {
+          inverseEdges.get(sink)?.splice(index, 1)
         }
 
-        if (inverseEdges.get(sink).length != 0) {
+        if (inverseEdges.get(sink)?.length != 0) {
           noIncoming.push(sink)
         }
       }

@@ -1,11 +1,11 @@
 import { Shape } from './Shape';
 import { require as d3require } from 'd3-require';
 const d3 = require('d3');
-import { BoundingBox, Coords  } from './VisualObject';
+import { BoundingBox, Coords, BoundingBoxGenerator  } from './VisualObject';
 
 export class Circle extends Shape {
   radius: number;
-  bounding_box_lam: (r: number) => Coords;
+  bounding_box_lam: BoundingBoxGenerator;
 
   /**
    * Creates a circle object at the given location
