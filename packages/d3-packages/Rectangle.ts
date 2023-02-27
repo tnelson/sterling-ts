@@ -33,7 +33,7 @@ export class Rectangle extends Shape{
     ){
         super(coords, color, borderWidth, borderColor, label, labelColor, labelSize)
         this.height = toFunc(0, height)
-        this.width = toFunc(0, width) //TODO: FIX THIS
+        this.width = toFunc(0, width) 
         let coordsFunc = toFunc({x: 0, y:0}, coords)
         this.center = () => {
             return {
