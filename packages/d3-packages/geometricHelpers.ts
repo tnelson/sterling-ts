@@ -1,4 +1,4 @@
-import { VisualObject, BoundingBox } from './VisualObject';
+import { BoundingBox } from './VisualObject';
 import { Coords } from './VisualObject';
 
 function distance(

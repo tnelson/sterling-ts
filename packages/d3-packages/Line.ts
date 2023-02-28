@@ -81,6 +81,9 @@ export class Line extends VisualObject {
       .append('path')
       .attr('d', 'M 0 0 12 6 0 12 3 6')
       .style('fill', 'black');
+// credit to : http://jsfiddle.net/igbatov/v0ekdzw1/
+//for the arrows (thanks Igor Batov <3)
+
     // TypeScript will now enforce that we're passing the proper type to attr.
     // attr doesn't take Paths, but string will work.
     if(this.arrow){

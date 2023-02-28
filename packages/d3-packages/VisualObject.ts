@@ -46,7 +46,8 @@ export class VisualObject {
    */
   constructor(coords?: Coords) {    
     this.coords = coords ?? { x: 0, y: 0 };
-    this.bounding_box_lam = (r: number) => this.coords;
+    // this.bounding_box_lam = (r: number) => this.coords;
+    this.bounding_box_lam = undefined;
     this.children = [];
     this.dependents = [];
   }
