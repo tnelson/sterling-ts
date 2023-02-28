@@ -37,10 +37,10 @@ export class Edge extends VisualObject {
     this.obj2 = params.obj2;
     this.text = params.text;
 
-    // this.obj1Coords = {x:0,y:0}
-    // this.obj2Coords = {x:0,y:0}
-    // this.boundary_points = [];
-    // this.visible_points = [];
+    this.obj1Coords = {x:0,y:0}
+    this.obj2Coords = {x:0,y:0}
+    this.boundary_points = [];
+    this.visible_points = [];
     this.arrow = params.arrow ?? false;
     this.compute_points(360);
   }
