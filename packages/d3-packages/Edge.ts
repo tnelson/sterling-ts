@@ -27,8 +27,8 @@ export class Edge extends VisualObject {
   obj1Coords: Coords;
   text: string | undefined;
   arrow: boolean;
-  visible_points:Coords[];
-  boundary_points:Coords[];
+  visible_points: Coords[];
+  boundary_points: Coords[];
 
   //the simplest design of this is as a pointer between two objects
   constructor(params: EdgeParams) {
@@ -37,10 +37,10 @@ export class Edge extends VisualObject {
     this.obj2 = params.obj2;
     this.text = params.text;
 
-    this.obj1Coords = {x:0,y:0}
-    this.obj2Coords = {x:0,y:0}
-    this.boundary_points = [];
-    this.visible_points = [];
+    // this.obj1Coords = {x:0,y:0}
+    // this.obj2Coords = {x:0,y:0}
+    // this.boundary_points = [];
+    // this.visible_points = [];
     this.arrow = params.arrow ?? false;
     this.compute_points(360);
   }
@@ -66,13 +66,11 @@ export class Edge extends VisualObject {
     const boundary_points: Coords[] = [];
     let boundingBoxLam: (r: number) => Coords; //this should be number. But typescript...
 
-    if(obj.bounding_box_lam){
+    if (obj.bounding_box_lam) {
       boundingBoxLam = obj.bounding_box_lam;
-    }
-    else{
+    } else {
       boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
     }
-
 
     for (let i = 1; i <= precision; i++) {
       const boundary_point = boundingBoxLam(((2 * Math.PI) / precision) * i);
@@ -91,10 +89,9 @@ export class Edge extends VisualObject {
 
   render(svg: any) {
     let makeLine: any;
-    if(this.arrow){
+    if (this.arrow) {
       makeLine = new Line([this.obj1Coords, this.obj2Coords], true);
-    }
-    else{
+    } else {
       makeLine = new Line([this.obj1Coords, this.obj2Coords]);
     }
     makeLine.render(svg);
