@@ -1,6 +1,6 @@
 import {Shape} from './Shape'
 import { require as d3require } from 'd3-require';
-const d3 = require("d3")
+import * as d3 from 'd3';
 import {BoundingBox, Coords} from './VisualObject'
 
 

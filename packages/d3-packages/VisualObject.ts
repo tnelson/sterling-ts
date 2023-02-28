@@ -38,6 +38,7 @@ export class VisualObject {
   //note: for non-circle objects, we leave the below
   //uninitialized! Bad typescript sorry :((
   bounding_box_lam: BoundingBoxGenerator;
+  hasBoundingBox: boolean;
 
 
   /**
@@ -46,8 +47,9 @@ export class VisualObject {
    */
   constructor(coords?: Coords) {    
     this.coords = coords ?? { x: 0, y: 0 };
-    // this.bounding_box_lam = (r: number) => this.coords;
-    this.bounding_box_lam = undefined;
+    this.bounding_box_lam = (r: number) => this.coords;
+    this.hasBoundingBox = false;
+    // this.bounding_box_lam = undefined;
     this.children = [];
     this.dependents = [];
   }
@@ -86,6 +88,9 @@ export class VisualObject {
     this.children.forEach((child) => child.setCenter(center));
   }
 
+  hasLam():Boolean{
+    return this.hasBoundingBox;
+  }
   getLam(): BoundingBoxGenerator {
     return this.bounding_box_lam;
   }

@@ -1,5 +1,5 @@
 import { require as d3require } from 'd3-require';
-const d3 = require("d3")
+import * as d3 from 'd3';
 import { DEFAULT_COLOR, DEFAULT_FONT_SIZE, DEFAULT_TEXT_COLOR } from './Constants';
 import {BoundingBox, Coords, VisualObject} from './VisualObject'
 

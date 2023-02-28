@@ -66,8 +66,8 @@ export class Edge extends VisualObject {
     const boundary_points: Coords[] = [];
     let boundingBoxLam: (r: number) => Coords; //this should be number. But typescript...
 
-    if (obj.bounding_box_lam) {
-      boundingBoxLam = obj.bounding_box_lam;
+    if (obj.hasLam()) {
+      boundingBoxLam = obj.getLam();
     } else {
       boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
     }
