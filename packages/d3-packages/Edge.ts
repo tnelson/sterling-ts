@@ -13,6 +13,7 @@ export interface EdgeParams {
   obj1: VisualObject;
   obj2: VisualObject;
   text?: string;
+  arrow?: boolean;
 }
 
 function instanceOfCoords(object: any): object is Coords {
@@ -22,13 +23,12 @@ function instanceOfCoords(object: any): object is Coords {
 export class Edge extends VisualObject {
   obj1: VisualObject;
   obj2: VisualObject;
-  obj1Coords: Coords;
   obj2Coords: Coords;
-  midpoint: Coords;
-  text: string;
-  points: Coords[];
-  visible_points: Coords[];
-  boundary_points: Coords[];
+  obj1Coords: Coords;
+  text: string | undefined;
+  arrow: boolean;
+  visible_points:Coords[];
+  boundary_points:Coords[];
 
   //the simplest design of this is as a pointer between two objects
   constructor(params: EdgeParams) {
@@ -37,10 +37,15 @@ export class Edge extends VisualObject {
     this.obj2 = params.obj2;
     this.text = params.text;
 
+    this.obj1Coords = {x:0,y:0}
+    this.obj2Coords = {x:0,y:0}
+    this.boundary_points = [];
+    this.visible_points = [];
+    this.arrow = params.arrow ?? false;
     this.compute_points(360);
   }
 
-  compute_points(precision) {
+  compute_points(precision: number) {
     const target_point: Coords = mid_point(
       //we set a point to optimize distance from
       this.obj1.center(),
@@ -59,7 +64,7 @@ export class Edge extends VisualObject {
     //want a way to check if any object has a specific function
     //if(func)
     const boundary_points: Coords[] = [];
-    let boundingBoxLam: (r) => Coords; //this should be number. But typescript...
+    let boundingBoxLam: (r: number) => Coords; //this should be number. But typescript...
 
     if(obj.bounding_box_lam){
       boundingBoxLam = obj.bounding_box_lam;
@@ -84,8 +89,14 @@ export class Edge extends VisualObject {
     return get_minimum_distance(target_point, boundary_points);
   }
 
-  render(svg) {
-    const makeLine = new Line([this.obj1Coords, this.obj2Coords]);
+  render(svg: any) {
+    let makeLine: any;
+    if(this.arrow){
+      makeLine = new Line([this.obj1Coords, this.obj2Coords], true);
+    }
+    else{
+      makeLine = new Line([this.obj1Coords, this.obj2Coords]);
+    }
     makeLine.render(svg);
     if (this.text) {
       const makeText = new TextBox(
