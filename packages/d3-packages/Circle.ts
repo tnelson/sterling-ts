@@ -1,10 +1,11 @@
 import { Shape } from './Shape';
 import { require as d3require } from 'd3-require';
 const d3 = require('d3');
-import { BoundingBox, Coords, BoundingBoxGenerator  } from './VisualObject';
+import { BoundingBox, Coords, ExperimentalBoundingBox, toFunc } from './Utility';
+import { BoundingBoxGenerator } from './VisualObject';
 
 export class Circle extends Shape {
-  radius: number;
+  radius: () => number;
   bounding_box_lam: BoundingBoxGenerator;
 
   /**
@@ -19,14 +20,14 @@ export class Circle extends Shape {
    * @param labelSize size of label
    */
   constructor(
-    radius: number,
-    coords?: Coords,
-    color?: string,
-    borderWidth?: number,
-    borderColor?: string,
-    label?: string,
-    labelColor?: string,
-    labelSize?: number
+    radius: number | (() => number),
+    coords?: Coords | (() => Coords),
+    color?: string | (() => string),
+    borderWidth?: number | (() => number),
+    borderColor?: string | (() => string),
+    label?: string | (() => string),
+    labelColor?: string | (() => string),
+    labelSize?: number | (() => number)
   ) {
     super(
       coords,
@@ -37,37 +38,39 @@ export class Circle extends Shape {
       labelColor,
       labelSize
     );
-    this.radius = radius;
+    this.radius = toFunc(0, radius);
 
     this.bounding_box_lam = (radians: number) => {
       return {
-        x: this.radius * Math.cos(radians) + this.coords.x,
-        y: this.radius * Math.sin(radians) + this.coords.y
+        x: this.radius() * Math.cos(radians) + this.center().x,
+        y: this.radius() * Math.sin(radians) + this.center().y
       };
     };
+    this.hasBoundingBox = true;
   }
 
   boundingBox(): BoundingBox {
     return {
       top_left: {
-        x: this.coords.x - this.radius,
-        y: this.coords.y - this.radius
+        x: this.center().x - this.radius(),
+        y: this.center().y - this.radius()
       },
       bottom_right: {
-        x: this.coords.x + this.radius,
-        y: this.coords.y + this.radius
+        x: this.center().x + this.radius(),
+        y: this.center().y + this.radius()
       }
     };
   }
-  setRadius(radius: number) {
-    this.radius = radius;
+  
+  setRadius(radius: number | (() => number)) {
+    this.radius = toFunc(0, radius);
   }
 
   override render(svg: any) {
     d3.select(svg)
       .append('circle')
-      .attr('cx', this.coords.x)
-      .attr('cy', this.coords.y)
+      .attr('cx', this.center().x)
+      .attr('cy', this.center().y)
       .attr('r', this.radius)
       .attr('stroke-width', this.borderWidth)
       .attr('stroke', this.borderColor)

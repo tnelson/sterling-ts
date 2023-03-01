@@ -15,7 +15,7 @@ const favIconPath = path.resolve(
   __dirname,
   'packages/sterling/src/public',
   'favicon.png'
-);
+); 
 
 module.exports = (env, argv) => {
   const mode = argv.mode;
@@ -26,7 +26,8 @@ module.exports = (env, argv) => {
     mode: isDev ? 'development' : 'production',
     context: __dirname,
     devServer: {
-      hot: true
+      hot: true,
+      port: 8081
     },
     entry: './packages/sterling/src/index.tsx',
     output: {

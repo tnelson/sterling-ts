@@ -7,7 +7,8 @@ import {
   get_minimum_distance,
   bounding_box_to_lambda
 } from './geometricHelpers';
-import { VisualObject, Coords } from './VisualObject';
+import { VisualObject } from './VisualObject';
+import { Coords } from './Utility';
 
 export interface EdgeParams {
   obj1: VisualObject;

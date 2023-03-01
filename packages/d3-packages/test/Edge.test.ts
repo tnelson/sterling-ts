@@ -8,7 +8,7 @@ import {
   bounding_box_to_lambda
 } from '../geometricHelpers';
 
-import { Coords } from '../VisualObject';
+import { Coords } from '../Utility';
 //note: had to run
 //  yarn node --experimental-vm-modules $(yarn bin jest)
 // for tests to work

@@ -1,5 +1,4 @@
-import { BoundingBox } from './VisualObject';
-import { Coords } from './VisualObject';
+import { BoundingBox, Coords } from './Utility';
 
 function distance(
   //computes the distance between two given points

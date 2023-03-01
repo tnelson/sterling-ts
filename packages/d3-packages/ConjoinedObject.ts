@@ -1,5 +1,9 @@
-import {VisualObject, Coords} from './VisualObject'
+import {Coords} from './Utility'
+import {VisualObject} from "./VisualObject"
 
+/**
+ * This class is not currently being used!!
+ */
 
 export class ConjoinedObject extends VisualObject{
     /**
