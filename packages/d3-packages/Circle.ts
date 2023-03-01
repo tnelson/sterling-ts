@@ -51,6 +51,7 @@ export class Circle extends Shape {
       }
     };
   }
+  
   setRadius(radius: number | (() => number)) {
     this.radius = toFunc(0, radius);
   }

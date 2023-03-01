@@ -54,10 +54,7 @@ export class Shape extends VisualObject {
     );
     this.children.push(this.label)
   }
-
-  setCenter(center: Coords | (() => Coords)) {
-    super.setCenter(center);
-  }
+  
   setColor(color: string | (() => string)) {
     this.color = toFunc(this.color(), color);
   }
