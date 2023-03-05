@@ -47,6 +47,10 @@ export class VisualObject {
       return boxUnion(this.children.map((child): BoundingBox => child.boundingBox()))
     }
   }
+
+  getChildren(): VisualObject[]{
+    return this.children;
+  }
   /**
    * Shifts object to have new given center
    * @param center new center of the object

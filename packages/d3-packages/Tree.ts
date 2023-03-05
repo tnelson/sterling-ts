@@ -74,7 +74,7 @@ export class Tree extends VisualObject{
     private setUpSubtrees(){ // There's a lot of math happening here, 
         // Need to more reliably comment details of it
         let layerHeight: number = this.height/(treeHeight(this.root) - 1)
-        console.log(layerHeight)
+        // console.log(layerHeight)
 
         let totalWidth: number = this.root.children
             .map((childTree): number => treeWidth(childTree))
