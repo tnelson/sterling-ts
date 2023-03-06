@@ -4,6 +4,13 @@ import { DEFAULT_COLOR, DEFAULT_FONT_SIZE, DEFAULT_TEXT_COLOR } from './Constant
 import {VisualObject} from './VisualObject'
 import { BoundingBox, Coords, toFunc } from './Utility';
 
+export interface TextBoxProps {
+    text? : string | (() => string),
+    coords?: Coords | (() => Coords),
+    color?: string | (() => string),
+    fontSize?: number | (() => number)
+}
+
 export class TextBox extends VisualObject{
     text: () => string;
     fontSize: () => number;
@@ -16,16 +23,11 @@ export class TextBox extends VisualObject{
      * @param color text color
      * @param fontSize size of the text
      */
-    constructor(
-        text? : string | (() => string),
-        coords?: Coords | (() => Coords),
-        color?: string | (() => string),
-        fontSize?: number | (() => number)
-    ){
-        super(coords)
-        this.text = toFunc("", text)
-        this.fontSize = toFunc(DEFAULT_FONT_SIZE, fontSize)
-        this.color = toFunc(DEFAULT_TEXT_COLOR, color)
+    constructor(props: TextBoxProps){
+        super(props.coords)
+        this.text = toFunc("", props.text)
+        this.fontSize = toFunc(DEFAULT_FONT_SIZE, props.fontSize)
+        this.color = toFunc(DEFAULT_TEXT_COLOR, props.color)
     }
     
     boundingBox(): BoundingBox {

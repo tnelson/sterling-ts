@@ -10,7 +10,7 @@ import {
 import { VisualObject } from './VisualObject';
 import { Coords } from './Utility';
 
-export interface EdgeParams {
+export interface EdgeProps {
   obj1: VisualObject;
   obj2: VisualObject;
   text?: string;
@@ -32,17 +32,17 @@ export class Edge extends VisualObject {
   boundary_points: Coords[];
 
   //the simplest design of this is as a pointer between two objects
-  constructor(params: EdgeParams) {
+  constructor(props: EdgeProps) { // Renamed props for consistency
     super();
-    this.obj1 = params.obj1;
-    this.obj2 = params.obj2;
-    this.text = params.text;
+    this.obj1 = props.obj1;
+    this.obj2 = props.obj2;
+    this.text = props.text;
 
     this.obj1Coords = {x:0,y:0}
     this.obj2Coords = {x:0,y:0}
     this.boundary_points = [];
     this.visible_points = [];
-    this.arrow = params.arrow ?? false;
+    this.arrow = props.arrow ?? false;
     this.compute_points(360);
   }
 
@@ -89,17 +89,12 @@ export class Edge extends VisualObject {
   }
 
   render(svg: any) {
-    let makeLine: any;
-    if (this.arrow) {
-      makeLine = new Line([this.obj1Coords, this.obj2Coords], true);
-    } else {
-      makeLine = new Line([this.obj1Coords, this.obj2Coords]);
-    }
+    let makeLine: any = new Line({points: [this.obj1Coords, this.obj2Coords], arrow: this.arrow})
     makeLine.render(svg);
     if (this.text) {
       const makeText = new TextBox(
         this.text,
-        mid_point(
+        mid_point( // Huh? 
           //we set a point to optimize distance from
           this.obj1.center(),
           this.obj2.center()

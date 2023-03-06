@@ -10,6 +10,16 @@ import {
 import { toFunc } from './Utility';
 import { TextBox } from './TextBox';
 
+export interface ShapeProps {
+  center?: Coords | (() => Coords),
+  color?: string | (() => string),
+  borderWidth?: number | (() => number),
+  borderColor?: string | (() => string),
+  label?: string | (() => string),
+  labelColor?: string | (() => string),
+  labelSize?: number | (() => number)
+}
+
 /**
  * Generic class for a large suite of "shape"-like objects.
  * Generally includes anything with an inside and an outside.
@@ -34,24 +44,18 @@ export class Shape extends VisualObject {
    * @param labelSize size of text
    */
   constructor(
-    center?: Coords | (() => Coords),
-    color?: string | (() => string),
-    borderWidth?: number | (() => number),
-    borderColor?: string | (() => string),
-    label?: string | (() => string),
-    labelColor?: string | (() => string),
-    labelSize?: number | (() => number)
+    props: ShapeProps
   ) {
-    super(center);
-    this.color = toFunc(DEFAULT_BORDER_COLOR, color);
-    this.borderWidth = toFunc(DEFAULT_STROKE_WIDTH, borderWidth);
-    this.borderColor = toFunc(DEFAULT_COLOR, borderColor);
-    this.label = new TextBox(
-      label,
-      () => {return this.center()}, // Wacky little trick, saves so much time
-      labelColor,
-      labelSize
-    );
+    super(props.center);
+    this.color = toFunc(DEFAULT_BORDER_COLOR, props.color);
+    this.borderWidth = toFunc(DEFAULT_STROKE_WIDTH, props.borderWidth);
+    this.borderColor = toFunc(DEFAULT_COLOR, props.borderColor);
+    this.label = new TextBox({
+      text: props.label,
+      coords: () => {return this.center()}, // Wacky little trick, saves so much time
+      color: props.labelColor,
+      fontSize: props.labelSize
+    });
     this.children.push(this.label)
   }
   

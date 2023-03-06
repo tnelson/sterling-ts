@@ -16,6 +16,15 @@ export interface VisTree{
     children: VisTree[]
 }
 
+export interface TreeProps {
+    root: VisTree, 
+    height: number, 
+    width: number, 
+    coords?: Coords | (() => Coords), 
+    edgeColor?: string, 
+    edgeWidth?: number
+}
+
 export class Tree extends VisualObject{
     root: VisTree;
     height: number;
@@ -32,16 +41,9 @@ export class Tree extends VisualObject{
      * @param width width of box to bound the tree
      * @param coords top left point of the tree
      */
-    constructor(
-        root: VisTree, 
-        height: number, 
-        width: number, 
-        coords?: Coords | (() => Coords), 
-        edgeColor?: string, 
-        edgeWidth?: number
-        ){
-        super(coords)
-        let coordsFunc = toFunc({x:0, y:0}, coords)
+    constructor(props: TreeProps){
+        super(props.coords)
+        let coordsFunc = toFunc({x:0, y:0}, props.coords)
         this.center = () => {
             return {
                 x: coordsFunc().x + this.width / 2,
@@ -58,17 +60,20 @@ export class Tree extends VisualObject{
             }
         }
 
-        this.height = height;
-        this.width = width;
-        this.root = root;
+        this.height = props.height;
+        this.width = props.width;
+        this.root = props.root;
         this.root.visualObject.setCenter(() => { return {
             x: this.coords().x + this.width / 2,
             y: this.coords().y
         }})
 
+        this.lines = []
+        this.subTrees = []
+
         this.setUpSubtrees();
-        this.setLineColor(edgeColor ?? DEFAULT_TREE_LINE_COLOR);
-        this.setLineWidth(edgeWidth ?? DEFAULT_TREE_LINE_WIDTH)
+        this.setLineColor(props.edgeColor ?? DEFAULT_TREE_LINE_COLOR);
+        this.setLineWidth(props.edgeWidth ?? DEFAULT_TREE_LINE_WIDTH)
     }
 
     private setUpSubtrees(){ // There's a lot of math happening here, 
@@ -88,21 +93,20 @@ export class Tree extends VisualObject{
             let prevWidth: number = currTotalWidth
             currTotalWidth += childWidth
 
-            return new Tree(
-                childTree, 
-                layerHeight * (treeHeight(childTree) - 1),
-                this.width * treeWidth(childTree) / totalWidth,
-                () => { return {
+            return new Tree({
+                root: childTree, 
+                height: layerHeight * (treeHeight(childTree) - 1),
+                width: this.width * treeWidth(childTree) / totalWidth,
+                coords: () => { return {
                     x: this.coords().x + (prevWidth / totalWidth) * this.width,
                     y: this.coords().y + layerHeight
-                }}
-                )
+                }} // Might need to set line color? Needs testing. 
+            })
         })
 
-        this.lines = []
         this.subTrees.forEach((subTree) => {
-            this.lines.push(new Line(
-                [() => { return {
+            this.lines.push(new Line({
+                points: [() => { return {
                     x: this.root.visualObject.center().x,
                     y: this.root.visualObject.center().y
                 }},
@@ -110,9 +114,9 @@ export class Tree extends VisualObject{
                     x: subTree.root.visualObject.center().x,
                     y: subTree.root.visualObject.center().y
                 }}],
-                DEFAULT_LINE_COLOR,
-                DEFAULT_STROKE_WIDTH // Need to make default later
-            ))
+                color: DEFAULT_LINE_COLOR,
+                width: DEFAULT_STROKE_WIDTH // Need to make default later
+            }))
         })
         this.lines.forEach((line) => { this.children.push(line) })
         this.subTrees.forEach((subTree) => { this.children.push(subTree) })

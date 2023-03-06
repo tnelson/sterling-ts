@@ -33,9 +33,9 @@ export class Grid extends VisualObject{
     cells: Array<Array<VisualObject>>
     gridlines: Array<Line>
 
-    constructor(config: gridProps){
-        super(config.grid_location)
-        this.config = config
+    constructor(props: gridProps){ // renamed to props for consistency
+        super(props.grid_location)
+        this.config = props
         // Note: We should never be accessing the grid_location field of config after this
         // point. It is
 
@@ -146,7 +146,7 @@ export class Grid extends VisualObject{
                 x: this.coords().x + this.config.grid_dimensions.x_size*this.config.cell_size.x_size,
                 y: this.coords().y + y_coord * this.config.cell_size.y_size
             }}]
-            const horizLine: Line = new Line(newLine);
+            const horizLine: Line = new Line({points: newLine});
             this.gridlines.push(horizLine)
             this.children.push(horizLine)
         }
@@ -160,7 +160,7 @@ export class Grid extends VisualObject{
                 y: this.coords().y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size
             }}]
             
-            const vertLine: Line = new Line(newLine);
+            const vertLine: Line = new Line({points: newLine});
             this.gridlines.push(vertLine)
             this.children.push(vertLine)    
         }
@@ -179,9 +179,10 @@ export class Grid extends VisualObject{
         
         this.check_coords(coords)
 
-        const addRectangle:Rectangle = new Rectangle(
-            this.config.cell_size.x_size, //y_size
-            this.config.cell_size.y_size) //x_size
+        const addRectangle:Rectangle = new Rectangle({
+            height: this.config.cell_size.x_size, //y_size
+            width: this.config.cell_size.y_size
+        }) //x_size
         
         addRectangle.setColor(color)
 

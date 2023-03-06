@@ -1,7 +1,11 @@
-import {Shape} from './Shape'
+import {Shape, ShapeProps} from './Shape'
 import { require as d3require } from 'd3-require';
 const d3 = require("d3")
 import { averagePath, boundsOfList, shiftList, BoundingBox, Coords, toFunc } from './Utility';
+
+export interface PolygonProps extends ShapeProps {
+    points: Coords[] | (() => Coords)[]
+}
 
 /**
  * Class Representing Polygonal objects. Takes the form of any
@@ -20,24 +24,15 @@ export class Polygon extends Shape{
      * @param labelColor color of label text
      * @param labelSize size of the label
      */
-    constructor(
-        points: Coords[] | (() => Coords)[],
-        color?: string | (() => string),
-        borderWidth?: number | (() => number),
-        borderColor?: string | (() => string),
-        label?: string | (() => string),
-        labelColor?: string | (() => string),
-        labelSize?: number | (() => number)
-    ){
-        let pointsUnshifted: (() => Coords)[] = points.map(
+    constructor(props: PolygonProps){
+        let pointsUnshifted: (() => Coords)[] = props.points.map(
             (point): (() => Coords) => toFunc({x: 0, y: 0}, point))
-
-        super(
-            (): Coords => {
+        
+        props.center = (): Coords => {
             return averagePath(pointsUnshifted.map((coordFunc) => coordFunc()))
             }, 
-            color, borderWidth, borderColor, label, labelColor, labelSize)
-
+        
+        super(props)
         this.pointsRelative = shiftList(pointsUnshifted, this.center)
     }
 

@@ -1,7 +1,12 @@
-import {Shape} from './Shape'
+import {Shape, ShapeProps} from './Shape'
 import * as d3 from 'd3';
 import {BoundingBox, Coords, toFunc} from './Utility'
 
+export interface RectangleProps extends ShapeProps {
+    height: number | (() => number),
+    width: number | (() => number),
+    coords?: Coords | (() => Coords)
+}
 
 export class Rectangle extends Shape{
     height: () => number;
@@ -20,20 +25,12 @@ export class Rectangle extends Shape{
      * @param labelSize size of label text
      */
     constructor(
-        height: number | (() => number),
-        width: number | (() => number),
-        coords?: Coords | (() => Coords),
-        color?: string | (() => string),
-        borderWidth?: number | (() => number),
-        borderColor?: string | (() => string),
-        label?: string | (() => string),
-        labelColor?: string | (() => string),
-        labelSize?: number | (() => number)
+        props: RectangleProps
     ){
-        super(coords, color, borderWidth, borderColor, label, labelColor, labelSize)
-        this.height = toFunc(0, height)
-        this.width = toFunc(0, width) 
-        let coordsFunc = toFunc({x: 0, y:0}, coords)
+        super(props)
+        this.height = toFunc(0, props.height)
+        this.width = toFunc(0, props.width) 
+        let coordsFunc = toFunc({x: 0, y:0}, props.coords)
         this.center = () => {
             return {
                 x: coordsFunc().x + (this.width() / 2),

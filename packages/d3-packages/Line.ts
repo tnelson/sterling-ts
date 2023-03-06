@@ -12,12 +12,19 @@ import {
   DEFAULT_STROKE_WIDTH
 } from './Constants';
 
+export interface LineProps {
+  points: Coords[] | (() => Coords)[], 
+  arrow?: boolean,
+  color?: string | (() => string), 
+  width?: number | (() => number),
+  opacity?: number | (() => number)
+}
+
 export class Line extends VisualObject {
   pointsRelative: (() => Coords)[];
   color: () => string;
   width: () => number;
   opacity: () => number;
-
   arrow: boolean;
 
   /**
@@ -27,14 +34,9 @@ export class Line extends VisualObject {
    * @param width width of line
    * @param opacity of the line
    */
-  constructor(
-      points: Coords[] | (() => Coords)[], 
-      arrow?: boolean,
-      color?: string | (() => string), 
-      width?: number | (() => number),
-      opacity?: number | (() => number)) {
+  constructor(props: LineProps) {
 
-    let pointsUnshifted: (() => Coords)[] = points.map(
+    let pointsUnshifted: (() => Coords)[] = props.points.map(
         (point): (() => Coords) => toFunc({x: 0, y: 0}, point))
 
     super((): Coords => {
@@ -43,10 +45,10 @@ export class Line extends VisualObject {
 
     
     this.pointsRelative = shiftList(pointsUnshifted, this.center)
-    this.color = toFunc(DEFAULT_LINE_COLOR, color);
-    this.width = toFunc(DEFAULT_STROKE_WIDTH, width);
-    this.opacity = toFunc(1, opacity)
-    this.arrow = arrow ?? false;
+    this.color = toFunc(DEFAULT_LINE_COLOR, props.color);
+    this.width = toFunc(DEFAULT_STROKE_WIDTH, props.width);
+    this.opacity = toFunc(1, props.opacity)
+    this.arrow = props.arrow ?? false;
   }
 
   boundingBox(): BoundingBox {

@@ -1,8 +1,12 @@
-import { Shape } from './Shape';
+import { Shape, ShapeProps } from './Shape';
 import { require as d3require } from 'd3-require';
 const d3 = require('d3');
 import { BoundingBox, Coords, ExperimentalBoundingBox, toFunc } from './Utility';
 import { BoundingBoxGenerator } from './VisualObject';
+
+export interface CircleProps extends ShapeProps {
+  radius: number | (() => number)
+}
 
 export class Circle extends Shape {
   radius: () => number;
@@ -19,26 +23,9 @@ export class Circle extends Shape {
    * @param labelColor color of label
    * @param labelSize size of label
    */
-  constructor(
-    radius: number | (() => number),
-    coords?: Coords | (() => Coords),
-    color?: string | (() => string),
-    borderWidth?: number | (() => number),
-    borderColor?: string | (() => string),
-    label?: string | (() => string),
-    labelColor?: string | (() => string),
-    labelSize?: number | (() => number)
-  ) {
-    super(
-      coords,
-      color,
-      borderWidth,
-      borderColor,
-      label,
-      labelColor,
-      labelSize
-    );
-    this.radius = toFunc(0, radius);
+  constructor(props: CircleProps) {
+    super(props);
+    this.radius = toFunc(0, props.radius);
 
     this.bounding_box_lam = (radians: number) => {
       return {
