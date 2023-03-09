@@ -42,6 +42,7 @@ export class Shape extends VisualObject {
    * @param label text to display atop the shape
    * @param labelColor color of text
    * @param labelSize size of text
+   * @param style
    */
   constructor(
     props: ShapeProps

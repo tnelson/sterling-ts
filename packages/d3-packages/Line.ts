@@ -18,6 +18,7 @@ export interface LineProps {
   color?: string | (() => string), 
   width?: number | (() => number),
   opacity?: number | (() => number)
+  style?: string | (() => string)
 }
 
 export class Line extends VisualObject {
@@ -26,6 +27,7 @@ export class Line extends VisualObject {
   width: () => number;
   opacity: () => number;
   arrow: boolean;
+  style: () => string;
 
   /**
    * Creates a line on the given poitns.
@@ -49,6 +51,7 @@ export class Line extends VisualObject {
     this.width = toFunc(DEFAULT_STROKE_WIDTH, props.width);
     this.opacity = toFunc(1, props.opacity)
     this.arrow = props.arrow ?? false;
+    this.style = toFunc("full", props.style)
   }
 
   boundingBox(): BoundingBox {
@@ -73,6 +76,10 @@ export class Line extends VisualObject {
     truePoints.forEach((point: Coords) => {
       path.lineTo(point.x, point.y);
     });
+
+    let style: string | number = "0"
+    if (this.style() == "dashed") style = this.width() * 5
+    else if (this.style() == "dotted") style = this.width()
 
     //add in definition for arrow
     d3.select(svg)
@@ -101,6 +108,7 @@ export class Line extends VisualObject {
             .attr('stroke', this.color)
             .attr('opacity', this.opacity())
             .attr("marker-end", "url(#triangle)")
+            .style("stroke-dasharray", (style))
             .attr('fill', 'transparent'); // Should prob make easier in future.
         super.render(svg);
     }
@@ -111,7 +119,8 @@ export class Line extends VisualObject {
             .attr('stroke-width', this.width)
             .attr('stroke', this.color)
             .attr('opacity', this.opacity())
-            .attr('fill', 'transparent'); // Should prob make easier in future.
+            .attr('fill', 'transparent')
+            .style("stroke-dasharray", (style)); // Should prob make easier in future.
         super.render(svg);
   }
     }

@@ -19,7 +19,7 @@ export class Stage{
     children_to_tree_recurse(root:VisualObject):VisTree{
         const descriptiveText:string = root.constructor.name;
         const returnNode:VisTree = {
-            visualObject:new TextBox(descriptiveText),
+            visualObject:new TextBox({text: descriptiveText}),
             children: [],
         }
         if(root.getChildren().length == 0){
@@ -40,7 +40,7 @@ export class Stage{
 
         const root:ConjoinedObject = new ConjoinedObject(this.Children);
         const treeRoot:VisTree = this.children_to_tree_recurse(root);
-        const tree:Tree = new Tree(treeRoot, 700,700, {x:100,y:100});
+        const tree:Tree = new Tree({root: treeRoot, height: 700,width: 700, coords: {x:100,y:100}});
         tree.render(svg);
         if(document){
             const svgContainer = document.getElementById('svg-container')
