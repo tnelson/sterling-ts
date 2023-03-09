@@ -36,8 +36,16 @@ export function buildGraph(
 
   // Get the graph components and position the nodes
   const graphComponents = getVisibleGraphComponents(instance, theme);
-  const nodes = layoutNodes(graphComponents);
-  const edges = graphComponents.edges;
+
+  // TN: danger! We have types from srcnew and src interacting! 
+  //   This doesn't present a problem in execution, but it does prevent Jest/VSCode...
+  const nodes: AlloyNode[] = layoutNodes(graphComponents);
+  const edges: AlloyEdge[] = graphComponents.edges;
 
   return newGraph(nodes, edges);
+
+  // src:
+  // export type AlloyNode = PositionedNode & { atom: AlloyAtom };
+  // srcnew:
+  // export type AlloyNode = Node & { atom: AlloyAtom };
 }
