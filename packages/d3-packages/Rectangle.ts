@@ -65,6 +65,7 @@ export class Rectangle extends Shape{
             .attr('stroke-width', this.borderWidth())
             .attr('stroke', this.borderColor())
             .attr('fill', this.color())
+            .attr('opacity', this.opacity())
         super.render(svg)
     }
 }

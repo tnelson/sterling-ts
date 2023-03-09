@@ -61,7 +61,8 @@ export class Circle extends Shape {
       .attr('r', this.radius)
       .attr('stroke-width', this.borderWidth)
       .attr('stroke', this.borderColor)
-      .attr('fill', this.color);
+      .attr('fill', this.color)
+      .attr('opacity', this.opacity());
     super.render(svg);
   }
 }

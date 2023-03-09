@@ -17,7 +17,8 @@ export interface ShapeProps {
   borderColor?: string | (() => string),
   label?: string | (() => string),
   labelColor?: string | (() => string),
-  labelSize?: number | (() => number)
+  labelSize?: number | (() => number),
+  opacity?: number | (() => number)
 }
 
 /**
@@ -29,6 +30,7 @@ export class Shape extends VisualObject {
   public color: () => string;
   public borderWidth: () => number;
   public borderColor: () => string;
+  public opacity: () => number; 
   public label: TextBox;
 
   /**
@@ -58,6 +60,7 @@ export class Shape extends VisualObject {
       fontSize: props.labelSize
     });
     this.children.push(this.label)
+    this.opacity = toFunc(1, props.opacity)
   }
   
   setColor(color: string | (() => string)) {
