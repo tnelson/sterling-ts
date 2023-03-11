@@ -51,21 +51,23 @@ class AlloySet {
      * to the dot join operator in Alloy, in which this set is on the left side
      * of the dot and that set is on the right side.
      *
+     * This method relies on object equality between AlloyAtom objects having the same id().
+     * 
      * @param that The other set
      */
     join (that: AlloySet): AlloySet {
 
         if (!this.tuples().length || !that.tuples().length)
-            return new AlloySet();
+            return new AlloySet();        
 
         const tupleMap = mapColumnToTuples(0, that.tuples());
         const joinTups: AlloyTuple[] = [];
-        const i = this._tuples[0].atoms().length - 1;
+        const i = this._tuples[0].atoms().length - 1;        
 
         this.tuples().forEach(tuple => {
-            const atom = tuple.atoms()[i];
-            const tups = tupleMap.get(atom);
-            if (tups) tups.forEach(tup => {
+            const atom: AlloyAtom = tuple.atoms()[i];
+            const tupsInThat = tupleMap.get(atom);
+            if (tupsInThat) tupsInThat.forEach(tup => {
                 const atoms = tuple.atoms()
                     .slice(0, -1)
                     .concat(...tup.atoms().slice(1));
@@ -185,15 +187,18 @@ class AlloyTuple extends AlloySet {
 
 }
 
-function mapColumnToTuples (column: number, tuples: AlloyTuple[]): Map<AlloyAtom, AlloyTuple[]> {
+/**
+ * Index a list of tuples by the atom they each have in the given column.
+ */
+function mapColumnToTuples (column: number, tuples: AlloyTuple[]): Map<AlloyAtom, AlloyTuple[]> {    
 
     const rTups = new Map<AlloyAtom, AlloyTuple[]>();
     tuples.forEach(tuple => {
         const atom = tuple.atoms()[column];
         if (!rTups.has(atom))
             rTups.set(atom, []);
-        rTups.get(atom)!.push(tuple);
-    });
+        rTups.get(atom)!.push(tuple);        
+    });    
     return rTups;
 
 }
