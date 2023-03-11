@@ -1,7 +1,8 @@
 import { Shape } from './Shape';
-import { BoundingBox, Coords } from './VisualObject';
+import { BoundingBox, Coords, BoundingBoxGenerator } from './VisualObject';
 export declare class Circle extends Shape {
     radius: number;
+    bounding_box_lam: BoundingBoxGenerator;
     /**
      * Creates a circle object at the given location
      * @param radius radius of circle

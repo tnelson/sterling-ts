@@ -10,7 +10,6 @@ export interface Node{
     neighbors: string[]
 }
 
-
 export class Graph extends VisualObject{
     nodes: Node[]
     node_radius:number

@@ -222,20 +222,35 @@ class AlloySignature extends AlloySet {
     }
 
     /**
-     * Get an array of signature types associated with an XML element. Typically
+     * Get one or more arrays of signature types associated with an XML element. Typically
      * this is used when parsing a field or skolem, as each ```<field>``` and ```<skolem>```
      * element will have a ```<types>``` child. This method parses the types defined
      * in this element and returns the corresponding signatures.
+     * 
+     * If a field contains a union in its type, Alloy XML will pass _multiple_ ```<types>```
+     * elements within the ```<field>```: one for each possible type. Thus, this function 
+     * returns an _array_ of arrays of AlloySignature.
      *
      * @param element The XML element that has a <types> child
      * @param sigIDs A map of signature IDs to signatures
      */
-    static typesFromXML (element: Element, sigIDs: Map<string, AlloySignature>): AlloySignature[] {
+    static typesFromXML (element: Element, sigIDs: Map<string, AlloySignature>): AlloySignature[][] {
 
-        const types = element.querySelector('types');
-        if (!types) throw AlloyError.missingElement('AlloyField', 'types');
+        const typesElements = element.querySelectorAll('types');
+        if (!typesElements) throw AlloyError.missingElement('AlloyField', 'types');
 
-        return Array.from(types.querySelectorAll('type'))
+        return Array.from(typesElements)
+            .map(typesElement => AlloySignature.typesFromXMLSingle(typesElement, sigIDs))
+    }
+
+    /**
+     * Private helper to handle a single ```<types>``` element 
+     * @param element The XML ```<types>``` element 
+     * @param sigIDs A map of signature IDs to signatures
+     * @returns an array of sigs representing the type defined by the element
+     */
+    private static typesFromXMLSingle (element: Element, sigIDs: Map<string, AlloySignature>): AlloySignature[] {
+        return Array.from(element.querySelectorAll('type'))
             .map(typeElement => {
 
                 const typeID = typeElement.getAttribute('ID');
@@ -249,6 +264,7 @@ class AlloySignature extends AlloySet {
             });
 
     }
+
 
 }
 

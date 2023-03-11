@@ -25,9 +25,12 @@ export interface BoundingBox {
     top_left: Coords;
     bottom_right: Coords;
 }
+export type BoundingBoxGenerator = (r: number) => Coords;
 export declare class VisualObject {
     coords: Coords;
     children: VisualObject[];
+    dependents: VisualObject[];
+    bounding_box_lam: BoundingBoxGenerator;
     /**
      * Top level class, which all other visual objects will extend.
      * @param coords position of the object on screen.
@@ -44,10 +47,23 @@ export declare class VisualObject {
      * @param center new center of the object
      */
     setCenter(center: Coords): void;
+    getLam(): BoundingBoxGenerator;
     /**
      * Renders the object to the screen.
      * @param svg HTML Svg object to which the object should be rendered.
      */
     render(svg: any): void;
+    /**
+     * Updates data about all objects that are effected by this object.
+     * Note: This actually implements topological sorting. More shallow "update()"
+     * method exists for use within this method, and should never be called on its own.
+     *
+     * Note: Maybe factor the algorithmic beef into helper?
+     */
+    deepUpdate(): void;
+    /**
+     * Updates necessary information about an object.
+     */
+    update(): void;
 }
 //# sourceMappingURL=VisualObject.d.ts.map
