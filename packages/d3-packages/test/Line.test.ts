@@ -1,5 +1,4 @@
-import {Line} from './Line'
-export const foo = 0
+import {Line} from '../Line'
 
 test("trivial test to check Jest install", () => {
   const tsOne: number = 1
@@ -7,6 +6,6 @@ test("trivial test to check Jest install", () => {
 });
 
 test("instantiate Line", () => {
-  const aLine: Line = new Line([{x: 0, y: 0}, {x: 10, y: 10}])
+  const aLine: Line = new Line({points: [{x: 0, y: 0}, {x: 10, y: 10}]})
   expect(aLine).toBe(aLine); // trivial check
 })
