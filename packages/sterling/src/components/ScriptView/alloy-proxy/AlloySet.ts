@@ -3,7 +3,6 @@ import { AlloyError } from './AlloyError';
 import { AlloySignature } from './AlloySignature';
 
 class AlloySet {
-
     protected _tuples: AlloyTuple[];
 
     /**
@@ -134,34 +133,55 @@ class AlloyTuple extends AlloySet {
     }
 
     /**
-     * Create an array of tuples from a node list of ```<tuple>``` XML elements.
+     * Create an array of tuples from a node list of ```<tuples>``` XML elements.
      *
-     * @param elements A node list of ```<tuple>``` elements, typically created
+     * @param elements A node list of ```<tuples>``` elements, typically created
      * using the ```querySelectorAll()``` method on a ```<field>``` or
      * ```<skolem>``` element.
-     * @param types An ordered array of signatures that define the type of each
-     * atom in each tuple, typically created using [[AlloySignature.typesFromXML]].
+     * @param types An array of ordered arrays of signatures. Each sub-array defines
+     * define a potential type for each atom in a tuple, typically created using
+     * [[AlloySignature.typesFromXML]].
      */
-    static tuplesFromXML (elements: NodeListOf<Element>, types: AlloySignature[]): AlloyTuple[] {
-
+    static tuplesFromXML (elements: NodeListOf<Element>, allTypes: AlloySignature[][]): AlloyTuple[] {        
         return Array.from(elements).map(tupleElement => {
-
-            const atoms = Array.from(tupleElement.querySelectorAll('atom')).map((atomElement, index) => {
-
-                const type = types[index];
-                const label = atomElement.getAttribute('label');
-                if (!label) throw AlloyError.missingAttribute('AlloyField', 'label');
-                const atom = type.atom(label);
-                if (!atom) throw AlloyError.error('AlloyField', `No atom: ${label}`);
-                return atom;
-
-            });
-
-            return new AlloyTuple(atoms);
-
+            // If there's only one possible type, use it (and error if there's a problem)
+            if(allTypes.length === 1) 
+                return AlloyTuple.buildTuple(allTypes[0], tupleElement)
+            // Otherwise, find a matching type from options in `allTypes` and use that to 
+            // build the atoms. Only propagate an error if _all_ types options fail
+            const tuple = allTypes.reduce(
+                (acc: AlloyTuple | undefined, ele: AlloySignature[]): AlloyTuple|undefined => { 
+                    if(acc) return acc
+                    try {
+                        return AlloyTuple.buildTuple(ele, tupleElement)
+                    } catch(e) {
+                        return undefined
+                    }
+                },
+                undefined);
+                
+            if (!tuple) {
+                throw AlloyError.error('AlloyField', 
+                    `No match for tuple element ${tupleElement} in declared types ${allTypes}`);
+            } else {
+                return tuple
+            }
         });
+    } 
 
-    }
+    private static buildTuple(types: AlloySignature[], tupleElement: Element): AlloyTuple {        
+        const atoms = Array.from(tupleElement.querySelectorAll('atom')).map((atomElement, index) => {
+            const type = types[index];
+            const label = atomElement.getAttribute('label');
+            if (!label) throw AlloyError.missingAttribute('AlloyField', 'label');                
+            const atom = type.atom(label);
+            if (!atom)
+                throw AlloyError.error('AlloyField', `No atom: ${label} in type: ${type}`);                
+            return atom;
+        });        
+        return new AlloyTuple(atoms);
+}
+
 
 }
 
@@ -194,3 +214,4 @@ export {
     AlloySet,
     AlloyTuple
 }
+
