@@ -66,7 +66,7 @@ class AlloySet {
 
         this.tuples().forEach(tuple => {
             const atom: AlloyAtom = tuple.atoms()[i];
-            const tupsInThat = tupleMap.get(atom);
+            const tupsInThat = tupleMap.get(atom.id());
             if (tupsInThat) tupsInThat.forEach(tup => {
                 const atoms = tuple.atoms()
                     .slice(0, -1)
@@ -189,15 +189,16 @@ class AlloyTuple extends AlloySet {
 
 /**
  * Index a list of tuples by the atom they each have in the given column.
+ * Since AlloyAtoms should be canonical, this indexes by atom _name_, rather than object.
  */
-function mapColumnToTuples (column: number, tuples: AlloyTuple[]): Map<AlloyAtom, AlloyTuple[]> {    
+function mapColumnToTuples (column: number, tuples: AlloyTuple[]): Map<string, AlloyTuple[]> {    
 
-    const rTups = new Map<AlloyAtom, AlloyTuple[]>();
+    const rTups = new Map<string, AlloyTuple[]>();
     tuples.forEach(tuple => {
         const atom = tuple.atoms()[column];
-        if (!rTups.has(atom))
-            rTups.set(atom, []);
-        rTups.get(atom)!.push(tuple);        
+        if (!rTups.has(atom.id()))
+            rTups.set(atom.id(), []);
+        rTups.get(atom.id())!.push(tuple);        
     });    
     return rTups;
 
