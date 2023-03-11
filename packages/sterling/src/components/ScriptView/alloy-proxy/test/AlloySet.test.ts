@@ -2,7 +2,7 @@ import {AlloyField} from '../AlloyField'
 // Must import these, or clash with .d.ts version (TODO: resolve conflict)
 import {AlloySignature} from '../AlloySignature'
 import {AlloyAtom} from '../AlloyAtom'
-import {AlloyTuple} from '../AlloySet'
+import {AlloyTuple,AlloySet} from '../AlloySet'
 
 const atomA0 = new AlloyAtom('A$0')
 const atomA1 = new AlloyAtom('A$1')
@@ -23,8 +23,20 @@ describe('AlloySet Join', () => {
         expect(atomA0_again.join(fldAB).tuples().length).toBe(1)
     })
 
-    it('Empty join produces an error', () => {
+    it('Joining with a non-AlloySet object (via unchecked code) produces an error', () => {        
+        const arrayMistake: unknown = [1,2,3] 
+        const objectMistake: unknown = {x: 50, y: 50}
+        expect(() => fldAB.join(arrayMistake as AlloySet)).toThrowError()
+        expect(() => fldAB.join(objectMistake as AlloySet)).toThrowError()
+    })
+
+
+    it('Necessarily empty join produces an error', () => {
         expect( () => fldAB.join(fldAB)).toThrowError()
+
+        // TODO: this feature isn't complete. Only joining two _fields_ will
+        //  produce the error, because fields are AlloyTypedSets
+        // expect( () => sigBNoProxy.join(fldAB)).toThrowError()
     })
 
   

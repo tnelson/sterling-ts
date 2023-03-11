@@ -56,6 +56,12 @@ class AlloySet {
      * @param that The other set
      */
     join (that: AlloySet): AlloySet {
+        // Because this function is often called directly in a user script, and (as of 2023)
+        // that script is JavaScript, not TypeScript, the type of `that` may not be sound. 
+        if(Array.isArray(that))
+            throw AlloyError.error('AlloySet', `[${that}] is an array, not an AlloySet, so unable to apply join.`)
+        if(!(that instanceof AlloySet)) 
+            throw AlloyError.error('AlloySet', `${that} is something other than an AlloySet, so unable to apply join.`)
 
         if (!this.tuples().length || !that.tuples().length)
             return new AlloySet();        
