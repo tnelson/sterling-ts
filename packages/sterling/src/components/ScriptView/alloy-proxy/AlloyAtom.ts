@@ -10,7 +10,11 @@ class AlloyAtom extends AlloySet {
 
     private readonly _id: string;
 
-    constructor (id: string, proxy?: AlloyProxy) {
+    /**
+     * AlloyAtoms are canonical for their id, and should be created exclusively via the 
+     * AlloyAtom.atom(id) factory method.
+     */
+    private constructor (id: string, proxy?: AlloyProxy) {
 
         super();
 
