@@ -9,11 +9,14 @@ import {
 } from './geometricHelpers';
 import { VisualObject } from './VisualObject';
 import { Coords } from './Utility';
+import { TextToPos, TextToPosArgs } from './TextToPos';
 
 export interface EdgeProps {
   obj1: VisualObject;
   obj2: VisualObject;
   text?: string;
+  textlpos?: string;
+  textrpos?: string;
   arrow?: boolean;
 }
 
@@ -26,24 +29,27 @@ export class Edge extends VisualObject {
   obj2: VisualObject;
   obj2Coords: Coords;
   obj1Coords: Coords;
-  text: string | undefined;
   arrow: boolean;
+  text_args:any;
   visible_points: Coords[];
   boundary_points: Coords[];
 
   //the simplest design of this is as a pointer between two objects
-  constructor(props: EdgeProps) { // Renamed props for consistency
+  constructor(props: EdgeProps) {
+    // Renamed props for consistency
     super();
     this.obj1 = props.obj1;
     this.obj2 = props.obj2;
-    this.text = props.text;
-
-    this.obj1Coords = {x:0,y:0}
-    this.obj2Coords = {x:0,y:0}
+    this.text_args = {
+      text: props.text,
+      textlpos: props.textlpos,
+      textrpos: props.textrpos
+    }
+    this.obj1Coords = { x: 0, y: 0 };
+    this.obj2Coords = { x: 0, y: 0 };
     this.boundary_points = [];
     this.visible_points = [];
     this.arrow = props.arrow ?? false;
-    this.compute_points(360);
   }
 
   compute_points(precision: number) {
@@ -89,18 +95,21 @@ export class Edge extends VisualObject {
   }
 
   render(svg: any) {
-    let makeLine: any = new Line({points: [this.obj1Coords, this.obj2Coords], arrow: this.arrow})
+    this.compute_points(360);
+    let makeLine: any = new Line({
+      points: [this.obj1Coords, this.obj2Coords],
+      arrow: this.arrow
+    });
     makeLine.render(svg);
-    if (this.text) {
-      const makeText = new TextBox(
-        this.text,
-        mid_point( // Huh? 
-          //we set a point to optimize distance from
-          this.obj1.center(),
-          this.obj2.center()
-        )
-      );
-      makeText.render(svg);
+    if(this.text_args.text){
+      const textObj = new TextBox({text: this.text_args.text});
+      const textObjBB = textObj.boundingBox();
+
+      textObj.setCenter(
+        TextToPos({p1: this.obj1Coords, p2: this.obj2Coords, size: textObjBB,
+        rpos: this.text_args.rpos, lpos: this.text_args.lpos})
+      )
+      textObj.render(svg)
     }
   }
 }
