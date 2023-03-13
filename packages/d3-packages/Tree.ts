@@ -1,4 +1,4 @@
-import { max } from 'lodash';
+import { max } from 'lodash-es';
 import { Circle } from './Circle';
 import {Graph, Node} from './Graph'
 import {VisualObject} from './VisualObject'

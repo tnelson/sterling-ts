@@ -91,15 +91,12 @@ export class Edge extends VisualObject {
   render(svg: any) {
     let makeLine: any = new Line({points: [this.obj1Coords, this.obj2Coords], arrow: this.arrow})
     makeLine.render(svg);
-    if (this.text) {
-      const makeText = new TextBox(
-        this.text,
-        mid_point( // Huh? 
+    if (this.text) {    
+      const makeText = new TextBox({
+          text: this.text,
           //we set a point to optimize distance from
-          this.obj1.center(),
-          this.obj2.center()
-        )
-      );
+          coords: mid_point(this.obj1.center(), this.obj2.center())
+        });
       makeText.render(svg);
     }
   }

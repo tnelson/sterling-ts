@@ -8,7 +8,7 @@ import {Line} from "./Line"
 import { Grid } from "./Grid"
 import {ConjoinedObject} from './ConjoinedObject'
 import { Polygon } from "./Polygon"
-import {Graph} from './Graph'
+//import {Graph} from './Graph'
 import {Tree, VisTree} from './Tree'
 import {Edge} from './Edge'
 
@@ -35,7 +35,7 @@ const scriptViewImports: scriptViewImport[] = [
     {name: "Line", value: Line},
     {name: "ConjoinedObject",value:ConjoinedObject},
     {name: "Polygon", value:Polygon},
-    {name: "Graph", value:Graph},
+    //{name: "Graph", value:Graph},
     {name: "Tree", value:Tree},
     {name: "Edge", value:Edge}
 ]

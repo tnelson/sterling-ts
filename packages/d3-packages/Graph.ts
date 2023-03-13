@@ -153,7 +153,7 @@ export class Graph extends VisualObject{
          * 
          * As an aside, we want this method to be private, except that it's used in the Tree class
          */
-        const node_names = new Set([])
+        const node_names = new Set<string>([])
 
         Nodes.forEach(node => { //build up our set of node names, checking for duplicates in the process
             if(node_names.has(node.name)){

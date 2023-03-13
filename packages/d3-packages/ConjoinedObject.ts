@@ -28,7 +28,7 @@ export class ConjoinedObject extends VisualObject{
          */
 
         if(index > this.children.length){
-            throw `Index larger than current number of objects stored plus 1. Add an index between 0 and ${this.objects.length}`
+            throw `Index larger than current number of objects stored plus 1. Add an index between 0 and ${this.children.length}`
         }
 
         this.children.splice(index, 0, obj);
