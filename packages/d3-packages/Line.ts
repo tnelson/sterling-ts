@@ -13,7 +13,7 @@ import {
 } from './Constants';
 
 export interface LineProps {
-  points: Coords[] | (() => Coords)[], 
+  points?: Coords[] | (() => Coords)[], 
   arrow?: boolean,
   color?: string | (() => string), 
   width?: number | (() => number),
@@ -38,8 +38,14 @@ export class Line extends VisualObject {
    */
   constructor(props: LineProps) {
 
-    let pointsUnshifted: (() => Coords)[] = props.points.map(
-        (point): (() => Coords) => toFunc({x: 0, y: 0}, point))
+    let pointsUnshifted: (() => Coords)[]
+    if (props.points != undefined){
+      pointsUnshifted = props.points.map(
+      (point): (() => Coords) => toFunc({x: 0, y: 0}, point))
+    } else {
+      pointsUnshifted = []
+    }
+
 
     super((): Coords => {
       return averagePath(pointsUnshifted.map((coordFunc) => coordFunc()))
