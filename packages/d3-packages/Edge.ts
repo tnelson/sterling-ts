@@ -107,7 +107,7 @@ export class Edge extends VisualObject {
     let angle: () => number = () => lineAngle(this.obj1Coords(), this.obj2Coords())
     let textBounding: () => BoundingBox = () => text.boundingBox()
     let cornerDist: () => number = () => {
-      return Math.sqrt(Math.pow(text.fontSize(), 2) + Math.pow(text.text().length * 0.5 * text.fontSize(), 2))
+      return Math.sqrt(Math.pow(text.fontSize(), 2) + Math.pow(text.text().length * 0.14 * text.fontSize(), 2))
     }
     let lineMidPoint: () => Coords = () => mid_point(this.obj1Coords(), this.obj2Coords())
 
@@ -115,16 +115,46 @@ export class Edge extends VisualObject {
       case "above":
         text.setCenter(() => {
           return {
+            x: lineMidPoint().x + Math.cos(angle() - Math.PI/2) * cornerDist(),
+            y: lineMidPoint().y + Math.sin(angle() - Math.PI/2) * cornerDist()
+          }
+        })
+        break;
+      case "below": 
+        text.setCenter(() => {
+          return {
             x: lineMidPoint().x + Math.cos(angle() + Math.PI/2) * cornerDist(),
             y: lineMidPoint().y + Math.sin(angle() + Math.PI/2) * cornerDist()
           }
         })
         break;
-      default: case "below": 
+      case "left":
         text.setCenter(() => {
-          return {
-            x: lineMidPoint().x + Math.cos(angle() - Math.PI/2) * cornerDist(),
-            y: lineMidPoint().y + Math.sin(angle() - Math.PI/2) * cornerDist()
+          if (angle() <= 0) {
+            return {
+              x: lineMidPoint().x + Math.cos(angle() - Math.PI/2) * cornerDist(),
+              y: lineMidPoint().y + Math.sin(angle() - Math.PI/2) * cornerDist()
+            }
+          } else {
+            return {
+              x: lineMidPoint().x + Math.cos(angle() + Math.PI/2) * cornerDist(),
+              y: lineMidPoint().y + Math.sin(angle() + Math.PI/2) * cornerDist()
+            }
+          }
+        })
+        break;
+      case "right":
+        text.setCenter(() => {
+          if (angle() <= 0) {
+            return {
+              x: lineMidPoint().x + Math.cos(angle() + Math.PI/2) * cornerDist(),
+              y: lineMidPoint().y + Math.sin(angle() + Math.PI/2) * cornerDist()
+            }
+          } else {
+            return {
+              x: lineMidPoint().x + Math.cos(angle() - Math.PI/2) * cornerDist(),
+              y: lineMidPoint().y + Math.sin(angle() - Math.PI/2) * cornerDist()
+            }
           }
         })
     }
