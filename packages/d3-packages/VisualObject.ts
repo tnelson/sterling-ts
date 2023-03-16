@@ -71,7 +71,6 @@ export class VisualObject {
    * @param svg HTML Svg object to which the object should be rendered.
    */
   render(svg: any) {
-    console.log("rendering")
     this.children.forEach((child: VisualObject) => {child.render(svg)});
   }
 }

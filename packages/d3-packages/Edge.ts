@@ -6,7 +6,8 @@ import {
   lineAngle,
   mid_point,
   get_minimum_distance,
-  bounding_box_to_lambda
+  bounding_box_to_lambda,
+  normalize
 } from './geometricHelpers';
 import { VisualObject } from './VisualObject';
 import { BoundingBox, Coords } from './Utility';
@@ -157,6 +158,31 @@ export class Edge extends VisualObject {
             }
           }
         })
+        break;
+      case "clockwise":
+        text.setCenter(() => {
+          let normalizedDiff: Coords = normalize({
+            x: this.obj2Coords().x - this.obj1Coords().x,
+            y: this.obj2Coords().y - this.obj1Coords().y
+          }) 
+          return {
+            x: lineMidPoint().x - normalizedDiff.y * cornerDist(),
+            y: lineMidPoint().y + normalizedDiff.x * cornerDist()
+          }
+        })
+        break;
+      case "counterclockwise":
+        text.setCenter(() => {
+          let normalizedDiff: Coords = normalize({
+            x: this.obj2Coords().x - this.obj1Coords().x,
+            y: this.obj2Coords().y - this.obj1Coords().y
+          }) 
+          return {
+            x: lineMidPoint().x + normalizedDiff.y * cornerDist(),
+            y: lineMidPoint().y - normalizedDiff.x * cornerDist()
+          }
+        })
+        break;
     }
 
     this.children.push(text)

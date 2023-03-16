@@ -8,6 +8,11 @@ function distance(
   return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)); 
 }
 
+function normalize(v: Coords) {
+  let mag: number = Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2))
+  return {x: v.x / mag, y: v.y / mag}
+}
+
 function mid_point(p1: Coords, p2: Coords): Coords {
   //given a line, finds the midpoint of that line
   return {
@@ -128,4 +133,4 @@ function bounding_box_to_lambda(
   };
 }
 
-export { distance, mid_point, get_minimum_distance, bounding_box_to_lambda};
+export { distance, mid_point, get_minimum_distance, bounding_box_to_lambda, normalize};
