@@ -5,7 +5,12 @@ function distance(
   p1: Coords,
   p2: Coords //a helper in the compute_points method in which we compute the distance between two points
 ): number {
-  return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+  return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)); 
+}
+
+function normalize(v: Coords) {
+  let mag: number = Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2))
+  return {x: v.x / mag, y: v.y / mag}
 }
 
 function mid_point(p1: Coords, p2: Coords): Coords {
@@ -14,6 +19,15 @@ function mid_point(p1: Coords, p2: Coords): Coords {
     x: (p1.x + p2.x) / 2,
     y: (p1.y + p2.y) / 2
   };
+}
+
+export function lineAngle(p1: Coords, p2: Coords): number {
+  if (p1.x == p2.x){
+    return 90
+  } else {
+    let slope = (p1.y - p2.y)/(p1.x - p2.x)
+    return Math.atan(slope)
+  }
 }
 
 function get_minimum_distance(
@@ -119,4 +133,4 @@ function bounding_box_to_lambda(
   };
 }
 
-export { distance, mid_point, get_minimum_distance, bounding_box_to_lambda};
+export { distance, mid_point, get_minimum_distance, bounding_box_to_lambda, normalize};

@@ -31,6 +31,7 @@ export class TextBox extends VisualObject{
     }
     
     boundingBox(): BoundingBox {
+        console.log("getting textBox bounding box")
         return {
             top_left: { // No easy solution here. Just returning a square of the text's size. 
                 x: this.center().x - (this.fontSize() / 2),
