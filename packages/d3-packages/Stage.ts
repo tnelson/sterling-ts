@@ -1,10 +1,9 @@
-import { require as d3require } from 'd3-require';
 import {Tree, VisTree} from './Tree';
 import { VisualObject } from './VisualObject';
 import {ConjoinedObject} from './ConjoinedObject';
 import { TextBox } from './TextBox';
 import { Circle } from './Circle';
-const d3 = require("d3")
+import * as d3 from 'd3' 
 
 export class Stage{
     Children: VisualObject[]
