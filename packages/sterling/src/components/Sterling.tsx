@@ -31,7 +31,7 @@ const Sterling = (props: SterlingProps) => {
   return (
     <>
       <Dashboard
-        leftPaneCollapsed={false}
+        leftPaneCollapsed={true}
         leftPaneInitialWidth={layout.explorerWidth}
         leftPaneMinWidth={layout.explorerMinWidth}
         leftPaneMaxWidth={layout.explorerMaxWidth}
