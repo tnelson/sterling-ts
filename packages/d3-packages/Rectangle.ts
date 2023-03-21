@@ -5,12 +5,14 @@ import {BoundingBox, Coords, toFunc} from './Utility'
 export interface RectangleProps extends ShapeProps {
     height: number | (() => number),
     width: number | (() => number),
-    coords?: Coords | (() => Coords)
+    coords?: Coords | (() => Coords),
+    labelLocation: string
 }
 
 export class Rectangle extends Shape{
     height: () => number;
     width: () => number;
+    labelLocation: string;
 
     /**
      * Creates a logical rectangle object
@@ -31,12 +33,14 @@ export class Rectangle extends Shape{
         this.height = toFunc(0, props.height)
         this.width = toFunc(0, props.width) 
         let coordsFunc = toFunc({x: 0, y:0}, props.coords)
+        this.labelLocation = props.labelLocation
         this.center = () => {
             return {
                 x: coordsFunc().x + (this.width() / 2),
                 y: coordsFunc().y + (this.height() / 2)
             }
         }
+        this.setLabelLocation()
     }
 
     boundingBox(): BoundingBox {
@@ -49,6 +53,43 @@ export class Rectangle extends Shape{
                 x: this.center().x + (this.width() / 2), 
                 y: this.center().y + (this.height() / 2)
             }
+        }
+    }
+
+    setLabelLocation() {
+        switch (this.labelLocation) {
+            case "topLeft": 
+                this.label.setCenter( () => {
+                    return {
+                        x: this.center().x - (this.width() / 2) + (this.label.text().length * 2.5),
+                        y: this.center().y - (this.height() / 2) - (this.label.fontSize() * 1)
+                    }
+                })
+                break;
+            case "topRight": 
+                this.label.setCenter( () => {
+                    return {
+                        x: this.center().x + (this.width() / 2) - (this.label.text().length * 2.5),
+                        y: this.center().y - (this.height() / 2) - (this.label.fontSize() * 1)
+                    }
+                })
+                break;
+            case "bottomRight": 
+                this.label.setCenter( () => {
+                    return {
+                        x: this.center().x + (this.width() / 2) - (this.label.text().length * 2.5),
+                        y: this.center().y + (this.height() / 2) + (this.label.fontSize() * 1)
+                    }
+                })
+                break;            
+            case "bottomLeft": 
+                this.label.setCenter( () => {
+                    return {
+                        x: this.center().x - (this.width() / 2) + (this.label.text().length * 2.5),
+                        y: this.center().y + (this.height() / 2) + (this.label.fontSize() * 1)
+                    }
+                })
+                break;
         }
     }
 
