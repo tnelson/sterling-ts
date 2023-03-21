@@ -1,9 +1,13 @@
-import { VisualObject, Coords } from './VisualObject';
+import { Coords } from './Utility';
+import { VisualObject } from "./VisualObject";
+/**
+ * This class is not currently being used!!
+ */
 export declare class ConjoinedObject extends VisualObject {
     /**
      * Note: this code is untested!
      */
-    objects: VisualObject[];
+    children: VisualObject[];
     constructor(Children?: VisualObject[]);
     addOrdered(obj: VisualObject, index: number): void;
     add(obj: VisualObject): void;

@@ -12,8 +12,8 @@ export declare class Graph extends VisualObject {
     constructor(coords?: Coords, graph_dimensions?: number, fixed_nodes?: number, node_radius?: number);
     setCenter(center: Coords): void;
     center(): {
-        x: number;
-        y: number;
+        x: any;
+        y: any;
     };
     add(Nodes: Node[]): void;
     private set_fixed_nodes;

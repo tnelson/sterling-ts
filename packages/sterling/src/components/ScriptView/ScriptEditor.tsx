@@ -1,4 +1,4 @@
-import { D3_TOTAL_DEFS } from 'd3-packages/d3lib-defs/total-defs';
+import { D3_TOTAL_DEFS } from 'd3-packages/d3-defs/total-defs';
 import { editor } from 'monaco-editor';
 import { useCallback, useEffect, useState } from 'react';
 import MonacoEditor, { monaco } from 'react-monaco-editor';

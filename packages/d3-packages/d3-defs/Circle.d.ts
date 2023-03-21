@@ -1,7 +1,12 @@
-import { Shape } from './Shape';
-import { BoundingBox, Coords, ExperimentalBoundingBox } from './VisualObject';
+import { Shape, ShapeProps } from './Shape';
+import { BoundingBox } from './Utility';
+import { BoundingBoxGenerator } from './VisualObject';
+export interface CircleProps extends ShapeProps {
+    radius: number | (() => number);
+}
 export declare class Circle extends Shape {
-    radius: number;
+    radius: () => number;
+    bounding_box_lam: BoundingBoxGenerator;
     /**
      * Creates a circle object at the given location
      * @param radius radius of circle
@@ -13,10 +18,9 @@ export declare class Circle extends Shape {
      * @param labelColor color of label
      * @param labelSize size of label
      */
-    constructor(radius: number, coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
+    constructor(props: CircleProps);
     boundingBox(): BoundingBox;
-    setRadius(radius: number): void;
-    getExperimentalBoundingBox(): ExperimentalBoundingBox;
+    setRadius(radius: number | (() => number)): void;
     render(svg: any): void;
 }
 //# sourceMappingURL=Circle.d.ts.map

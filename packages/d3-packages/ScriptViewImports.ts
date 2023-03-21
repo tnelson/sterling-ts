@@ -6,11 +6,10 @@ import { TextBox } from "./TextBox"
 import { VisualObject } from "./VisualObject"
 import {Line} from "./Line"
 import { Grid } from "./Grid"
-import {ConjoinedObject} from './ConjoinedObject'
 import { Polygon } from "./Polygon"
-import {Graph} from './Graph'
 import {Tree, VisTree} from './Tree'
 import {Edge} from './Edge'
+import { boxUnion } from "./Utility"
 
 interface scriptViewImport{
     name: string;
@@ -33,11 +32,10 @@ const scriptViewImports: scriptViewImport[] = [
     {name: "Stage", value: Stage},
     {name: "TextBox", value: TextBox},
     {name: "Line", value: Line},
-    {name: "ConjoinedObject",value:ConjoinedObject},
     {name: "Polygon", value:Polygon},
-    {name: "Graph", value:Graph},
     {name: "Tree", value:Tree},
-    {name: "Edge", value:Edge}
+    {name: "Edge", value:Edge},
+    {name: "boxUnion", value:boxUnion}
 ]
 
 export {scriptViewImports};

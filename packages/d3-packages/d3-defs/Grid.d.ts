@@ -1,7 +1,8 @@
-import { VisualObject, Coords } from './VisualObject';
+import { VisualObject } from './VisualObject';
+import { Coords } from './Utility';
 import { Line } from './Line';
 interface gridProps {
-    grid_location: Coords;
+    grid_location: Coords | (() => Coords);
     cell_size: {
         x_size: number;
         y_size: number;
@@ -10,10 +11,6 @@ interface gridProps {
         x_size: number;
         y_size: number;
     };
-}
-interface gridCell {
-    contents?: VisualObject;
-    center: Coords;
 }
 export declare class Grid extends VisualObject {
     /**
@@ -26,31 +23,18 @@ export declare class Grid extends VisualObject {
      *  Note: grid size is fixed! You can't change the size of a grid once it's created
      *
      */
+    private coords;
     config: gridProps;
-    cells: Array<Array<gridCell>>;
+    cells: Array<Array<VisualObject>>;
     gridlines: Array<Line>;
-    constructor(config: gridProps);
-    boundingBox(): {
-        top_left: Coords;
-        bottom_right: {
-            x: number;
-            y: number;
-        };
-    };
-    private initialize_cells;
-    center(): {
-        x: number;
-        y: number;
-    };
-    setCenter(center: Coords): void;
+    constructor(props: gridProps);
     private check_bounding_box;
     add(coords: Coords, add_object: VisualObject, ignore_warning?: boolean): void;
-    remove(coords: Coords): void;
+    private center_helper;
     private fill_grid_lines;
     hide_grid_lines(): void;
     fill(coords: Coords, color: string): void;
     private check_coords;
-    render(svg: any): void;
 }
 export {};
 //# sourceMappingURL=Grid.d.ts.map

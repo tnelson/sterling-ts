@@ -1,7 +1,6 @@
 import { require as d3require } from 'd3-require';
 import {Tree, VisTree} from './Tree';
 import { VisualObject } from './VisualObject';
-import {ConjoinedObject} from './ConjoinedObject';
 import { TextBox } from './TextBox';
 import { Circle } from './Circle';
 const d3 = require("d3")
@@ -35,20 +34,20 @@ export class Stage{
 
     }
     
-    render_dep_tree(svg: any, document?:any){
-        d3.selectAll("svg > *").remove();
+    // render_dep_tree(svg: any, document?:any){
+    //     d3.selectAll("svg > *").remove();
 
-        const root:ConjoinedObject = new ConjoinedObject(this.Children);
-        const treeRoot:VisTree = this.children_to_tree_recurse(root);
-        const tree:Tree = new Tree({root: treeRoot, height: 700,width: 700, coords: {x:100,y:100}});
-        tree.render(svg);
-        if(document){
-            const svgContainer = document.getElementById('svg-container')
-            svgContainer.getElementsByTagName('svg')[0].style.height = '200%'
-            svgContainer.getElementsByTagName('svg')[0].style.width = '200%'
-        }
+    //     const root = this.Children;
+    //     const treeRoot:VisTree = this.children_to_tree_recurse(root);
+    //     const tree:Tree = new Tree({root: treeRoot, height: 700,width: 700, coords: {x:100,y:100}});
+    //     tree.render(svg);
+    //     if(document){
+    //         const svgContainer = document.getElementById('svg-container')
+    //         svgContainer.getElementsByTagName('svg')[0].style.height = '200%'
+    //         svgContainer.getElementsByTagName('svg')[0].style.width = '200%'
+    //     }
         
-    }
+    // }
     render(svg:any, document?:any){
         d3.selectAll("svg > *").remove();
         this.Children.forEach(pane => pane.render(svg))

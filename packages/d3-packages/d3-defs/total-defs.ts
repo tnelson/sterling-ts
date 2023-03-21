@@ -12,39 +12,27 @@ export const D3_TOTAL_DEFS: string = `
  * If these steps are not followed, the file's definitions will either not be accessible within
  * sterling, or will not show up in monaco.
  */
-/**
- * Interface that will be used generically to represent locations within a given svg
- */
-interface Coords {
-    x: number;
-    y: number;
-}
-/**
- * Generic props for representing a box around an object.
- */
-interface BoundingBox {
-    top_left: Coords;
-    bottom_right: Coords;
-}
+declare type BoundingBoxGenerator = (r: number) => Coords;
 declare class VisualObject {
-    coords: Coords;
+    center: () => Coords;
     children: VisualObject[];
+    dependents: VisualObject[];
+    bounding_box_lam: BoundingBoxGenerator;
+    hasBoundingBox: boolean;
     /**
      * Top level class, which all other visual objects will extend.
      * @param coords position of the object on screen.
      */
-    constructor(coords?: Coords);
+    constructor(coords?: Coords | (() => Coords));
     boundingBox(): BoundingBox;
-    /**
-     * Returns the center of the object
-     * @returns coordinates of center
-     */
-    center(): Coords;
+    getChildren(): VisualObject[];
     /**
      * Shifts object to have new given center
      * @param center new center of the object
      */
-    setCenter(center: Coords): void;
+    setCenter(center: Coords | (() => Coords)): void;
+    hasLam(): Boolean;
+    getLam(): BoundingBoxGenerator;
     /**
      * Renders the object to the screen.
      * @param svg HTML Svg object to which the object should be rendered.
@@ -52,15 +40,26 @@ declare class VisualObject {
     render(svg: any): void;
 }
 //# sourceMappingURL=VisualObject.d.ts.map
+interface ShapeProps {
+    center?: Coords | (() => Coords);
+    color?: string | (() => string);
+    borderWidth?: number | (() => number);
+    borderColor?: string | (() => string);
+    label?: string | (() => string);
+    labelColor?: string | (() => string);
+    labelSize?: number | (() => number);
+    opacity?: number | (() => number);
+}
 /**
  * Generic class for a large suite of "shape"-like objects.
  * Generally includes anything with an inside and an outside.
  * All shapes come with builtin label.
  */
 declare class Shape extends VisualObject {
-    color: string;
-    borderWidth: number;
-    borderColor: string;
+    color: () => string;
+    borderWidth: () => number;
+    borderColor: () => string;
+    opacity: () => number;
     label: TextBox;
     /**
      * Constructs a generic shape object. This is a top-level class,
@@ -73,16 +72,15 @@ declare class Shape extends VisualObject {
      * @param label text to display atop the shape
      * @param labelColor color of text
      * @param labelSize size of text
+     * @param style
      */
-    constructor(coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
-    setCenter(center: Coords): void;
-    render(svg: any): void;
-    setColor(color: string): void;
-    setBorderWidth(borderWidth: number): void;
-    setBorderColor(borderColor: string): void;
-    setLabelText(text: string): void;
-    setLabelColor(labelColor: string): void;
-    setLabelSize(labelSize: number): void;
+    constructor(props: ShapeProps);
+    setColor(color: string | (() => string)): void;
+    setBorderWidth(borderWidth: number | (() => number)): void;
+    setBorderColor(borderColor: string | (() => string)): void;
+    setLabelText(text: string | (() => string)): void;
+    setLabelColor(labelColor: string | (() => string)): void;
+    setLabelSize(labelSize: number | (() => number)): void;
 }
 //# sourceMappingURL=Shape.d.ts.map
 declare class Pane {
@@ -93,7 +91,7 @@ declare class Pane {
 }
 //# sourceMappingURL=Pane.d.ts.map
 interface gridProps {
-    grid_location: Coords;
+    grid_location: Coords | (() => Coords);
     cell_size: {
         x_size: number;
         y_size: number;
@@ -102,10 +100,6 @@ interface gridProps {
         x_size: number;
         y_size: number;
     };
-}
-interface gridCell {
-    contents?: VisualObject;
-    center: Coords;
 }
 declare class Grid extends VisualObject {
     /**
@@ -118,37 +112,29 @@ declare class Grid extends VisualObject {
      *  Note: grid size is fixed! You can't change the size of a grid once it's created
      *
      */
+    private coords;
     config: gridProps;
-    cells: Array<Array<gridCell>>;
+    cells: Array<Array<VisualObject>>;
     gridlines: Array<Line>;
-    constructor(config: gridProps);
-    boundingBox(): {
-        top_left: Coords;
-        bottom_right: {
-            x: number;
-            y: number;
-        };
-    };
-    private initialize_cells;
-    center(): {
-        x: number;
-        y: number;
-    };
-    setCenter(center: Coords): void;
+    constructor(props: gridProps);
     private check_bounding_box;
     add(coords: Coords, add_object: VisualObject, ignore_warning?: boolean): void;
-    remove(coords: Coords): void;
+    private center_helper;
     private fill_grid_lines;
     hide_grid_lines(): void;
     fill(coords: Coords, color: string): void;
     private check_coords;
-    render(svg: any): void;
 }
 {};
 //# sourceMappingURL=Grid.d.ts.map
+interface RectangleProps extends ShapeProps {
+    height: number | (() => number);
+    width: number | (() => number);
+    coords?: Coords | (() => Coords);
+}
 declare class Rectangle extends Shape {
-    height: number;
-    width: number;
+    height: () => number;
+    width: () => number;
     /**
      * Creates a logical rectangle object
      * @param height height (y direction)
@@ -161,17 +147,19 @@ declare class Rectangle extends Shape {
      * @param labelColor color for label text
      * @param labelSize size of label text
      */
-    constructor(height: number, width: number, coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
+    constructor(props: RectangleProps);
     boundingBox(): BoundingBox;
-    setWidth(width: number): void;
-    setHeight(height: number): void;
-    center(): Coords;
-    setCenter(center: Coords): void;
+    setWidth(width: number | (() => number)): void;
+    setHeight(height: number | (() => number)): void;
     render(svg: any): void;
 }
 //# sourceMappingURL=Rectangle.d.ts.map
+interface CircleProps extends ShapeProps {
+    radius: number | (() => number);
+}
 declare class Circle extends Shape {
-    radius: number;
+    radius: () => number;
+    bounding_box_lam: BoundingBoxGenerator;
     /**
      * Creates a circle object at the given location
      * @param radius radius of circle
@@ -183,9 +171,9 @@ declare class Circle extends Shape {
      * @param labelColor color of label
      * @param labelSize size of label
      */
-    constructor(radius: number, coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
+    constructor(props: CircleProps);
     boundingBox(): BoundingBox;
-    setRadius(radius: number): void;
+    setRadius(radius: number | (() => number)): void;
     render(svg: any): void;
 }
 //# sourceMappingURL=Circle.d.ts.map
@@ -193,13 +181,20 @@ declare class Stage {
     Children: VisualObject[];
     constructor();
     add(addObject: VisualObject): void;
+    children_to_tree_recurse(root: VisualObject): VisTree;
     render(svg: any, document?: any): void;
 }
 //# sourceMappingURL=Stage.d.ts.map
+interface TextBoxProps {
+    text?: string | (() => string);
+    coords?: Coords | (() => Coords);
+    color?: string | (() => string);
+    fontSize?: number | (() => number);
+}
 declare class TextBox extends VisualObject {
-    text: string;
-    fontSize: number;
-    color: string;
+    text: () => string;
+    fontSize: () => number;
+    color: () => string;
     /**
      * Displays given text.
      * @param text text to display
@@ -207,57 +202,52 @@ declare class TextBox extends VisualObject {
      * @param color text color
      * @param fontSize size of the text
      */
-    constructor(text: string, coords?: Coords, color?: string, fontSize?: number);
+    constructor(props: TextBoxProps);
     boundingBox(): BoundingBox;
-    setText(text: string): void;
-    setFontSize(fontSize: number): void;
-    setTextColor(color: string): void;
+    setText(text: string | (() => string)): void;
+    setFontSize(fontSize: number | (() => number)): void;
+    setTextColor(color: string | (() => string)): void;
     render(svg: any): void;
 }
 //# sourceMappingURL=TextBox.d.ts.map
+interface LineProps {
+    points?: Coords[] | (() => Coords)[];
+    arrow?: boolean;
+    color?: string | (() => string);
+    width?: number | (() => number);
+    opacity?: number | (() => number);
+    style?: string | (() => string);
+}
 declare class Line extends VisualObject {
-    points: Coords[];
-    color: string;
-    width: number;
+    pointsRelative: (() => Coords)[];
+    color: () => string;
+    width: () => number;
+    opacity: () => number;
+    arrow: boolean;
+    style: () => string;
     /**
      * Creates a line on the given poitns.
      * @param points list of points for the line to pass through
      * @param color color of line
      * @param width width of line
+     * @param opacity of the line
      */
-    constructor(points: Coords[], color?: string, width?: number);
+    constructor(props: LineProps);
     boundingBox(): BoundingBox;
-    setColor(color: string): void;
-    setWidth(width: number): void;
-    center(): Coords;
-    setCenter(center: Coords): void;
+    setColor(color: string | (() => string)): void;
+    setWidth(width: number | (() => number)): void;
+    setOpacity(opacity: number | (() => number)): void;
     render(svg: any): void;
 }
-/**
- * Simple method averaging the coordinate points in a series.
- * @param points
- * @returns
- */
-declare function averagePath(points: Coords[]): Coords;
-/**
- * Shifts a list of points according to a shift variable
- * @param pointList
- * @param shift
- * @returns
- */
-declare function shiftList(pointList: Coords[], shift: Coords): Coords[];
-/**
- * Utility function returning bounding box for a list of points
- * @param pointList list of points as coords
- * @returns bounding box
- */
-declare function boundsOfList(pointList: Coords[]): BoundingBox;
 //# sourceMappingURL=Line.d.ts.map
+/**
+ * This class is not currently being used!!
+ */
 declare class ConjoinedObject extends VisualObject {
     /**
      * Note: this code is untested!
      */
-    objects: VisualObject[];
+    children: VisualObject[];
     constructor(Children?: VisualObject[]);
     addOrdered(obj: VisualObject, index: number): void;
     add(obj: VisualObject): void;
@@ -265,12 +255,15 @@ declare class ConjoinedObject extends VisualObject {
     render(svg: any): void;
 }
 //# sourceMappingURL=ConjoinedObject.d.ts.map
+interface PolygonProps extends ShapeProps {
+    points: Coords[] | (() => Coords)[];
+}
 /**
  * Class Representing Polygonal objects. Takes the form of any
  * series of points, and will form a polygon with said points as the boundary.
  */
 declare class Polygon extends Shape {
-    points: Coords[];
+    pointsRelative: (() => Coords)[];
     /**
      * Constructs a polygon object
      * @param points list of points forming outside
@@ -281,10 +274,8 @@ declare class Polygon extends Shape {
      * @param labelColor color of label text
      * @param labelSize size of the label
      */
-    constructor(points: Coords[], color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
+    constructor(props: PolygonProps);
     boundingBox(): BoundingBox;
-    center(): Coords;
-    setCenter(center: Coords): void;
     render(svg: any): void;
 }
 //# sourceMappingURL=Polygon.d.ts.map
@@ -301,8 +292,8 @@ declare class Graph extends VisualObject {
     constructor(coords?: Coords, graph_dimensions?: number, fixed_nodes?: number, node_radius?: number);
     setCenter(center: Coords): void;
     center(): {
-        x: number;
-        y: number;
+        x: any;
+        y: any;
     };
     add(Nodes: Node[]): void;
     private set_fixed_nodes;
@@ -314,11 +305,68 @@ declare class Graph extends VisualObject {
 }
 //# sourceMappingURL=Graph.d.ts.map
 /**
+ * This is going to be a generic utility file. Primarily for factoring
+ * out algorithms with a higher level of computational complexity.
+ */
+declare function toFunc<T>(defaultValue: T, t?: T | (() => T)): (() => T);
+interface Coords {
+    x: number;
+    y: number;
+}
+/**
+ * Generic props for representing a box around an object.
+ */
+interface BoundingBox {
+    top_left: Coords;
+    bottom_right: Coords;
+}
+declare function boxUnion(boxes: BoundingBox[]): {
+    top_left: {
+        x: number;
+        y: number;
+    };
+    bottom_right: {
+        x: number;
+        y: number;
+    };
+};
+interface ExperimentalBoundingBox {
+    lambda: (radians: number) => Coords;
+}
+/**
+ * Simple method averaging the coordinate points in a series.
+ * @param points
+ * @returns
+ */
+declare function averagePath(points: Coords[]): Coords;
+/**
+ * Shifts a function list of points according to a shift variable
+ * @param pointList
+ * @param shift
+ * @returns
+ */
+declare function shiftList(pointList: (() => Coords)[], shift: () => Coords): (() => Coords)[];
+/**
+ * Utility function returning bounding box for a list of points
+ * @param pointList list of points as coords
+ * @returns bounding box
+ */
+declare function boundsOfList(pointList: Coords[]): BoundingBox;
+//# sourceMappingURL=Utility.d.ts.map
+/**
  * Interface for node in a tree with a visualObject
  */
 interface VisTree {
     visualObject: VisualObject;
     children: VisTree[];
+}
+interface TreeProps {
+    root: VisTree;
+    height: number;
+    width: number;
+    coords?: Coords | (() => Coords);
+    edgeColor?: string;
+    edgeWidth?: number;
 }
 declare class Tree extends VisualObject {
     root: VisTree;
@@ -326,6 +374,7 @@ declare class Tree extends VisualObject {
     width: number;
     private lines;
     private subTrees;
+    private coords;
     /**
      * Builds a tree object, pulling all children nodes into proper locations and
      * adding lines where necessary.
@@ -334,14 +383,10 @@ declare class Tree extends VisualObject {
      * @param width width of box to bound the tree
      * @param coords top left point of the tree
      */
-    constructor(root: VisTree, height: number, width: number, coords?: Coords, edgeColor?: string, edgeWidth?: number);
+    constructor(props: TreeProps);
     private setUpSubtrees;
-    setCenter(center: Coords): void;
     setLineColor(color: string): void;
     setLineWidth(width: number): void;
-    renderNodes(svg: any): void;
-    renderLines(svg: any): void;
-    render(svg: any): void;
 }
 //# sourceMappingURL=Tree.d.ts.map
 `

@@ -1,5 +1,4 @@
 import { Circle } from './Circle';
-import {Graph, Node} from './Graph'
 import {VisualObject} from './VisualObject'
 import {Coords, toFunc} from "./Utility"
 import {TextBox} from './TextBox'
