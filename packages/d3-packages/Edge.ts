@@ -4,10 +4,10 @@ import { TextBox, TextBoxProps } from './TextBox';
 import {
   distance,
   lineAngle,
-  mid_point,
-  get_minimum_distance,
-  bounding_box_to_lambda,
   normalize
+  midPoint,
+  getMinimumDistance,
+  boundingBoxToLambda
 } from './geometricHelpers';
 import { VisualObject } from './VisualObject';
 import { BoundingBox, Coords } from './Utility';
@@ -55,7 +55,7 @@ export class Edge extends VisualObject {
   }
 
   compute_points(precision: number) {
-    const target_point: Coords = mid_point(
+    const target_point: Coords = midPoint(
       //we set a point to optimize distance from
       this.obj1.center(),
       this.obj2.center()
@@ -78,7 +78,7 @@ export class Edge extends VisualObject {
     if (obj.hasLam()) {
       boundingBoxLam = obj.getLam();
     } else {
-      boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
+      boundingBoxLam = boundingBoxToLambda(obj.boundingBox());
     }
 
     for (let i = 1; i <= precision; i++) {
@@ -93,7 +93,7 @@ export class Edge extends VisualObject {
     this.visible_points = boundary_points;
     this.boundary_points = boundary_points;
 
-    return get_minimum_distance(target_point, boundary_points);
+    return getMinimumDistance(target_point, boundary_points);
   }
 
   makeLine() { // TODO: Figure out if need a deep copy here instead
@@ -110,7 +110,7 @@ export class Edge extends VisualObject {
     let cornerDist: () => number = () => {
       return Math.sqrt(Math.pow(text.fontSize(), 2) + Math.pow(text.text().length * 0.14 * text.fontSize(), 2))
     }
-    let lineMidPoint: () => Coords = () => mid_point(this.obj1Coords(), this.obj2Coords())
+    let lineMidPoint: () => Coords = () => midPoint(this.obj1Coords(), this.obj2Coords())
 
     switch (this.textLocation) {
       case "above":
