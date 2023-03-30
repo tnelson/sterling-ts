@@ -69,6 +69,7 @@ export function averagePath(points: Coords[]): Coords {
       { x: 0, y: 0 }
     );
   }
+
   
   /**
    * Shifts a function list of points according to a shift variable
@@ -107,3 +108,21 @@ export function averagePath(points: Coords[]): Coords {
       bottom_right: { x: x_max, y: y_max }
     };
   }  
+
+  function instanceOfCoords(object: any): object is Coords {
+    return 'x' in object && 'y' in object;
+  }
+
+  export function pointsOnBorder(lam: (r:number) =>Coords, precision: number): Coords[]{
+    const boundary_points: Coords[] = [];
+    for (let i = 1; i <= precision; i++) {
+      const boundary_point = lam(((2 * Math.PI) / precision) * i);
+      if (instanceOfCoords(boundary_point)) {
+        boundary_points.push(boundary_point);
+      } else {
+        throw 'returned bounding box response not of type coords. Issue in edge.ts or utility.ts';
+      }
+    }
+
+    return boundary_points;
+  }
