@@ -133,4 +133,82 @@ function bounding_box_to_lambda(
   };
 }
 
+export function leftMost(S:Coords[]){
+  //get furthest left point
+  //surely there isn't a faster way to do this
+  const compareFunc = (a:Coords,b:Coords) => {
+    if(a.x > b.x){
+      return 1;
+    }
+    else if (b.x > a.x) {
+      return -1;
+    }
+    else{
+      return 0;
+    }
+  }
+	return(S.sort(compareFunc)[0])
+}
+
+function mag(v:Coords){
+  //magnitude
+	return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2));
+}
+
+function xprod(v1:Coords,v2:Coords){
+  //dot product
+	return v1.x*v2.x + v1.y*v2.y
+}
+
+export function ang(v1:Coords, v2:Coords){
+  //return angle between two points (returning infinity of the points are on
+  //the same line). This should technically be 0, but we want to disincentivize the algo
+  //from including such points in our hull so we make it infinity for sake of algo
+	const x = xprod(v1,v2)/(mag(v1)*mag(v2));
+  
+  if(mag(v1)*mag(v2) == 0){
+  	return Infinity
+  }
+	return Math.acos(x)
+}
+
+export function jarvisAlgo(S:Coords[]){
+		let hull:Coords[] = [] //the hull that we will populate
+    let disqualified_points = new Set<Coords>();
+   	
+    hull.push(leftMost(S)) //first point in hull is leftmost point
+    let i = 0;
+    while(i == 0 || !(hull[i].x == hull[0].x && hull[i].y == hull[0].y)){
+    	let oldVec:Coords;
+			if(i == 0){
+      	oldVec = {x:0, y:1}
+      }
+      else{
+      	oldVec = {x: hull[i].x - hull[i-1].x, y: hull[i].y - hull[i-1].y}
+        disqualified_points.add({x:hull[i].x, y:hull[i].y});
+      }
+            
+      let currNextVec = {x:0,y:0}; 
+      let currMinAngle = 2*Math.PI; //dummy angle, vector point to get algo started
+      
+      S.forEach(s => { //iterate through points, finding point that gives
+        //minimum angle between "currVec" (vector between prior point and currpoint) and "candVec",
+        //(vector between current point and candidate next point)
+      		if(!disqualified_points.has({x:s.x, y:s.y})){
+          	let candVec = {x: s.x - hull[i].x, y: s.y - hull[i].y}
+          	let candAng = ang(oldVec, candVec)
+          	if(candAng < currMinAngle || (currNextVec.x ==hull[i].x && currNextVec.y == hull[i].y) ){
+            	currNextVec = s;
+            	currMinAngle = candAng;
+          }
+          }
+        
+      })
+      i++;
+     	hull.push(currNextVec);
+ 			
+    }
+    return hull;
+}
+
 export { distance, mid_point, get_minimum_distance, bounding_box_to_lambda, normalize};

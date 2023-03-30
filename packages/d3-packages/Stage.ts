@@ -14,6 +14,11 @@ export class Stage{
     add(addObject:VisualObject){
         this.Children.push(addObject)
     }
+    addAll(addObjects:VisualObject[]){
+        addObjects.forEach((o) => {
+            this.Children.push(o);
+        })
+    }
 
     children_to_tree_recurse(root:VisualObject):VisTree{
         const descriptiveText:string = root.constructor.name;
