@@ -7,8 +7,11 @@ mapper['^(\\.{1,2}/.*)\\.js$'] = '$1'
 
 // Jest doesn't support the "module" field in package.json, which gives webpack
 // the hint that @reduxjs/toolkit can also be ESM. So map directly to the ESM version.
+//  ... but then we need to include the module in transpilation (below)
+// TODO: must be a better way to do this. Or just use Playwright?
 mapper['^@reduxjs/toolkit'] = '@reduxjs/toolkit/dist/redux-toolkit.esm.js'
-// ^ Problem: now it's trying to eval this as being outside a module...
+//mapper['jest-websocket-mock'] = 'jest-websocket-mock/lib/jest-websocket-mock.es.js'
+//mapper['immer'] = 'immer/dist/immer.esm.js'
 
 // // transform CSS
 mapper['\\.(scss|sass|css)$'] = 'identity-obj-proxy'

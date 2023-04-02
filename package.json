@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "author": "Tristan Dyer <atristandyer@gmail.com>",
-  "license": "MIT",  
+  "license": "MIT",
   "scripts": {
     "build:alloy": "npx webpack --env provider=alloy",
     "build:forge": "npx webpack --env provider=forge",

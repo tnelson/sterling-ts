@@ -1,7 +1,7 @@
 import { D3_TOTAL_DEFS } from 'd3-packages/d3lib-defs/total-defs';
 import { editor } from 'monaco-editor';
 import { useCallback, useEffect, useState } from 'react';
-import MonacoEditor, { monaco } from 'react-monaco-editor';
+import { default as MonacoEditor, monaco } from 'react-monaco-editor';
 import { ScriptVariable } from '../../state/script/script';
 import { alloyDefs, generateAlloyVariablesModel } from './alloyModel';
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
