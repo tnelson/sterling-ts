@@ -43,9 +43,3 @@ describe('Mid Point Unit Tests', () => {
   });
 });
 
-describe('Bounding Box to Lambda Tests', () => {
-  const rect = new Rectangle({height: 50, width: 60, coords: { x: 0, y: 0 }});
-  it('runs tests correctly', () => {
-    expect(1 + 1).toBe(2);
-  });
-});

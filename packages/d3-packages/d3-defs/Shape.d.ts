@@ -1,14 +1,26 @@
-import { VisualObject, Coords } from './VisualObject';
+import { VisualObject } from './VisualObject';
+import { Coords } from './Utility';
 import { TextBox } from './TextBox';
+export interface ShapeProps {
+    center?: Coords | (() => Coords);
+    color?: string | (() => string);
+    borderWidth?: number | (() => number);
+    borderColor?: string | (() => string);
+    label?: string | (() => string);
+    labelColor?: string | (() => string);
+    labelSize?: number | (() => number);
+    opacity?: number | (() => number);
+}
 /**
  * Generic class for a large suite of "shape"-like objects.
  * Generally includes anything with an inside and an outside.
  * All shapes come with builtin label.
  */
 export declare class Shape extends VisualObject {
-    color: string;
-    borderWidth: number;
-    borderColor: string;
+    color: () => string;
+    borderWidth: () => number;
+    borderColor: () => string;
+    opacity: () => number;
     label: TextBox;
     /**
      * Constructs a generic shape object. This is a top-level class,
@@ -21,15 +33,14 @@ export declare class Shape extends VisualObject {
      * @param label text to display atop the shape
      * @param labelColor color of text
      * @param labelSize size of text
+     * @param style
      */
-    constructor(coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
-    setCenter(center: Coords): void;
-    render(svg: any): void;
-    setColor(color: string): void;
-    setBorderWidth(borderWidth: number): void;
-    setBorderColor(borderColor: string): void;
-    setLabelText(text: string): void;
-    setLabelColor(labelColor: string): void;
-    setLabelSize(labelSize: number): void;
+    constructor(props: ShapeProps);
+    setColor(color: string | (() => string)): void;
+    setBorderWidth(borderWidth: number | (() => number)): void;
+    setBorderColor(borderColor: string | (() => string)): void;
+    setLabelText(text: string | (() => string)): void;
+    setLabelColor(labelColor: string | (() => string)): void;
+    setLabelSize(labelSize: number | (() => number)): void;
 }
 //# sourceMappingURL=Shape.d.ts.map

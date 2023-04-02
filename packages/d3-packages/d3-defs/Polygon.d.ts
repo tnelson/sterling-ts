@@ -1,11 +1,14 @@
-import { Shape } from './Shape';
-import { BoundingBox, Coords } from './VisualObject';
+import { Shape, ShapeProps } from './Shape';
+import { BoundingBox, Coords } from './Utility';
+export interface PolygonProps extends ShapeProps {
+    points: Coords[] | (() => Coords)[];
+}
 /**
  * Class Representing Polygonal objects. Takes the form of any
  * series of points, and will form a polygon with said points as the boundary.
  */
 export declare class Polygon extends Shape {
-    points: Coords[];
+    pointsRelative: (() => Coords)[];
     /**
      * Constructs a polygon object
      * @param points list of points forming outside
@@ -16,10 +19,8 @@ export declare class Polygon extends Shape {
      * @param labelColor color of label text
      * @param labelSize size of the label
      */
-    constructor(points: Coords[], color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
+    constructor(props: PolygonProps);
     boundingBox(): BoundingBox;
-    center(): Coords;
-    setCenter(center: Coords): void;
     render(svg: any): void;
 }
 //# sourceMappingURL=Polygon.d.ts.map

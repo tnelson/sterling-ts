@@ -1,8 +1,15 @@
-import { BoundingBox, Coords, VisualObject } from './VisualObject';
+import { VisualObject } from './VisualObject';
+import { BoundingBox, Coords } from './Utility';
+export interface TextBoxProps {
+    text?: string | (() => string);
+    coords?: Coords | (() => Coords);
+    color?: string | (() => string);
+    fontSize?: number | (() => number);
+}
 export declare class TextBox extends VisualObject {
-    text: string;
-    fontSize: number;
-    color: string;
+    text: () => string;
+    fontSize: () => number;
+    color: () => string;
     /**
      * Displays given text.
      * @param text text to display
@@ -10,11 +17,11 @@ export declare class TextBox extends VisualObject {
      * @param color text color
      * @param fontSize size of the text
      */
-    constructor(text: string, coords?: Coords, color?: string, fontSize?: number);
+    constructor(props: TextBoxProps);
     boundingBox(): BoundingBox;
-    setText(text: string): void;
-    setFontSize(fontSize: number): void;
-    setTextColor(color: string): void;
+    setText(text: string | (() => string)): void;
+    setFontSize(fontSize: number | (() => number)): void;
+    setTextColor(color: string | (() => string)): void;
     render(svg: any): void;
 }
 //# sourceMappingURL=TextBox.d.ts.map

@@ -1,8 +1,13 @@
-import { Shape } from './Shape';
-import { BoundingBox, Coords } from './VisualObject';
+import { Shape, ShapeProps } from './Shape';
+import { BoundingBox, Coords } from './Utility';
+export interface RectangleProps extends ShapeProps {
+    height: number | (() => number);
+    width: number | (() => number);
+    coords?: Coords | (() => Coords);
+}
 export declare class Rectangle extends Shape {
-    height: number;
-    width: number;
+    height: () => number;
+    width: () => number;
     /**
      * Creates a logical rectangle object
      * @param height height (y direction)
@@ -15,12 +20,10 @@ export declare class Rectangle extends Shape {
      * @param labelColor color for label text
      * @param labelSize size of label text
      */
-    constructor(height: number, width: number, coords?: Coords, color?: string, borderWidth?: number, borderColor?: string, label?: string, labelColor?: string, labelSize?: number);
+    constructor(props: RectangleProps);
     boundingBox(): BoundingBox;
-    setWidth(width: number): void;
-    setHeight(height: number): void;
-    center(): Coords;
-    setCenter(center: Coords): void;
+    setWidth(width: number | (() => number)): void;
+    setHeight(height: number | (() => number)): void;
     render(svg: any): void;
 }
 //# sourceMappingURL=Rectangle.d.ts.map

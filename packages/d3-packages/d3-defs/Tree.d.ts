@@ -1,4 +1,5 @@
-import { VisualObject, Coords } from './VisualObject';
+import { VisualObject } from './VisualObject';
+import { Coords } from "./Utility";
 /**
  * Interface for node in a tree with a visualObject
  */
@@ -6,12 +7,21 @@ export interface VisTree {
     visualObject: VisualObject;
     children: VisTree[];
 }
+export interface TreeProps {
+    root: VisTree;
+    height: number;
+    width: number;
+    coords?: Coords | (() => Coords);
+    edgeColor?: string;
+    edgeWidth?: number;
+}
 export declare class Tree extends VisualObject {
     root: VisTree;
     height: number;
     width: number;
     private lines;
     private subTrees;
+    private coords;
     /**
      * Builds a tree object, pulling all children nodes into proper locations and
      * adding lines where necessary.
@@ -20,13 +30,9 @@ export declare class Tree extends VisualObject {
      * @param width width of box to bound the tree
      * @param coords top left point of the tree
      */
-    constructor(root: VisTree, height: number, width: number, coords?: Coords, edgeColor?: string, edgeWidth?: number);
+    constructor(props: TreeProps);
     private setUpSubtrees;
-    setCenter(center: Coords): void;
     setLineColor(color: string): void;
     setLineWidth(width: number): void;
-    renderNodes(svg: any): void;
-    renderLines(svg: any): void;
-    render(svg: any): void;
 }
 //# sourceMappingURL=Tree.d.ts.map

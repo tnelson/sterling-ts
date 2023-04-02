@@ -1,23 +1,31 @@
-import { VisualObject, Coords } from './VisualObject';
-export interface EdgeParams {
+import { LineProps } from './Line';
+import { TextBoxProps } from './TextBox';
+import { VisualObject } from './VisualObject';
+import { Coords } from './Utility';
+export interface EdgeProps {
     obj1: VisualObject;
     obj2: VisualObject;
-    text?: string;
+    lineProps: LineProps;
+    textProps: TextBoxProps;
+    textLocation: string;
 }
 export declare class Edge extends VisualObject {
     obj1: VisualObject;
     obj2: VisualObject;
-    obj1Coords: Coords;
-    obj2Coords: Coords;
-    text: String;
-    points: Coords[];
-    constructor(params: EdgeParams);
-    compute_points(precision: any): void;
-    opt_points(target_point: Coords, obj: VisualObject, precision: number): Coords;
-    get_minimum_distance(target_point: Coords, compare_points: Coords[]): Coords;
-    distance(p1: Coords, p2: Coords): number;
-    mid_point(p1: Coords, p2: Coords): Coords;
-    render(svg: any): void;
+    obj2Coords: () => Coords;
+    obj1Coords: () => Coords;
+    text: string | undefined;
+    lineProps: LineProps;
+    textProps: TextBoxProps;
+    textLocation: string;
+    visible_points: Coords[];
+    boundary_points: Coords[];
+    constructor(props: EdgeProps);
+    compute_points(precision: number): void;
+    opt_points(// Factor into utility? 
+    target_point: Coords, obj: VisualObject, precision: number): Coords;
+    makeLine(): void;
+    makeText(): void;
 }
 /**
  * TODO:

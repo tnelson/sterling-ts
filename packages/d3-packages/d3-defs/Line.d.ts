@@ -1,39 +1,32 @@
-import { BoundingBox, Coords, VisualObject } from './VisualObject';
+import { VisualObject } from './VisualObject';
+import { BoundingBox, Coords } from './Utility';
+export interface LineProps {
+    points?: Coords[] | (() => Coords)[];
+    arrow?: boolean;
+    color?: string | (() => string);
+    width?: number | (() => number);
+    opacity?: number | (() => number);
+    style?: string | (() => string);
+}
 export declare class Line extends VisualObject {
-    points: Coords[];
-    color: string;
-    width: number;
+    pointsRelative: (() => Coords)[];
+    color: () => string;
+    width: () => number;
+    opacity: () => number;
+    arrow: boolean;
+    style: () => string;
     /**
      * Creates a line on the given poitns.
      * @param points list of points for the line to pass through
      * @param color color of line
      * @param width width of line
+     * @param opacity of the line
      */
-    constructor(points: Coords[], color?: string, width?: number);
+    constructor(props: LineProps);
     boundingBox(): BoundingBox;
-    setColor(color: string): void;
-    setWidth(width: number): void;
-    center(): Coords;
-    setCenter(center: Coords): void;
+    setColor(color: string | (() => string)): void;
+    setWidth(width: number | (() => number)): void;
+    setOpacity(opacity: number | (() => number)): void;
     render(svg: any): void;
 }
-/**
- * Simple method averaging the coordinate points in a series.
- * @param points
- * @returns
- */
-export declare function averagePath(points: Coords[]): Coords;
-/**
- * Shifts a list of points according to a shift variable
- * @param pointList
- * @param shift
- * @returns
- */
-export declare function shiftList(pointList: Coords[], shift: Coords): Coords[];
-/**
- * Utility function returning bounding box for a list of points
- * @param pointList list of points as coords
- * @returns bounding box
- */
-export declare function boundsOfList(pointList: Coords[]): BoundingBox;
 //# sourceMappingURL=Line.d.ts.map

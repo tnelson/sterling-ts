@@ -1,3 +1,4 @@
+import { Coords, BoundingBox } from "./Utility";
 /**
  * To anyone adding to this library in the future: please take the following steps when adding
  * new VisualObjects.
@@ -11,43 +12,27 @@
  * If these steps are not followed, the file's definitions will either not be accessible within
  * sterling, or will not show up in monaco.
  */
-/**
- * Interface that will be used generically to represent locations within a given svg
- */
-export interface Coords {
-    x: number;
-    y: number;
-}
-/**
- * Generic props for representing a box around an object.
- */
-export interface BoundingBox {
-    top_left: Coords;
-    bottom_right: Coords;
-}
-export interface ExperimentalBoundingBox {
-    lambda: (radians: number) => Coords;
-}
+export declare type BoundingBoxGenerator = (r: number) => Coords;
 export declare class VisualObject {
-    coords: Coords;
+    center: () => Coords;
     children: VisualObject[];
+    dependents: VisualObject[];
+    bounding_box_lam: BoundingBoxGenerator;
+    hasBoundingBox: boolean;
     /**
      * Top level class, which all other visual objects will extend.
      * @param coords position of the object on screen.
      */
-    constructor(coords?: Coords);
+    constructor(coords?: Coords | (() => Coords));
     boundingBox(): BoundingBox;
-    getExperimentalBoundingBox(): ExperimentalBoundingBox;
-    /**
-     * Returns the center of the object
-     * @returns coordinates of center
-     */
-    center(): Coords;
+    getChildren(): VisualObject[];
     /**
      * Shifts object to have new given center
      * @param center new center of the object
      */
-    setCenter(center: Coords): void;
+    setCenter(center: Coords | (() => Coords)): void;
+    hasLam(): Boolean;
+    getLam(): BoundingBoxGenerator;
     /**
      * Renders the object to the screen.
      * @param svg HTML Svg object to which the object should be rendered.

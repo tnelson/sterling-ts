@@ -10,7 +10,7 @@ import {
   normalize
 } from './geometricHelpers';
 import { VisualObject } from './VisualObject';
-import { BoundingBox, Coords } from './Utility';
+import { BoundingBox, Coords, pointsOnBorder } from './Utility';
 
 export interface EdgeProps {
   obj1: VisualObject;
@@ -18,10 +18,6 @@ export interface EdgeProps {
   lineProps: LineProps;
   textProps: TextBoxProps;
   textLocation: string;
-}
-
-function instanceOfCoords(object: any): object is Coords {
-  return 'x' in object && 'y' in object;
 }
 
 export class Edge extends VisualObject {
@@ -37,21 +33,26 @@ export class Edge extends VisualObject {
   boundary_points: Coords[];
 
   //the simplest design of this is as a pointer between two objects
-  constructor(props: EdgeProps) { // Renamed props for consistency
+  constructor(props: EdgeProps) {
+    // Renamed props for consistency
     super();
     this.obj1 = props.obj1;
     this.obj2 = props.obj2;
     this.textProps = props.textProps ?? {};
-    this.lineProps = props.lineProps ?? {points: []};
+    this.lineProps = props.lineProps ?? { points: [] };
     this.textLocation = props.textLocation;
 
-    this.obj1Coords = () => {return {x:0,y:0}}
-    this.obj2Coords = () => {return {x:0,y:0}}
+    this.obj1Coords = () => {
+      return { x: 0, y: 0 };
+    };
+    this.obj2Coords = () => {
+      return { x: 0, y: 0 };
+    };
     this.boundary_points = [];
     this.visible_points = [];
     this.compute_points(360);
     this.makeLine();
-    this.makeText()
+    this.makeText();
   }
 
   compute_points(precision: number) {
@@ -65,14 +66,14 @@ export class Edge extends VisualObject {
     this.obj1Coords = () => this.opt_points(target_point, this.obj1, precision);
   }
 
-  opt_points( // Factor into utility? 
+  opt_points(
+    // Factor into utility?
     target_point: Coords,
     obj: VisualObject,
     precision: number
   ): Coords {
     //want a way to check if any object has a specific function
     //if(func)
-    const boundary_points: Coords[] = [];
     let boundingBoxLam: (r: number) => Coords; //this should be number. But typescript...
 
     if (obj.hasLam()) {
@@ -81,14 +82,7 @@ export class Edge extends VisualObject {
       boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
     }
 
-    for (let i = 1; i <= precision; i++) {
-      const boundary_point = boundingBoxLam(((2 * Math.PI) / precision) * i);
-      if (instanceOfCoords(boundary_point)) {
-        boundary_points.push(boundary_point);
-      } else {
-        throw 'returned bounding box response not of type coords. Issue in edge.ts';
-      }
-    }
+    const boundary_points: Coords[] = pointsOnBorder(boundingBoxLam, precision);
 
     this.visible_points = boundary_points;
     this.boundary_points = boundary_points;
@@ -96,96 +90,120 @@ export class Edge extends VisualObject {
     return get_minimum_distance(target_point, boundary_points);
   }
 
-  makeLine() { // TODO: Figure out if need a deep copy here instead
-    this.lineProps.points = [this.obj1Coords, this.obj2Coords]
-    let line: Line = new Line(this.lineProps)
-    this.children.push(line)
+  makeLine() {
+    // TODO: Figure out if need a deep copy here instead
+    this.lineProps.points = [this.obj1Coords, this.obj2Coords];
+    let line: Line = new Line(this.lineProps);
+    this.children.push(line);
   }
 
-  makeText(){
-    let text: TextBox = new TextBox(this.textProps)
+  makeText() {
+    let text: TextBox = new TextBox(this.textProps);
 
-    let angle: () => number = () => lineAngle(this.obj1Coords(), this.obj2Coords())
-    let textBounding: () => BoundingBox = () => text.boundingBox()
+    let angle: () => number = () =>
+      lineAngle(this.obj1Coords(), this.obj2Coords());
+    let textBounding: () => BoundingBox = () => text.boundingBox();
     let cornerDist: () => number = () => {
-      return Math.sqrt(Math.pow(text.fontSize(), 2) + Math.pow(text.text().length * 0.14 * text.fontSize(), 2))
-    }
-    let lineMidPoint: () => Coords = () => mid_point(this.obj1Coords(), this.obj2Coords())
+      return Math.sqrt(
+        Math.pow(text.fontSize(), 2) +
+          Math.pow(text.text().length * 0.14 * text.fontSize(), 2)
+      );
+    };
+    let lineMidPoint: () => Coords = () =>
+      mid_point(this.obj1Coords(), this.obj2Coords());
 
     switch (this.textLocation) {
-      case "above":
+      case 'above':
         text.setCenter(() => {
           return {
-            x: lineMidPoint().x + Math.cos(angle() - Math.PI/2) * cornerDist(),
-            y: lineMidPoint().y + Math.sin(angle() - Math.PI/2) * cornerDist()
-          }
-        })
+            x:
+              lineMidPoint().x + Math.cos(angle() - Math.PI / 2) * cornerDist(),
+            y: lineMidPoint().y + Math.sin(angle() - Math.PI / 2) * cornerDist()
+          };
+        });
         break;
-      case "below": 
+      case 'below':
         text.setCenter(() => {
           return {
-            x: lineMidPoint().x + Math.cos(angle() + Math.PI/2) * cornerDist(),
-            y: lineMidPoint().y + Math.sin(angle() + Math.PI/2) * cornerDist()
-          }
-        })
+            x:
+              lineMidPoint().x + Math.cos(angle() + Math.PI / 2) * cornerDist(),
+            y: lineMidPoint().y + Math.sin(angle() + Math.PI / 2) * cornerDist()
+          };
+        });
         break;
-      case "left":
+      case 'left':
         text.setCenter(() => {
           if (angle() <= 0) {
             return {
-              x: lineMidPoint().x + Math.cos(angle() - Math.PI/2) * cornerDist(),
-              y: lineMidPoint().y + Math.sin(angle() - Math.PI/2) * cornerDist()
-            }
+              x:
+                lineMidPoint().x +
+                Math.cos(angle() - Math.PI / 2) * cornerDist(),
+              y:
+                lineMidPoint().y +
+                Math.sin(angle() - Math.PI / 2) * cornerDist()
+            };
           } else {
             return {
-              x: lineMidPoint().x + Math.cos(angle() + Math.PI/2) * cornerDist(),
-              y: lineMidPoint().y + Math.sin(angle() + Math.PI/2) * cornerDist()
-            }
+              x:
+                lineMidPoint().x +
+                Math.cos(angle() + Math.PI / 2) * cornerDist(),
+              y:
+                lineMidPoint().y +
+                Math.sin(angle() + Math.PI / 2) * cornerDist()
+            };
           }
-        })
+        });
         break;
-      case "right":
+      case 'right':
         text.setCenter(() => {
           if (angle() <= 0) {
             return {
-              x: lineMidPoint().x + Math.cos(angle() + Math.PI/2) * cornerDist(),
-              y: lineMidPoint().y + Math.sin(angle() + Math.PI/2) * cornerDist()
-            }
+              x:
+                lineMidPoint().x +
+                Math.cos(angle() + Math.PI / 2) * cornerDist(),
+              y:
+                lineMidPoint().y +
+                Math.sin(angle() + Math.PI / 2) * cornerDist()
+            };
           } else {
             return {
-              x: lineMidPoint().x + Math.cos(angle() - Math.PI/2) * cornerDist(),
-              y: lineMidPoint().y + Math.sin(angle() - Math.PI/2) * cornerDist()
-            }
+              x:
+                lineMidPoint().x +
+                Math.cos(angle() - Math.PI / 2) * cornerDist(),
+              y:
+                lineMidPoint().y +
+                Math.sin(angle() - Math.PI / 2) * cornerDist()
+            };
           }
-        })
+        });
         break;
-      case "clockwise":
+      case 'clockwise':
         text.setCenter(() => {
           let normalizedDiff: Coords = normalize({
             x: this.obj2Coords().x - this.obj1Coords().x,
             y: this.obj2Coords().y - this.obj1Coords().y
-          }) 
+          });
           return {
             x: lineMidPoint().x - normalizedDiff.y * cornerDist(),
             y: lineMidPoint().y + normalizedDiff.x * cornerDist()
-          }
-        })
+          };
+        });
         break;
-      case "counterclockwise":
+      case 'counterclockwise':
         text.setCenter(() => {
           let normalizedDiff: Coords = normalize({
             x: this.obj2Coords().x - this.obj1Coords().x,
             y: this.obj2Coords().y - this.obj1Coords().y
-          }) 
+          });
           return {
             x: lineMidPoint().x + normalizedDiff.y * cornerDist(),
             y: lineMidPoint().y - normalizedDiff.x * cornerDist()
-          }
-        })
+          };
+        });
         break;
     }
 
-    this.children.push(text)
+    this.children.push(text);
   }
 }
 
