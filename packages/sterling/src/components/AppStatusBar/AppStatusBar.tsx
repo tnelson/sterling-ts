@@ -10,7 +10,7 @@ const AppStatusBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   
   return (
-    <StatusBar>
+    <StatusBar data-testid='app-status-bar'>
       <Spacer />
       <Divider orientation='vertical' mx={2} />
       <div
