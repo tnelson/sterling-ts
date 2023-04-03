@@ -5,6 +5,8 @@ import { useSterlingDispatch } from '../../state/hooks';
 import { ConnectionStatus } from './ConnectionStatus';
 import { ManualXMLModal } from './ManualXMLModal';
 
+export const TEXT_manual_datum_button = 'Manual Datum'
+
 const AppStatusBar = () => {
   const dispatch = useSterlingDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -17,7 +19,7 @@ const AppStatusBar = () => {
         className='cursor-pointer hover:text-gray-500'
         onClick={onOpen}
       >
-        Manual Datum
+        {TEXT_manual_datum_button}
       </div>
       <ManualXMLModal isOpen={isOpen} onClose={onClose}/>
       <Divider orientation='vertical' mx={2} />

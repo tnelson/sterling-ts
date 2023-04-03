@@ -71,8 +71,9 @@ const ScriptEditor = (props: ScriptEditorProps) => {
     ]);
   }, [editor, variables]);
 
-  return (
-    <MonacoEditor
+  return (    
+    <MonacoEditor      
+      data-testid='script-view-monaco-editor'
       language='javascript'
       options={{
         automaticLayout: true,

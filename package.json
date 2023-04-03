@@ -4,6 +4,7 @@
   "main": "index.js",
   "author": "Tristan Dyer <atristandyer@gmail.com>",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "build:alloy": "npx webpack --env provider=alloy",
     "build:forge": "npx webpack --env provider=forge",

@@ -135,11 +135,11 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
                 provided that the SVG height/width styling is changed directly by the script. 
                 The slightly off-white background color shows the actual full SVG area.*/}
             {stage === 'svg' && 
-              <div id='svg-container' style={{height: '100%', width: '100%', overflow: 'scroll'}}>
+              <div aria-label='SVG Visualization' id='svg-container' style={{height: '100%', width: '100%', overflow: 'scroll'}}>
                 <svg ref={svgRef} style={{width:'100%', height:'100%', backgroundColor: 'snow'}}/>
               </div>}
           </Pane>
-          <Pane className='relative'>
+          <Pane className='relative' aria-label='Visualization Script' data-testid='script-editor-pane'>
             <ScriptEditor
               initialText={initialText}
               variables={datumVariables}

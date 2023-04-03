@@ -9,6 +9,9 @@ interface ManualXMLModelProps {
     onClose: () => void
 }
 
+export const TEXT_manual_entry_modal_add_button = 'Add Datum'
+export const TEXT_manual_entry_modal_textarea_label = 'XML Datum'
+
 const placeholderXML = `
 <instance bitwidth= "4" maxseq= "-1" command= "example-run" filename= "no-filename.als" version= "1.5.0">
 <sig label= "seq/Int" ID= "0" parentID= "1" builtin= "yes"> </sig>
@@ -39,7 +42,7 @@ export function ManualXMLModal({isOpen, onClose}: ManualXMLModelProps) {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>XML Datum</FormLabel>
+              <FormLabel>{TEXT_manual_entry_modal_textarea_label}</FormLabel>
               <Textarea minH="20rem" ref={initialRef} placeholder={placeholderXML} />
             </FormControl>
           </ModalBody>
@@ -88,7 +91,8 @@ export function ManualXMLModal({isOpen, onClose}: ManualXMLModelProps) {
 
                 // Finally, close the modal dialog
                 onClose()
-            }}>Add Datum</Button>
+            }}
+            >{TEXT_manual_entry_modal_add_button}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
