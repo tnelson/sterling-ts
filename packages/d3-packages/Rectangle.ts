@@ -6,7 +6,7 @@ export interface RectangleProps extends ShapeProps {
     height: number | (() => number),
     width: number | (() => number),
     coords?: Coords | (() => Coords),
-    labelLocation: string
+    labelLocation?: string
 }
 
 export class Rectangle extends Shape{
@@ -33,7 +33,7 @@ export class Rectangle extends Shape{
         this.height = toFunc(0, props.height)
         this.width = toFunc(0, props.width) 
         let coordsFunc = toFunc({x: 0, y:0}, props.coords)
-        this.labelLocation = props.labelLocation
+        this.labelLocation = props.labelLocation ?? "center"
         this.center = () => {
             return {
                 x: coordsFunc().x + (this.width() / 2),

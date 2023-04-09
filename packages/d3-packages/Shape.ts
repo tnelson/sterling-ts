@@ -8,7 +8,7 @@ import {
   DEFAULT_TEXT_COLOR
 } from './Constants';
 import { toFunc } from './Utility';
-import { TextBox } from './TextBox';
+import { TextBox } from './Textbox';
 
 export interface ShapeProps {
   center?: Coords | (() => Coords),
