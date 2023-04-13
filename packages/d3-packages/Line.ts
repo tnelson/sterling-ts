@@ -17,7 +17,7 @@ export interface LineProps {
   arrow?: boolean,
   color?: string | (() => string), 
   width?: number | (() => number),
-  opacity?: number | (() => number)
+  opacity?: number | (() => number),
   style?: string | (() => string)
 }
 

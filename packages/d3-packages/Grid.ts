@@ -14,7 +14,6 @@ interface gridProps{
         x_size:number,
         y_size:number
     },
-    // outline: boolean
 }
 
 export class Grid extends VisualObject{
