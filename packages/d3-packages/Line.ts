@@ -71,7 +71,7 @@ export class Line extends VisualObject {
   setWidth(width: number | (() => number)) { this.width = toFunc(this.width(), width); }
   setOpacity(opacity: number | (() => number)) {this.opacity = toFunc(this.opacity(), opacity)}
 
-  override render(svg: any) {
+  override render(svg: any, masks: BoundingBox[]) {
     let truePoints: Coords[] = this.pointsRelative.map((pointFn): Coords => {return {
       x: pointFn().x + this.center().x,
       y: pointFn().y + this.center().y
@@ -87,6 +87,7 @@ export class Line extends VisualObject {
     if (this.style() == "dashed") style = this.width() * 5
     else if (this.style() == "dotted") style = this.width()
 
+    
     //add in definition for arrow
     d3.select(svg)
       .append('svg:defs')

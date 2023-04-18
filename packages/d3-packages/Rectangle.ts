@@ -96,7 +96,15 @@ export class Rectangle extends Shape{
     setWidth(width: number | (() => number)){this.width = toFunc(this.width(), width)}
     setHeight(height: number | (() => number)){this.height = toFunc(this.height(), height)}
 
-    render(svg: any){
+    override render(svg: any, masks ?: BoundingBox[]){
+        if(this.masks){
+            this.addMaskRender(this.masks, svg)
+            //should be this.masks UNION masks
+            //need identifier
+        }
+        else{
+            this.addMaskRender(svg, [])
+        }
         d3.select(svg)
             .append('rect')
             .attr('x', this.center().x - this.width()/2)
@@ -106,6 +114,7 @@ export class Rectangle extends Shape{
             .attr('stroke-width', this.borderWidth())
             .attr('stroke', this.borderColor())
             .attr('fill', this.color())
+            // .attr("mask", "url(#myMask)")
             .attr('opacity', this.opacity())
         super.render(svg)
     }

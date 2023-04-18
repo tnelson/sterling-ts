@@ -11,6 +11,7 @@ import { Tree, VisTree } from './Tree';
 import { Edge } from './Edge';
 import { boxUnion } from './Utility';
 import { Hull } from './Hull';
+import {TestMask} from './TestMask'
 
 interface scriptViewImport {
   name: string;
@@ -36,7 +37,8 @@ const scriptViewImports: scriptViewImport[] = [
   { name: 'Polygon', value: Polygon },
   { name: 'Tree', value: Tree },
   { name: 'Edge', value: Edge },
-  { name: 'Hull', value: Hull }
+  { name: 'Hull', value: Hull },
+  {name: 'TestMask', value: TestMask}
 ];
 
 export { scriptViewImports };

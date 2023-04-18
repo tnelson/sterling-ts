@@ -1,4 +1,12 @@
-import { toFunc, Coords, ExperimentalBoundingBox, BoundingBox, boxUnion } from "./Utility";
+import {
+  toFunc,
+  Coords,
+  ExperimentalBoundingBox,
+  BoundingBox,
+  boxUnion
+} from './Utility';
+
+import * as d3 from 'd3';
 
 /**
  * To anyone adding to this library in the future: please take the following steps when adding
@@ -20,35 +28,41 @@ export class VisualObject {
   center: () => Coords;
   children: VisualObject[];
   dependents: VisualObject[];
+  masks: BoundingBox[];
 
   //note: for non-circle objects, we leave the below
   //uninitialized! Bad typescript sorry :((
   bounding_box_lam: BoundingBoxGenerator;
   hasBoundingBox: boolean;
 
-
   /**
    * Top level class, which all other visual objects will extend.
    * @param coords position of the object on screen.
    */
   constructor(coords?: Coords | (() => Coords)) {
+    //TODO: refactor this
     this.center = toFunc({ x: 0, y: 0 }, coords);
-    this.bounding_box_lam = (r: number) => { return this.center() };
+    this.bounding_box_lam = (r: number) => {
+      return this.center();
+    };
     this.hasBoundingBox = false;
     this.children = [];
     this.dependents = [];
+    this.masks = [];
   }
 
   boundingBox(): BoundingBox {
     if (this.children.length == 0) {
-      return {top_left: this.center(), bottom_right: this.center()}
+      return { top_left: this.center(), bottom_right: this.center() };
     } else {
-      // Defaults to returning bounding box of all children. 
-      return boxUnion(this.children.map((child): BoundingBox => child.boundingBox()))
+      // Defaults to returning bounding box of all children.
+      return boxUnion(
+        this.children.map((child): BoundingBox => child.boundingBox())
+      );
     }
   }
 
-  getChildren(): VisualObject[]{
+  getChildren(): VisualObject[] {
     return this.children;
   }
   /**
@@ -59,18 +73,40 @@ export class VisualObject {
     this.center = toFunc(this.center(), center);
   }
 
-  hasLam():Boolean{
+  addMask(mask: BoundingBox) {
+    this.masks.push(mask);
+  }
+  /**
+   * Method should not be called outside of internal backend!
+   *
+   * @param masks Masks to be applied to svg
+   * @param SVG HTML Svg object to which the object should be rendered.
+   */
+  addMaskRender(masks: BoundingBox[], svg: any) {
+
+   
+  }
+  hasLam(): Boolean {
     return this.hasBoundingBox;
   }
   getLam(): BoundingBoxGenerator {
     return this.bounding_box_lam;
   }
 
+  //a brief note on *why* we would want multiple masks to get passed down: masks can only get rendered in D3 to primitive
+  //objects: object that physically gets rendered by D3. So imagine case of grid that contains a circle. We want a mask for the
+  //circle and also a mask for the grid (this is what user stipulates). So our physical grid object
+
   /**
    * Renders the object to the screen.
    * @param svg HTML Svg object to which the object should be rendered.
+   * @param masks Optional param that indicates the inherited masks that should be passed down to each child
+   *
    */
-  render(svg: any) {
-    this.children.forEach((child: VisualObject) => {child.render(svg)});
+
+  render(svg: any, masks?: BoundingBox[]) {
+    this.children.forEach((child: VisualObject) => {
+      child.render(svg, masks);
+    });
   }
 }
