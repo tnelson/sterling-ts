@@ -1,6 +1,6 @@
 import { Line, LineProps } from './Line';
 import { Shape } from './Shape';
-import { TextBox, TextBoxProps } from './TextBox';
+import { TextBox, TextBoxProps } from './Textbox';
 import {
   distance,
   lineAngle,

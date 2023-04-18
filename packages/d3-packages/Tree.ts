@@ -1,7 +1,7 @@
 import { Circle } from './Circle';
 import {VisualObject} from './VisualObject'
 import {Coords, toFunc} from "./Utility"
-import {TextBox} from './TextBox'
+import {TextBox} from './Textbox'
 import {Line} from "./Line"
 import { Children } from 'react';
 import { DEFAULT_LINE_COLOR, DEFAULT_STROKE_WIDTH, DEFAULT_TREE_LINE_COLOR, DEFAULT_TREE_LINE_WIDTH } from './Constants';
