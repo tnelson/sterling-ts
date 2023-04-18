@@ -24,3 +24,5 @@ export const NODE_OFFSET:number = 20;
 
 export const DEFAULT_TREE_LINE_COLOR: string = "black"
 export const DEFAULT_TREE_LINE_WIDTH: number = 2
+
+

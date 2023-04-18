@@ -8,6 +8,8 @@ import {
 
 import * as d3 from 'd3';
 
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from './Constants';
+
 /**
  * To anyone adding to this library in the future: please take the following steps when adding
  * new VisualObjects.
@@ -81,10 +83,37 @@ export class VisualObject {
    *
    * @param masks Masks to be applied to svg
    * @param SVG HTML Svg object to which the object should be rendered.
+   * 
+   * @returns a unique identifier to the mask (used to ID the mask)
    */
-  addMaskRender(masks: BoundingBox[], svg: any) {
-
-   
+  addMaskRender(masks: BoundingBox[], svg: any): string {
+    const maskIdentifier:string = window.performance.now().toString();
+    console.log("mask identifier in addMask func:" + maskIdentifier)
+    const mask = d3
+      .select(svg)
+      .append('defs')
+      .append('mask')
+      .attr('id', maskIdentifier);
+    mask //"background" mask. Not sure why this works but it does
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 2000)
+      .attr('height', 2000)
+      .style('fill', 'white')
+      .style('opacity', 1);
+    if (masks instanceof Array) {
+      masks.forEach((m) => {
+        mask.append('rect')
+        .attr('x', m.top_left.x)
+        .attr('y', m.top_left.y)
+        .attr('width', Math.abs(m.top_left.x - m.bottom_right.x))
+        .attr('height', Math.abs(m.top_left.y - m.bottom_right.y))
+      });
+    } else {
+      throw 'mask passed in not an array. Check VisualObject.ts';
+    }
+    return maskIdentifier;
   }
   hasLam(): Boolean {
     return this.hasBoundingBox;
