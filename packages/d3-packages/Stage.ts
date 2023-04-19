@@ -1,6 +1,6 @@
 import {Tree, VisTree} from './Tree';
 import { VisualObject } from './VisualObject';
-import { TextBox } from './TextBox';
+import { TextBox } from './Textbox';
 import { Circle } from './Circle';
 import * as d3 from 'd3' 
 
