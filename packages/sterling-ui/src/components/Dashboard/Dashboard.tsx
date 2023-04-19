@@ -1,5 +1,5 @@
 import { Box, useStyleConfig } from '@chakra-ui/react';
-import { clamp, throttle } from 'lodash';
+import { clamp, throttle } from 'lodash-es';
 import {
   Children,
   CSSProperties,

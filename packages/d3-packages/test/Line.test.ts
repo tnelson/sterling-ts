@@ -1,5 +1,4 @@
-import {Line} from './Line'
-export const foo = 0
+import {Line} from '../Line'
 
 test("trivial test to check Jest install", () => {
   const tsOne: number = 1

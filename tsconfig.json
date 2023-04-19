@@ -7,8 +7,9 @@
         "dom",
         "dom.iterable",
         "esnext"
-      ],
-      "allowJs": false,
+      ],      
+      "esModuleInterop": true,
+      "allowJs": true,
       "allowSyntheticDefaultImports": true,
       "jsx": "react-jsx",
       "isolatedModules": true,
@@ -23,9 +24,6 @@
         "@/alloy-instance": [
           "alloy-instance/index.ts"
         ],
-        // "@/d3-packages": [
-        //   "d3-packages/index.ts"
-        // ],
         "@/graph-lib": [
           "graph-lib/index.ts"
         ],

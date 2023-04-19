@@ -10,7 +10,7 @@ const DataExplorer = () => {
   const activeDatum = useSterlingSelector(selectActiveDatum);
   const data = useSterlingSelector(selectData);
   return (
-    <Pane>
+    <Pane data-testid='explorer-pane'>
       <PaneHeader className='px-2 border-b'>
         <PaneTitle>Explorer</PaneTitle>
       </PaneHeader>

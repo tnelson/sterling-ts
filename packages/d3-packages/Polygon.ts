@@ -1,6 +1,5 @@
 import {Shape, ShapeProps} from './Shape'
-import { require as d3require } from 'd3-require';
-const d3 = require("d3")
+import * as d3 from 'd3' 
 import { averagePath, boundsOfList, shiftList, BoundingBox, Coords, toFunc } from './Utility';
 
 export interface PolygonProps extends ShapeProps {
@@ -57,7 +56,7 @@ export class Polygon extends Shape{
         path.closePath()
         d3.select(svg)
             .append('path')
-            .attr('d', path)
+            .attr('d', path.toString)
             .attr('stroke-width', this.borderWidth)
             .attr('stroke', this.borderColor)
             .attr('fill', this.color)

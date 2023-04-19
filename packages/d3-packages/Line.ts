@@ -1,8 +1,4 @@
 import { Shape } from './Shape';
-import { require as d3require } from 'd3-require';
-//import { require as d3require } from 'd3-require';
-// This wasn't using d3require anyway, just old-style require, which caused d3 to have type "any"
-//const d3 = require("d3")
 import * as d3 from 'd3';
 import { VisualObject } from './VisualObject';
 import { BoundingBox, Coords, toFunc, averagePath, shiftList, boundsOfList } from './Utility';

@@ -1,4 +1,5 @@
 import { toFunc, Coords, ExperimentalBoundingBox, BoundingBox, boxUnion } from "./Utility";
+export type {Coords};
 
 /**
  * To anyone adding to this library in the future: please take the following steps when adding

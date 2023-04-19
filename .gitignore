@@ -3,6 +3,9 @@
 .DS_Store
 .code-workspace
 
+# testing
+coverage
+
 # dependencies
 /node_modules
 
