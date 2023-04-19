@@ -5,12 +5,15 @@
   "author": "Tristan Dyer <atristandyer@gmail.com>",
   "license": "MIT",
   "type": "module",
+  "homepage": "https://tnelson.github.io/sterling-ts",
   "scripts": {
     "build:alloy": "npx webpack --env provider=alloy",
     "build:forge": "npx webpack --env provider=forge",
     "dev:alloy": "npx webpack serve --open --mode=development --env provider=alloy",
     "dev:forge": "npx webpack serve --open --mode=development --env provider=forge",
-    "test": "yarn node --experimental-vm-modules $(yarn bin jest)"
+    "test": "yarn node --experimental-vm-modules $(yarn bin jest)",
+    "predeploy": "npx webpack --env provider=alloy",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.51.3",
@@ -74,6 +77,7 @@
     "favicons": "^6.2.2",
     "favicons-webpack-plugin": "^5.0.2",
     "file-loader": "^6.2.0",
+    "gh-pages": "^5.0.0",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.4.2",
