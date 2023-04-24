@@ -89,6 +89,9 @@ export class VisualObject {
    * @returns a unique identifier to the mask (used to ID the mask)
    */
   addMaskRender(masks: BoundingBox[], svg: any): string {
+    if(masks.length <= 0){
+      return "0";
+    }
     const maskIdentifier:string = window.performance.now().toString();
     console.log("mask identifier in addMask func:" + maskIdentifier)
     const mask = d3

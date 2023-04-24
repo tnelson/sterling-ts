@@ -39,7 +39,7 @@ export class Hull extends VisualObject {
       objs.forEach((obj) => {
         //build a circle around the object (of radius given by fuzz)
         const objFuzz = new Circle({ radius: this.fuzz, center: obj.center() });
-        const fuzzPts = pointsOnBorder(objFuzz.getLam(), 4);
+        const fuzzPts = pointsOnBorder(objFuzz.getLam(), 100);
         fuzzPts.forEach((p) => pts.push(p));
       });
     } else {
@@ -47,7 +47,7 @@ export class Hull extends VisualObject {
         //build a circle around the object (of radius given by fuzz)
         const objFuzz = new Rectangle({ height: this.fuzz, width: this.fuzz });
         objFuzz.setCenter(obj.center());
-        const fuzzPts = pointsOnBorder(objFuzz.getLam(), 4);
+        const fuzzPts = pointsOnBorder(objFuzz.getLam(), 100);
         fuzzPts.forEach((p) => pts.push(p));
       });
     }
