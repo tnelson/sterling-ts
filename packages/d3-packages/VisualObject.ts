@@ -1,5 +1,5 @@
-import { toFunc, Coords, ExperimentalBoundingBox, BoundingBox, boxUnion } from "./Utility";
-
+import { toFunc, Coords, BoundingBox, boxUnion } from "./Utility";
+import {bounding_box_to_lambda} from "./geometricHelpers"
 import * as d3 from 'd3';
 import {SCREEN_WIDTH, SCREEN_HEIGHT} from './Constants'
 export type {Coords};
@@ -69,7 +69,12 @@ export class VisualObject {
     return this.hasBoundingBox;
   }
   getLam(): BoundingBoxGenerator {
-    return this.bounding_box_lam;
+    if(this.hasBoundingBox){
+      return this.bounding_box_lam;
+    }
+    else{
+      return bounding_box_to_lambda(this.boundingBox());
+    }
   }
 
   addMask(mask: BoundingBox) {

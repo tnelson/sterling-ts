@@ -61,8 +61,10 @@ export class Edge extends VisualObject {
       this.obj1.center(),
       this.obj2.center()
     );
-
+    
+    console.log("obj2")
     this.obj2Coords = () => this.opt_points(target_point, this.obj2, precision);
+    console.log("obj1")
     this.obj1Coords = () => this.opt_points(target_point, this.obj1, precision);
   }
 
@@ -81,11 +83,13 @@ export class Edge extends VisualObject {
     } else {
       boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
     }
+    // let boundingBoxLam: (r: number) => Coords = obj.getLam()
 
     const boundary_points: Coords[] = pointsOnBorder(boundingBoxLam, precision);
 
     this.visible_points = boundary_points;
     this.boundary_points = boundary_points;
+    console.log(get_minimum_distance(target_point, boundary_points))
 
     return get_minimum_distance(target_point, boundary_points);
   }
