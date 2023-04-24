@@ -36,7 +36,8 @@ const scriptViewImports: scriptViewImport[] = [
   { name: 'Polygon', value: Polygon },
   { name: 'Tree', value: Tree },
   { name: 'Edge', value: Edge },
-  { name: 'Hull', value: Hull }
+  { name: 'Hull', value: Hull },
+  {name: 'boxUnion', value: boxUnion}
 ];
 
 export { scriptViewImports };
