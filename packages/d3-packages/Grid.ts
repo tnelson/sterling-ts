@@ -181,7 +181,8 @@ export class Grid extends VisualObject{
 
         const addRectangle:Rectangle = new Rectangle({
             height: this.config.cell_size.x_size, //y_size
-            width: this.config.cell_size.y_size
+            width: this.config.cell_size.y_size,
+            labelLocation: "above"
         }) //x_size
         
         addRectangle.setColor(color)

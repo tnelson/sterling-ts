@@ -98,8 +98,8 @@ export class VisualObject {
       .append('rect')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('width', 2000)
-      .attr('height', 2000)
+      .attr('width', SCREEN_WIDTH)
+      .attr('height', SCREEN_HEIGHT)
       .style('fill', 'white')
       .style('opacity', 1);
     if (masks instanceof Array) {

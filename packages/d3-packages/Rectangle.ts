@@ -127,7 +127,6 @@ export class Rectangle extends Shape {
       maskIdentifier = this.addMaskRender(svg, []);
     }
 
-    console.log("mask identifier in render func:" + maskIdentifier)
     d3.select(svg)
       .append('rect')
       .attr('x', this.center().x - this.width() / 2)
