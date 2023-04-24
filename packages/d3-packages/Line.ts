@@ -67,7 +67,16 @@ export class Line extends VisualObject {
   setWidth(width: number | (() => number)) { this.width = toFunc(this.width(), width); }
   setOpacity(opacity: number | (() => number)) {this.opacity = toFunc(this.opacity(), opacity)}
 
-  override render(svg: any) {
+  override render(svg: any, parent_masks ?: BoundingBox[]) {
+    let maskIdentifier:string = "";
+
+        let render_masks: BoundingBox[];
+        if (parent_masks) {
+            render_masks = this.masks.concat(parent_masks);
+        } else {
+            render_masks = this.masks;
+        }
+    maskIdentifier = this.addMaskRender(render_masks, svg);
     let truePoints: Coords[] = this.pointsRelative.map((pointFn): Coords => {return {
       x: pointFn().x + this.center().x,
       y: pointFn().y + this.center().y
@@ -110,9 +119,10 @@ export class Line extends VisualObject {
             .attr('stroke', this.color)
             .attr('opacity', this.opacity())
             .attr("marker-end", "url(#triangle)")
+            .attr('mask', `url(#${maskIdentifier})`)
             .style("stroke-dasharray", (style))
             .attr('fill', 'transparent'); // Should prob make easier in future.
-        super.render(svg);
+        super.render(svg, render_masks);
     }
     else{
         d3.select(svg)
@@ -122,8 +132,9 @@ export class Line extends VisualObject {
             .attr('stroke', this.color)
             .attr('opacity', this.opacity())
             .attr('fill', 'transparent')
+            .attr('mask', `url(#${maskIdentifier})`)
             .style("stroke-dasharray", (style)); // Should prob make easier in future.
-        super.render(svg);
+        super.render(svg, render_masks);
   }
     }
     

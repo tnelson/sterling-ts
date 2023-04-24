@@ -1,4 +1,7 @@
 import { toFunc, Coords, ExperimentalBoundingBox, BoundingBox, boxUnion } from "./Utility";
+
+import * as d3 from 'd3';
+import {SCREEN_WIDTH, SCREEN_HEIGHT} from './Constants'
 export type {Coords};
 
 /**
@@ -26,6 +29,7 @@ export class VisualObject {
   //uninitialized! Bad typescript sorry :((
   bounding_box_lam: BoundingBoxGenerator;
   hasBoundingBox: boolean;
+  masks: BoundingBox[];
 
 
   /**
@@ -38,6 +42,7 @@ export class VisualObject {
     this.hasBoundingBox = false;
     this.children = [];
     this.dependents = [];
+    this.masks = [];
   }
 
   boundingBox(): BoundingBox {
@@ -67,11 +72,56 @@ export class VisualObject {
     return this.bounding_box_lam;
   }
 
+  addMask(mask: BoundingBox) {
+    this.masks.push(mask);
+  }
+  /**
+   * Method should not be called outside of internal backend!
+   *
+   * @param masks Masks to be applied to svg
+   * @param SVG HTML Svg object to which the object should be rendered.
+   * 
+   * @returns a unique identifier to the mask (used to ID the mask)
+   */
+  addMaskRender(masks: BoundingBox[], svg: any): string {
+    const maskIdentifier:string = window.performance.now().toString();
+    console.log("mask identifier in addMask func:" + maskIdentifier)
+    const mask = d3
+      .select(svg)
+      .append('defs')
+      .append('mask')
+      .attr('id', maskIdentifier);
+    mask //"background" mask. Not sure why this works but it does
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', SCREEN_WIDTH)
+      .attr('height', SCREEN_HEIGHT)
+      .style('fill', 'white')
+      .style('opacity', 1);
+    if (masks instanceof Array && masks) {
+      masks.forEach((m) => {
+        mask.append('rect')
+        .attr('x', m.top_left.x)
+        .attr('y', m.top_left.y)
+        .attr('width', Math.abs(m.top_left.x - m.bottom_right.x))
+        .attr('height', Math.abs(m.top_left.y - m.bottom_right.y))
+      });
+    } 
+    return maskIdentifier;
+  }
+
   /**
    * Renders the object to the screen.
    * @param svg HTML Svg object to which the object should be rendered.
    */
-  render(svg: any) {
-    this.children.forEach((child: VisualObject) => {child.render(svg)});
+  render(svg: any, parent_masks?: BoundingBox[]) {
+    let render_masks: BoundingBox[];
+    if (parent_masks) {
+      render_masks = this.masks.concat(parent_masks);
+    } else {
+      render_masks = this.masks;
+    }
+    this.children.forEach((child: VisualObject) => {child.render(svg, render_masks)});
   }
 }

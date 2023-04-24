@@ -1,10 +1,15 @@
 import { Shape, ShapeProps } from './Shape';
-import * as d3 from 'd3' 
-import { BoundingBox, Coords, ExperimentalBoundingBox, toFunc } from './Utility';
+import * as d3 from 'd3';
+import {
+  BoundingBox,
+  Coords,
+  ExperimentalBoundingBox,
+  toFunc
+} from './Utility';
 import { BoundingBoxGenerator } from './VisualObject';
 
 export interface CircleProps extends ShapeProps {
-  radius: number | (() => number)
+  radius: number | (() => number);
 }
 
 export class Circle extends Shape {
@@ -47,12 +52,22 @@ export class Circle extends Shape {
       }
     };
   }
-  
+
   setRadius(radius: number | (() => number)) {
     this.radius = toFunc(0, radius);
   }
 
-  override render(svg: any) {
+  override render(svg: any, parent_masks?: BoundingBox[]) {
+    let maskIdentifier: string = '';
+
+    let render_masks: BoundingBox[];
+    if (parent_masks) {
+      render_masks = this.masks.concat(parent_masks);
+    } else {
+      render_masks = this.masks;
+    }
+    maskIdentifier = this.addMaskRender(render_masks, svg);
+
     d3.select(svg)
       .append('circle')
       .attr('cx', this.center().x)
@@ -61,7 +76,8 @@ export class Circle extends Shape {
       .attr('stroke-width', this.borderWidth)
       .attr('stroke', this.borderColor)
       .attr('fill', this.color)
+      .attr('mask', `url(#${maskIdentifier})`)
       .attr('opacity', this.opacity());
-    super.render(svg);
+    super.render(svg, render_masks);
   }
 }

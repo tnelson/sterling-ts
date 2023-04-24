@@ -42,7 +42,14 @@ export class Polygon extends Shape{
         }}));
     }
 
-    render(svg: any){
+    render(svg: any, parent_masks: BoundingBox[]){
+        let maskIdentifier: string = '';
+        let render_masks: BoundingBox[];
+        if (parent_masks) {
+        render_masks = this.masks.concat(parent_masks);
+        } else {
+        render_masks = this.masks;
+        }
         let truePoints: Coords[] = this.pointsRelative.map((pointFn): Coords => {return {
             x: pointFn().x + this.center().x,
             y: pointFn().y + this.center().y
@@ -54,13 +61,15 @@ export class Polygon extends Shape{
             path.lineTo(point.x, point.y);
           });
         path.closePath()
+        maskIdentifier = this.addMaskRender(render_masks, svg);
         d3.select(svg)
             .append('path')
             .attr('d', path.toString)
             .attr('stroke-width', this.borderWidth)
             .attr('stroke', this.borderColor)
             .attr('fill', this.color)
+            .attr('mask', `url(#${maskIdentifier})`)
             .attr('opacity', this.opacity()) 
-        super.render(svg)
+        super.render(svg, render_masks)
     }
 }

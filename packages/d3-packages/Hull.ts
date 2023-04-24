@@ -1,6 +1,6 @@
 import { Line } from './Line';
 import { jarvisAlgo } from './geometricHelpers';
-import { Coords , pointsOnBorder} from './Utility';
+import { BoundingBox, Coords, pointsOnBorder } from './Utility';
 import { VisualObject } from './VisualObject';
 import * as d3 from 'd3';
 import { Circle } from './Circle';
@@ -12,7 +12,7 @@ export interface HullProps {
 
 export class Hull extends VisualObject {
   pts: Coords[];
-  fuzz:number;
+  fuzz: number;
 
   constructor(props: HullProps) {
     super();
@@ -23,25 +23,31 @@ export class Hull extends VisualObject {
   populatePoints(objs: VisualObject[]): Coords[] {
     let pts: Coords[] = [];
 
-    if(this.fuzz == 0){
+    if (this.fuzz == 0) {
       //simple population of hull points (just object centers)
       objs.forEach((obj) => {
-        pts.push({x:obj.center().x, y:obj.center().y});
+        pts.push({ x: obj.center().x, y: obj.center().y });
       });
-    }
-    else{
-      objs.forEach((obj) => { //build a circle around the object (of radius given by fuzz)
-        const objFuzz = new Circle({radius: this.fuzz, center: obj.center()});
+    } else {
+      objs.forEach((obj) => {
+        //build a circle around the object (of radius given by fuzz)
+        const objFuzz = new Circle({ radius: this.fuzz, center: obj.center() });
         const fuzzPts = pointsOnBorder(objFuzz.getLam(), 4);
-        fuzzPts.forEach(p => pts.push(p));
+        fuzzPts.forEach((p) => pts.push(p));
       });
     }
-  
+
     return pts;
   }
 
-  override render(svg: any) {
+  override render(svg: any, parent_masks ?: BoundingBox[]) {
+    let render_masks: BoundingBox[];
+    if (parent_masks) {
+      render_masks = this.masks.concat(parent_masks);
+    } else {
+      render_masks = this.masks;
+    }
     const l = new Line({ points: this.pts });
-    l.render(svg);
+    l.render(svg, render_masks);
   }
 }
