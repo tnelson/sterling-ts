@@ -11,6 +11,7 @@
     "build:forge": "npx webpack --env provider=forge",
     "dev:alloy": "npx webpack serve --open --mode=development --env provider=alloy",
     "dev:forge": "npx webpack serve --open --mode=development --env provider=forge",
+    "e2e": "npx webpack serve --mode=development --env provider=alloy",
     "test": "yarn node --experimental-vm-modules $(yarn bin jest)",
     "predeploy": "npx webpack --env provider=alloy",
     "deploy": "gh-pages -d dist"
