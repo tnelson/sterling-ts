@@ -60,7 +60,18 @@ export class TextBox extends VisualObject {
     this.color = toFunc(this.color(), color);
   }
 
-  override render(svg: any) {
+  override render(svg: any, parent_masks: BoundingBox[]) {
+
+    let maskIdentifier: string = '';
+
+    let render_masks: BoundingBox[];
+    if (parent_masks) {
+      render_masks = this.masks.concat(parent_masks);
+    } else {
+      render_masks = this.masks;
+    }
+    maskIdentifier = this.addMaskRender(render_masks, svg);
+
     d3.select(svg)
       .append('text')
       .attr('x', this.center().x)
@@ -68,6 +79,7 @@ export class TextBox extends VisualObject {
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central')
       .attr('font-size', this.fontSize)
+      .attr('mask', `url(#${maskIdentifier})`)
       .attr('fill', this.color)
       .text(this.text);
     super.render(svg);

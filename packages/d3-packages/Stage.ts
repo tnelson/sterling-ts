@@ -3,12 +3,15 @@ import { VisualObject } from './VisualObject';
 import { TextBox } from './Textbox';
 import { Circle } from './Circle';
 import * as d3 from 'd3' 
+import { BoundingBox } from './Utility';
 
 export class Stage{
     Children: VisualObject[]
+    masks: BoundingBox[]
 
     constructor(){
         this.Children = []
+        this.masks = []
     }
     add(addObject:VisualObject){
         this.Children.push(addObject)
@@ -19,7 +22,11 @@ export class Stage{
         })
     }
 
-    children_to_tree_recurse(root:VisualObject):VisTree{
+    addMask(bb:BoundingBox){
+        this.masks.push(bb);
+    }
+
+    childrenToTreeRecurse(root:VisualObject):VisTree{
         const descriptiveText:string = root.constructor.name;
         const returnNode:VisTree = {
             visualObject:new TextBox({text: descriptiveText}),
@@ -54,7 +61,7 @@ export class Stage{
     // }
     render(svg:any, document?:any){
         d3.selectAll("svg > *").remove();
-        this.Children.forEach(pane => pane.render(svg))
+        this.Children.forEach(pane => pane.render(svg, this.masks))
         if(document){
             const svgContainer = document.getElementById('svg-container')
             svgContainer.getElementsByTagName('svg')[0].style.height = '200%'
