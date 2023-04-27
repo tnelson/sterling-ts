@@ -63,6 +63,7 @@ export class Line extends VisualObject {
     }}));
   }
 
+
   setColor(color: string | (() => string)) { this.color = toFunc(this.color(), color); }
   setWidth(width: number | (() => number)) { this.width = toFunc(this.width(), width); }
   setOpacity(opacity: number | (() => number)) {this.opacity = toFunc(this.opacity(), opacity)}

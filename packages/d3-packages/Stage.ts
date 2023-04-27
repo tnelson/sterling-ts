@@ -37,7 +37,7 @@ export class Stage{
         }
         else{ //recursive step
             root.children.forEach((child:VisualObject) => {
-                returnNode.children.push(this.children_to_tree_recurse(child));
+                returnNode.children.push(this.childrenToTreeRecurse(child));
             })
         }
 

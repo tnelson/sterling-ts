@@ -11,6 +11,8 @@ import {
 } from './geometricHelpers';
 import { VisualObject } from './VisualObject';
 import { BoundingBox, Coords, pointsOnBorder } from './Utility';
+import { EDGE_PRECISION} from './Constants'
+
 
 export interface EdgeProps {
   obj1: VisualObject;
@@ -50,7 +52,7 @@ export class Edge extends VisualObject {
     };
     this.boundary_points = [];
     this.visible_points = [];
-    this.compute_points(360);
+    this.compute_points(EDGE_PRECISION);
     this.makeLine();
     this.makeText();
   }
