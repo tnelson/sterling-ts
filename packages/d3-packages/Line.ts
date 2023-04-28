@@ -78,6 +78,17 @@ export class Line extends VisualObject {
             render_masks = this.masks;
         }
     maskIdentifier = this.addMaskRender(render_masks, svg);
+
+    if(this.pointsRelative.length == 2){
+      if(this.pointsRelative[0]().x == this.pointsRelative[1]().x){
+        const currlam = this.pointsRelative[0];
+        this.pointsRelative[0] = () => {return {x: currlam().x + 0.0001, y: currlam().y}}
+      }
+      if(this.pointsRelative[0]().y == this.pointsRelative[1]().y){
+        const currlam = this.pointsRelative[0];
+        this.pointsRelative[0] = () => {return {x: currlam().x, y: currlam().y + 0.0001}}
+      }
+    }
     let truePoints: Coords[] = this.pointsRelative.map((pointFn): Coords => {return {
       x: pointFn().x + this.center().x,
       y: pointFn().y + this.center().y
