@@ -11,6 +11,7 @@ import { Tree, VisTree } from './Tree';
 import { Edge } from './Edge';
 import { boxUnion } from './Utility';
 import { Hull } from './Hull';
+import { ConjoinedObject } from './ConjoinedObject'
 
 interface scriptViewImport {
   name: string;
@@ -37,7 +38,8 @@ const scriptViewImports: scriptViewImport[] = [
   { name: 'Tree', value: Tree },
   { name: 'Edge', value: Edge },
   { name: 'Hull', value: Hull },
-  {name: 'boxUnion', value: boxUnion}
+  { name: 'ConjoinedObject', value: ConjoinedObject },
+  { name: 'boxUnion', value: boxUnion }
 ];
 
 export { scriptViewImports };
