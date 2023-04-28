@@ -32,4 +32,4 @@ export const DEFAULT_TREE_LINE_WIDTH: number = 2
  * 
  */
 
-export const EDGE_PRECISION:number = 10;
+export const EDGE_PRECISION:number = 30;

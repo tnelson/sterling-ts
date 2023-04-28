@@ -1,14 +1,12 @@
-import {Coords} from './Utility'
+import {Coords, BoundingBox} from './Utility'
 import {VisualObject} from "./VisualObject"
+
 
 /**
  * This class is not currently being used!!
  */
 
 export class ConjoinedObject extends VisualObject{
-    /**
-     * Note: this code is untested!
-     */
 
     children:VisualObject[]
     constructor(Children?:VisualObject[]){
@@ -48,16 +46,5 @@ export class ConjoinedObject extends VisualObject{
         this.children.forEach(obj => {
             obj.setCenter(coords)
         })
-    }
-
-    override render(svg:any){
-        /**
-         * We render each of our objects. Note that this is done in inverse order of the list,
-         * as the first element in the list should be the frontmost element
-         */
-
-        for(let i = this.children.length-1; i >= 0; i--){
-            this.children[i].render(svg)
-        }
     }
 }

@@ -20,19 +20,21 @@ export interface EdgeProps {
   lineProps: LineProps;
   textProps: TextBoxProps;
   textLocation: string;
+  optimize ?: boolean;
 }
 
 export class Edge extends VisualObject {
   obj1: VisualObject;
   obj2: VisualObject;
+  obj2CoordsStore: Coords;
+  obj1CoordsStore: Coords;
   obj2Coords: () => Coords;
   obj1Coords: () => Coords;
   text: string | undefined;
   lineProps: LineProps; // Using lineProps object instead
   textProps: TextBoxProps;
   textLocation: string;
-  visible_points: Coords[];
-  boundary_points: Coords[];
+  optimize: boolean;
 
   //the simplest design of this is as a pointer between two objects
   constructor(props: EdgeProps) {
@@ -43,15 +45,15 @@ export class Edge extends VisualObject {
     this.textProps = props.textProps ?? {};
     this.lineProps = props.lineProps ?? { points: [] };
     this.textLocation = props.textLocation;
-
+    this.obj1CoordsStore = {x:0,y:0}
+    this.obj2CoordsStore = {x:0,y:0}
+    this.optimize = props.optimize ?? false;
     this.obj1Coords = () => {
       return { x: 0, y: 0 };
     };
     this.obj2Coords = () => {
       return { x: 0, y: 0 };
     };
-    this.boundary_points = [];
-    this.visible_points = [];
     this.compute_points(EDGE_PRECISION);
     this.makeLine();
     this.makeText();
@@ -63,35 +65,34 @@ export class Edge extends VisualObject {
       this.obj1.center(),
       this.obj2.center()
     );
-    this.obj2Coords = () => this.opt_points(target_point, this.obj2, precision);
-    this.obj1Coords = () => this.opt_points(target_point, this.obj1, precision);
+    this.obj2Coords = () => this.opt_points(target_point, this.obj2, precision, "obj1");
+    this.obj1Coords = () => this.opt_points(target_point, this.obj1, precision, "obj2");
   }
 
   opt_points(
     // Factor into utility?
     target_point: Coords,
     obj: VisualObject,
-    precision: number
+    precision: number,
+    coordsStore: string //indicate if we want to modify this for obj1 or obj2
   ): Coords {
-    //want a way to check if any object has a specific function
-    //if(func)
-    let boundingBoxLam: (r: number) => Coords; //this should be number. But typescript...
 
-    if (obj.hasLam()) {
-      boundingBoxLam = obj.getLam();
-    } else {
-      boundingBoxLam = bounding_box_to_lambda(obj.boundingBox());
-    }
-    // let boundingBoxLam: (r: number) => Coords = obj.getLam()
-    
-    const boundary_points: Coords[] = pointsOnBorder(boundingBoxLam, precision);
+    // if(this.optimize){
 
-    this.visible_points = boundary_points;
-    this.boundary_points = boundary_points;
+    // }
+
+    const boundary_points = pointsOnBorder(obj.getLam(), precision);
     const ret = get_minimum_distance(target_point, boundary_points);
+    if(coordsStore == "obj1"){
+      this.obj1CoordsStore = ret;
+    }
+    else if(coordsStore == "obj2"){
+      this.obj2CoordsStore = ret;
+    }
+    else{
+      throw "bad arg for coordsstore"
+    }
     return ret;
-
-
   }
 
   makeLine() {
@@ -206,7 +207,6 @@ export class Edge extends VisualObject {
         });
         break;
     }
-
     this.children.push(text);
   }
 }
