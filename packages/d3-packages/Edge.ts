@@ -76,10 +76,28 @@ export class Edge extends VisualObject {
     precision: number,
     coordsStore: string //indicate if we want to modify this for obj1 or obj2
   ): Coords {
+    if(this.optimize){
+      //if the user wants to optimize edge production, we create a range (obj.boundingBox() )that our
+      //final location values could fall between. If the current stores for edge location are
+      //within these ranges we just return whatever we currently have
+      let currGuess:Coords;
+      if(coordsStore == "obj1"){
+        currGuess = this.obj1CoordsStore;
+      }
+      else if(coordsStore == "obj2"){
+        currGuess = this.obj1CoordsStore;
+      }
+      else{
+        throw "bad arg for coordsstore"
+      }
 
-    // if(this.optimize){
+      if(currGuess.x < obj.boundingBox().bottom_right.x && currGuess.x > obj.boundingBox().top_left.x
+      && currGuess.y > obj.boundingBox().bottom_right.y && currGuess.y < obj.boundingBox().top_left.y)
+      {
+        return currGuess;  
+      }
 
-    // }
+    }
 
     const boundary_points = pointsOnBorder(obj.getLam(), precision);
     const ret = get_minimum_distance(target_point, boundary_points);
