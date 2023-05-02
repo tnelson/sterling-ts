@@ -190,7 +190,7 @@ interface LineProps {
 ```
 If `arrow` is true, the end of the line will have a small arrowhead. Style can take the values of `'dotted'` or `'dashed'`Here's an example line:
 ```
-polypoints = [
+linepoints = [
     {x:100, y:100},
     {x:125, y:100},
     {x:150, y:75},
@@ -200,7 +200,7 @@ polypoints = [
 ]
 
 let line = new Line({
-    points: polypoints, 
+    points: linepoints, 
     color: 'black', 
     width: 2, 
     labelColor: "blue",

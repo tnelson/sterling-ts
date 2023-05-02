@@ -12,6 +12,7 @@ import { Edge } from './Edge';
 import { boxUnion } from './Utility';
 import { Hull } from './Hull';
 import { ConjoinedObject } from './ConjoinedObject'
+import { Ellipse } from './Ellipse';
 
 interface scriptViewImport {
   name: string;
@@ -39,7 +40,8 @@ const scriptViewImports: scriptViewImport[] = [
   { name: 'Edge', value: Edge },
   { name: 'Hull', value: Hull },
   { name: 'ConjoinedObject', value: ConjoinedObject },
-  { name: 'boxUnion', value: boxUnion }
+  { name: 'boxUnion', value: boxUnion },
+  { name: 'Ellipse', value: Ellipse}
 ];
 
 export { scriptViewImports };
