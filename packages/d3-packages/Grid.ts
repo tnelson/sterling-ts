@@ -104,13 +104,15 @@ export class Grid extends VisualObject{
         if(!ignore_warning){this.check_bounding_box(add_object.boundingBox())}
         
         this.children.push(add_object)
-        add_object.center = this.center_helper(coords) //center object
+        add_object.center = this.center_helper(coords, add_object.center) //center object
     }
 
-    private center_helper(coords: Coords): (() => Coords) {
-        return () => { return {
-            x: this.coords().x + this.config.cell_size.x_size * (coords.x + .5),
-            y: this.coords().y + this.config.cell_size.y_size * (coords.y + .5)
+    private center_helper(coords: Coords, offset: () => Coords): (() => Coords) {
+        return () => { 
+            let off: Coords = offset()
+            return {
+            x: this.coords().x + this.config.cell_size.x_size * (coords.x + .5) + off.x,
+            y: this.coords().y + this.config.cell_size.y_size * (coords.y + .5) + off.y
         }}
     }
 

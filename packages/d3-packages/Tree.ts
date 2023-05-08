@@ -61,9 +61,11 @@ export class Tree extends VisualObject{
         this.height = props.height;
         this.width = props.width;
         this.root = props.root;
+        
+        let oldCenterFunc: () => Coords = this.root.visualObject.center
         this.root.visualObject.setCenter(() => { return {
-            x: this.coords().x + this.width / 2,
-            y: this.coords().y
+            x: this.coords().x + this.width / 2 + oldCenterFunc().x,
+            y: this.coords().y + oldCenterFunc().y
         }})
 
         this.lines = []
