@@ -14,12 +14,6 @@ const GraphViewButtons = () => {
   return (
     <>
       <SideBarButton
-        text='Explorer'
-        rightIcon={<FaFilm />}
-        isActive={view === 'GraphView' && drawer === 'explorer'}
-        onClick={() => dispatch(graphDrawerViewChanged('explorer'))}
-      />
-      <SideBarButton
         text='Time'
         rightIcon={<FaFilm />}
         isActive={view === 'GraphView' && drawer === 'state'}

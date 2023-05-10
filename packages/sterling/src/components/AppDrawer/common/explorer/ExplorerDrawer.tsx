@@ -9,7 +9,7 @@ import { ListView } from './ListView/ListView';
 // import { TimeProjectionSection } from './projections/TimeProjectionSection';
 // import { TimeSection } from './time/TimeSection';
 
-const GraphExplorerDrawer = () => {
+const ExplorerDrawer = () => {
   const activeDatum = useSterlingSelector(selectActiveDatum);
   const data = useSterlingSelector(selectData);
   console.log("explorer drawer yay!!!!!!!!!!!")
@@ -21,7 +21,7 @@ const GraphExplorerDrawer = () => {
   );
 };
 
-const GraphExplorerDrawerHeader = () => {
+const ExplorerDrawerHeader = () => {
   return (
     <div className='flex items-center px-2 space-x-2'>
       <Icon as={FaFilm} />
@@ -75,4 +75,4 @@ const TestDatumBox = ({
       </Box>
     );
   };
-export { GraphExplorerDrawer, GraphExplorerDrawerHeader };
+export { ExplorerDrawer, ExplorerDrawerHeader };

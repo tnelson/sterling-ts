@@ -2,10 +2,9 @@ export type GraphView = 'GraphView';
 export type TableView = 'TableView';
 export type ScriptView = 'ScriptView';
 export type MainView = GraphView | TableView | ScriptView;
-export type CommonDrawerView = 'evaluator' | 'log';
+export type CommonDrawerView = 'explorer' | 'evaluator' | 'log';
 export type GraphDrawerView =
   | CommonDrawerView
-  | 'explorer'
   | 'state'
   | 'theme'
   | 'layout'
