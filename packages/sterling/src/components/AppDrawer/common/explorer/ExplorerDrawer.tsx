@@ -1,21 +1,18 @@
 import { PaneTitle } from '@/sterling-ui';
 import { Box, Icon } from '@chakra-ui/react';
 import { FaFilm } from 'react-icons/fa';
-// import { DataExplorer } from 'sterling/src/components/DataExplorer/DataExplorer';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum, selectData } from '../../../../state/selectors';
 import { GraphPreview } from '../../../GraphPreview/GraphPreview';
 import { ListView } from './ListView/ListView';
-// import { TimeProjectionSection } from './projections/TimeProjectionSection';
-// import { TimeSection } from './time/TimeSection';
 
 const ExplorerDrawer = () => {
   const activeDatum = useSterlingSelector(selectActiveDatum);
   const data = useSterlingSelector(selectData);
-  console.log("explorer drawer yay!!!!!!!!!!!")
+
   if (!activeDatum) return null;
   return (
-    <div className='absolute inset-0 flex flex-col overflow-y-auto'>
+    <div aria-label='explorer pane datum selector' className='absolute inset-0 flex flex-col overflow-y-auto'>
         <ListView data={data} active={activeDatum} /> 
     </div>
   );
