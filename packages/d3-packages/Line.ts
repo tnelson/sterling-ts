@@ -224,7 +224,7 @@ export class Line extends VisualObject {
         // Default sweep to `1` (curve upward on a left-to-right line)
         return `M ${truePoints[0].x} ${truePoints[0].y} 
                 A ${curveSpec.xradius} ${curveSpec.yradius} ${0} ${0} 
-                  ${curveSpec.sweep ? curveSpec.sweep : 1} ${truePoints[1].x} ${truePoints[1].y}`
+                  ${curveSpec.sweep !== undefined ? curveSpec.sweep : 1} ${truePoints[1].x} ${truePoints[1].y}`
       case 'cubic': 
         console.log('Error: cubic curves currently unsupported by Line')
         throw new Error('cubic curves currently unsupported by Line')
