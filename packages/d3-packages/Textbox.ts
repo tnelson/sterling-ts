@@ -79,7 +79,7 @@ export class TextBox extends VisualObject {
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central')
       .attr('font-size', this.fontSize)
-      .attr('mask', `url(#${maskIdentifier})`)
+      .attr('mask', (render_masks.length > 0) ? `url(#${maskIdentifier})` : '')
       .attr('fill', this.color)
       .text(this.text);
     super.render(svg);

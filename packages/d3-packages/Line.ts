@@ -1,4 +1,4 @@
-import { Shape } from './Shape';
+import { v4 as uuidv4 } from 'uuid';
 import * as d3 from 'd3';
 import { VisualObject } from './VisualObject';
 import {
@@ -15,6 +15,36 @@ import {
   DEFAULT_STROKE_WIDTH
 } from './Constants';
 
+/**
+ * Use SVG arc (command "A") to curve the line. 
+ * Will ignore all points after the first two.
+ */
+export interface ArcSpec {
+  curveType: 'arc', 
+  xradius: number,
+  yradius: number,
+  sweep ?: number,
+}
+/**
+ * No curve will be applied.
+ */
+export interface NoCurveSpec {
+  curveType: 'none'
+}
+/**
+ * Currently unsupported
+ */
+export interface CubicBezierSpec {
+  curveType: 'cubic'
+}
+/**
+ * Currently unsupported
+ */
+export interface QuadraticBezierSpec {
+  curveType: 'quadratic'
+}
+export type CurveSpec = CubicBezierSpec | QuadraticBezierSpec | ArcSpec | NoCurveSpec;
+
 export interface LineProps {
   points?: Coords[] | (() => Coords)[];
   arrow?: boolean;
@@ -22,6 +52,7 @@ export interface LineProps {
   width?: number | (() => number);
   opacity?: number | (() => number);
   style?: string | (() => string);
+  curve?: CurveSpec | (() => CurveSpec);
 }
 
 export class Line extends VisualObject {
@@ -31,6 +62,7 @@ export class Line extends VisualObject {
   opacity: () => number;
   arrow: boolean;
   style: () => string;
+  curve: () => CurveSpec;
 
   /**
    * Creates a line on the given poitns.
@@ -59,6 +91,7 @@ export class Line extends VisualObject {
     this.opacity = toFunc(1, props.opacity);
     this.arrow = props.arrow ?? false;
     this.style = toFunc('full', props.style);
+    this.curve = toFunc({curveType: 'none'}, props.curve)
   }
 
   boundingBox(): BoundingBox {
@@ -117,58 +150,90 @@ export class Line extends VisualObject {
         y: pointFn().y + this.center().y
       };
     });
-    let path = d3.path();
-    path.moveTo(truePoints[0].x, truePoints[0].y);
-    truePoints.forEach((point: Coords) => {
-      path.lineTo(point.x, point.y);
-    });
-
+    
+    const pathstr = this.buildPathString(truePoints) 
+    
     let style: string | number = '0';
     if (this.style() == 'dashed') style = this.width() * 5;
     else if (this.style() == 'dotted') style = this.width();
 
-    //add in definition for arrow
-    d3.select(svg)
-      .append('svg:defs')
-      .append('svg:marker')
-      .attr('id', 'triangle')
-      .attr('refX', 11)
-      .attr('refY', 6)
-      .attr('markerWidth', 10 * this.width())
-      .attr('markerHeight', 10 * this.width())
-      .attr('markerUnits', 'userSpaceOnUse')
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M 0 0 12 6 0 12 3 6')
-      .style('fill', 'black');
-    // credit to : http://jsfiddle.net/igbatov/v0ekdzw1/
-    //for the arrows (thanks Igor Batov <3)
-
     // TypeScript will now enforce that we're passing the proper type to attr.
     // attr doesn't take Paths, but string will work.
     if (this.arrow) {
+      // add in definition for arrow. use a fresh uuid to distinguish arrows for each line
+      //   (otherwise difference between lines, like color changes, won't be seen)
+      // credit to : http://jsfiddle.net/igbatov/v0ekdzw1/ 
+      //   for the arrows (thanks Igor Batov <3)
+      const fresh_uuid: string = uuidv4()
       d3.select(svg)
+        .append('svg:defs')
+        .append('svg:marker')
+        .attr('id', fresh_uuid)
+        .attr('refX', 11)
+        .attr('refY', 6)
+        .attr('markerWidth', 10 * this.width())
+        .attr('markerHeight', 10 * this.width())
+        .attr('markerUnits', 'userSpaceOnUse')
+        .attr('orient', 'auto')
         .append('path')
-        .attr('d', path.toString())
+        .attr('d', 'M 0 0 12 6 0 12 3 6')      
+        .style('fill', this.color);    
+
+      // Add the line itself, which refers to the arrow
+      d3.select(svg)
+        .append('path')        
+        .attr('d', pathstr) 
         .attr('stroke-width', this.width)
         .attr('stroke', this.color)
         .attr('opacity', this.opacity())
-        .attr('marker-end', 'url(#triangle)')
-        .attr('mask', `url(#${maskIdentifier})`)
+        .attr('marker-end', `url(#${fresh_uuid})`)
+        // Only add the mask ID if it exists
+        .attr('mask', (render_masks.length > 0) ? `url(#${maskIdentifier})` : '')
         .style('stroke-dasharray', style)
         .attr('fill', 'transparent'); // Should prob make easier in future.
       super.render(svg, render_masks);
     } else {
+      // otherwise, no arrow, just a line
       d3.select(svg)
-        .append('path')
-        .attr('d', path.toString())
+        .append('path')        
+        .attr('d', pathstr) 
         .attr('stroke-width', this.width)
         .attr('stroke', this.color)
         .attr('opacity', this.opacity())
         .attr('fill', 'transparent')
-        .attr('mask', `url(#${maskIdentifier})`)
+        .attr('mask', (render_masks.length > 0) ? `url(#${maskIdentifier})` : '')
         .style('stroke-dasharray', style); // Should prob make easier in future.
       super.render(svg, render_masks);
+    }
+  }
+
+  private buildPathString(truePoints: Coords[]): string {
+    const curveSpec = this.curve()
+    console.log(curveSpec)
+    switch(curveSpec.curveType) {
+      case 'none': 
+        const path = d3.path();    
+        path.moveTo(truePoints[0].x, truePoints[0].y);    
+        truePoints.forEach((point: Coords) => {
+           path.lineTo(point.x, point.y);
+        });
+        return path.toString();
+      case 'arc':
+        // D3 is not currently building the arc as expected, so build the 
+        // SVG path string directly. Ignore all but the first two points. 
+        // Default sweep to `1` (curve upward on a left-to-right line)
+        return `M ${truePoints[0].x} ${truePoints[0].y} 
+                A ${curveSpec.xradius} ${curveSpec.yradius} ${0} ${0} 
+                  ${curveSpec.sweep ? curveSpec.sweep : 1} ${truePoints[1].x} ${truePoints[1].y}`
+      case 'cubic': 
+        console.log('Error: cubic curves currently unsupported by Line')
+        throw new Error('cubic curves currently unsupported by Line')
+      case 'quadratic': 
+        console.log('Error: quadratic curves currently unsupported by Line')
+        throw new Error('quadratic curves currently unsupported by Line')
+      default:
+        console.log(`Error: unrecognized curveType in prop ${JSON.stringify(curveSpec)} (check you have not misspelled the field name)`)
+        throw new Error(`unknown curveType field in Line prop ${JSON.stringify(curveSpec)} (check you have not misspelled the field name)`)
     }
   }
 }
