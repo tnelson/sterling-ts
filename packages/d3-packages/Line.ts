@@ -222,6 +222,8 @@ export class Line extends VisualObject {
         // D3 is not currently building the arc as expected, so build the 
         // SVG path string directly. Ignore all but the first two points. 
         // Default sweep to `1` (curve upward on a left-to-right line)
+        // TODO: first 0 is the angle relative to the x axis
+        // TODO: second 0 should be 1 if the arc sweeps > 180 degrees
         return `M ${truePoints[0].x} ${truePoints[0].y} 
                 A ${curveSpec.xradius} ${curveSpec.yradius} ${0} ${0} 
                   ${curveSpec.sweep !== undefined ? curveSpec.sweep : 1} ${truePoints[1].x} ${truePoints[1].y}`
