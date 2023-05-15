@@ -17,10 +17,10 @@ import { EDGE_PRECISION} from './Constants'
 export interface EdgeProps {
   obj1: VisualObject;
   obj2: VisualObject;
-  lineProps: LineProps;
-  textProps: TextBoxProps;
-  textLocation: string;
-  optimize ?: boolean;
+  lineProps?: LineProps;
+  textProps?: TextBoxProps;
+  textLocation?: string;
+  fast_imprecise ?: boolean;
 }
 
 export class Edge extends VisualObject {
@@ -34,7 +34,7 @@ export class Edge extends VisualObject {
   lineProps: LineProps; // Using lineProps object instead
   textProps: TextBoxProps;
   textLocation: string;
-  optimize: boolean;
+  fast_imprecise: boolean;
 
   //the simplest design of this is as a pointer between two objects
   constructor(props: EdgeProps) {
@@ -44,10 +44,10 @@ export class Edge extends VisualObject {
     this.obj2 = props.obj2;
     this.textProps = props.textProps ?? {};
     this.lineProps = props.lineProps ?? { points: [] };
-    this.textLocation = props.textLocation;
+    this.textLocation = props.textLocation ?? "none";
     this.obj1CoordsStore = {x:0,y:0}
     this.obj2CoordsStore = {x:0,y:0}
-    this.optimize = props.optimize ?? false;
+    this.fast_imprecise = props.fast_imprecise ?? false;
     this.obj1Coords = () => {
       return { x: 0, y: 0 };
     };
@@ -61,7 +61,7 @@ export class Edge extends VisualObject {
 
   compute_points(precision: number) {
     const target_point: Coords = mid_point(
-      //we set a point to optimize distance from
+      //we set a point to fast_imprecise distance from
       this.obj1.center(),
       this.obj2.center()
     );
@@ -76,8 +76,8 @@ export class Edge extends VisualObject {
     precision: number,
     coordsStore: string //indicate if we want to modify this for obj1 or obj2
   ): Coords {
-    if(this.optimize){
-      //if the user wants to optimize edge production, we create a range (obj.boundingBox() )that our
+    if(this.fast_imprecise){
+      //if the user wants to fast_imprecise edge production, we create a range (obj.boundingBox() )that our
       //final location values could fall between. If the current stores for edge location are
       //within these ranges we just return whatever we currently have
       let currGuess:Coords;
@@ -121,6 +121,9 @@ export class Edge extends VisualObject {
   }
 
   makeText() {
+    if(this.textLocation == "none"){
+      return;
+    }
     let text: TextBox = new TextBox(this.textProps);
 
     let angle: () => number = () =>
