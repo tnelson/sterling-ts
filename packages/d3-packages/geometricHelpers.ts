@@ -211,4 +211,153 @@ export function jarvisAlgo(S:Coords[]){
     return hull;
 }
 
+///////////////////////////////////////////
+// SVG Arc conversion
+///////////////////////////////////////////
+
+// TODO: this needs more review; adding for experimental purposes
+
+export interface ArcEndpointParameterization {
+  x1: number, 
+  y1: number, 
+  rx: number, 
+  ry: number, 
+  phi: number, 
+  fA: boolean, 
+  fS: boolean, 
+  x2: number, 
+  y2: number
+}
+
+export interface ArcCenterParameterization {
+  cx: number,
+  cy: number,
+  startAngle: number,
+  deltaAngle: number,
+  endAngle: number,
+  clockwise: boolean
+}
+
+export interface ScaledRadii {
+  rx: number,
+  ry: number
+}
+
+function findAngleRadians( ux: number, uy: number, vx: number, vy: number ): number {
+  const  dot = ux * vx + uy * vy;
+  const  mod = Math.sqrt( ( ux * ux + uy * uy ) * ( vx * vx + vy * vy ) );
+  let  rad = Math.acos( dot / mod );
+  if( ux * vy - uy * vx < 0.0 ) {
+      rad = -rad;
+  }
+  return rad;
+}
+
+/**
+ * 
+ * Convert an endpoint parameterization (SVG) to a center parameterization
+ * Docs: https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
+ * Conversion process: https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
+ *
+ * Code adapted from "cuixiping": https://stackoverflow.com/questions/9017100/calculate-center-of-svg-arc
+ *    with modifications and comments by TN
+ * 
+ */
+export function svgArcEndpointToCenter(
+    {x1, y1, rx, ry, phi, fA, fS, x2, y2}: ArcEndpointParameterization): 
+    ArcCenterParameterization & ScaledRadii {
+
+  // Output variables
+  let cx, cy, startAngle, deltaAngle, endAngle;
+  const PIx2 = Math.PI * 2.0;
+
+  /////////////////////////////////////////////////////
+  // Correction of out-of-range radii
+  // F.6.6 Step 1: Ensure the radii are non-zero
+  if (rx == 0.0 || ry == 0.0) { 
+    throw Error('rx and ry can not be 0');
+  }
+
+  // F.6.6 Step 2: Ensure radii are positive
+  if (rx < 0) {
+      rx = -rx;
+  }
+  if (ry < 0) {
+      ry = -ry;
+  }
+
+  const s_phi = Math.sin(phi);
+  const c_phi = Math.cos(phi);
+  const hd_x = (x1 - x2) / 2.0; // half diff of x
+  const hd_y = (y1 - y2) / 2.0; // half diff of y
+  const hs_x = (x1 + x2) / 2.0; // half sum of x
+  const hs_y = (y1 + y2) / 2.0; // half sum of y
+
+  // F6.5.1
+  const x1_ = c_phi * hd_x + s_phi * hd_y;
+  const y1_ = c_phi * hd_y - s_phi * hd_x;
+
+  // F.6.6 Correction of out-of-range radii
+  //   Step 3: Ensure radii are large enough
+  const lambda = (x1_ * x1_) / (rx * rx) + (y1_ * y1_) / (ry * ry);
+  if (lambda > 1) {
+      rx = rx * Math.sqrt(lambda);
+      ry = ry * Math.sqrt(lambda);
+  }
+
+  // F.6.6. Step 4: Proceed with computations
+  ////////////////////////////////////////////////////
+
+  var rxry = rx * ry;
+  var rxy1_ = rx * y1_;
+  var ryx1_ = ry * x1_;
+  var sum_of_sq = rxy1_ * rxy1_ + ryx1_ * ryx1_; // sum of square
+  if (!sum_of_sq) {
+      throw Error('start point can not be same as end point');
+  }
+  var coe = Math.sqrt(Math.abs((rxry * rxry - sum_of_sq) / sum_of_sq));
+  if (fA == fS) { coe = -coe; }
+
+  // F6.5.2
+  var cx_ = coe * rxy1_ / ry;
+  var cy_ = -coe * ryx1_ / rx;
+
+  // F6.5.3
+  cx = c_phi * cx_ - s_phi * cy_ + hs_x;
+  cy = s_phi * cx_ + c_phi * cy_ + hs_y;
+
+  var xcr1 = (x1_ - cx_) / rx;
+  var xcr2 = (x1_ + cx_) / rx;
+  var ycr1 = (y1_ - cy_) / ry;
+  var ycr2 = (y1_ + cy_) / ry;
+
+  // F6.5.5
+  startAngle = findAngleRadians(1.0, 0.0, xcr1, ycr1);
+
+  // F6.5.6
+  deltaAngle = findAngleRadians(xcr1, ycr1, -xcr2, -ycr2);
+  while (deltaAngle > PIx2) { deltaAngle -= PIx2; }
+  while (deltaAngle < 0.0) { deltaAngle += PIx2; }
+  if (fS == false) { deltaAngle -= PIx2; }
+  endAngle = startAngle + deltaAngle;
+  while (endAngle > PIx2) { endAngle -= PIx2; }
+  while (endAngle < 0.0) { endAngle += PIx2; }
+
+  return {
+      cx: cx,
+      cy: cy,
+      startAngle: startAngle,
+      deltaAngle: deltaAngle,
+      endAngle: endAngle,
+      clockwise: (fS == true),
+      // Report back the radii, in case they needed to be scaled
+      rx: rx,
+      ry: ry
+  }
+
+
+}
+
+///////////////////////////////////////////////
+
 export { distance, mid_point, get_minimum_distance, bounding_box_to_lambda, normalize};

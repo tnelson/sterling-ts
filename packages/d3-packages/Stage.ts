@@ -16,10 +16,15 @@ export class Stage{
     add(addObject:VisualObject){
         this.Children.push(addObject)
     }
+    
     addAll(addObjects:VisualObject[]){
         addObjects.forEach((o) => {
             this.Children.push(o);
         })
+    }
+
+    remove(removeObject: VisualObject){
+        this.Children = this.Children.filter(c => c !== removeObject)
     }
 
     addMask(bb:BoundingBox){

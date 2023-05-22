@@ -13,6 +13,7 @@ import { boxUnion } from './Utility';
 import { Hull } from './Hull';
 import { ConjoinedObject } from './ConjoinedObject'
 import { Ellipse } from './Ellipse';
+import { ImageBox } from './ImageBox';
 
 interface scriptViewImport {
   name: string;
@@ -41,7 +42,8 @@ const scriptViewImports: scriptViewImport[] = [
   { name: 'Hull', value: Hull },
   { name: 'ConjoinedObject', value: ConjoinedObject },
   { name: 'boxUnion', value: boxUnion },
-  { name: 'Ellipse', value: Ellipse}
+  { name: 'Ellipse', value: Ellipse},
+  { name: 'ImageBox', value: ImageBox}
 ];
 
 export { scriptViewImports };

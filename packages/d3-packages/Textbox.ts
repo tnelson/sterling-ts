@@ -13,12 +13,26 @@ export interface TextBoxProps {
   coords?: Coords | (() => Coords);
   color?: string | (() => string);
   fontSize?: number | (() => number);
+  events?: VisualObjectEventDecl[] | (() => VisualObjectEventDecl[])
+}
+
+/**
+ * Taken from D3's declarations. `d` is typed within D3, but via
+ * a type parameter.
+ */
+export type VisualObjectEventCallback = 
+  (this: SVGTextElement, event: any, d: any) => void
+export interface VisualObjectEventDecl {
+  event: string,
+  callback: VisualObjectEventCallback,
+  options?: any // D3's type decls use `any` here
 }
 
 export class TextBox extends VisualObject {
   text: () => string;
   fontSize: () => number;
   color: () => string;
+  events: () => VisualObjectEventDecl[];
 
   /**
    * Displays given text.
@@ -32,6 +46,7 @@ export class TextBox extends VisualObject {
     this.text = toFunc('', props.text);
     this.fontSize = toFunc(DEFAULT_FONT_SIZE, props.fontSize);
     this.color = toFunc(DEFAULT_TEXT_COLOR, props.color);
+    this.events = toFunc([], props.events)
   }
 
   boundingBox(): BoundingBox {
@@ -72,16 +87,23 @@ export class TextBox extends VisualObject {
     }
     maskIdentifier = this.addMaskRender(render_masks, svg);
 
-    d3.select(svg)
+    const d3Box = d3.select(svg)
       .append('text')
       .attr('x', this.center().x)
       .attr('y', this.center().y)
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central')
       .attr('font-size', this.fontSize)
-      .attr('mask', `url(#${maskIdentifier})`)
+      .attr('mask', (render_masks.length > 0) ? `url(#${maskIdentifier})` : '')
       .attr('fill', this.color)
       .text(this.text);
+
+    // Because of how props are lifted to a function, they can
+    // never themselves have function type. Instead, have one 
+    // event prop (object), which is more extensible anyway. 
+    if(this.events()) 
+      this.events().forEach(e => d3Box.on(e.event, e.callback))
+
     super.render(svg);
   }
 }

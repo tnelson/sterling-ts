@@ -46,9 +46,9 @@ export class Polygon extends Shape{
         let maskIdentifier: string = '';
         let render_masks: BoundingBox[];
         if (parent_masks) {
-        render_masks = this.masks.concat(parent_masks);
+          render_masks = this.masks.concat(parent_masks);
         } else {
-        render_masks = this.masks;
+          render_masks = this.masks;
         }
         let truePoints: Coords[] = this.pointsRelative.map((pointFn): Coords => {return {
             x: pointFn().x + this.center().x,
@@ -68,7 +68,7 @@ export class Polygon extends Shape{
             .attr('stroke-width', this.borderWidth)
             .attr('stroke', this.borderColor)
             .attr('fill', this.color)
-            .attr('mask', `url(#${maskIdentifier})`)
+            .attr('mask', (render_masks.length > 0) ? `url(#${maskIdentifier})` : '')
             .attr('opacity', this.opacity()) 
         super.render(svg, render_masks)
     }
