@@ -1,9 +1,9 @@
 import { require as d3require } from 'd3-require';
 import * as d3 from 'd3';
 import {
-  DEFAULT_COLOR,
   DEFAULT_FONT_SIZE,
-  DEFAULT_TEXT_COLOR
+  DEFAULT_TEXT_COLOR,
+  DEFAULT_FONT_WEIGHT
 } from './Constants';
 import { VisualObject } from './VisualObject';
 import { BoundingBox, Coords, toFunc } from './Utility';
@@ -13,6 +13,13 @@ export interface TextBoxProps {
   coords?: Coords | (() => Coords);
   color?: string | (() => string);
   fontSize?: number | (() => number);
+  fontWeight?: number | (() => number);
+  /**
+   * Event handlers for this visual object. Note that if you're changing
+   * properties of the object in a handler, make sure to do this before
+   * calling the Stage's render method once more, or your changes won't 
+   * be included in the rendering.
+   */
   events?: VisualObjectEventDecl[] | (() => VisualObjectEventDecl[])
 }
 
@@ -33,6 +40,7 @@ export class TextBox extends VisualObject {
   fontSize: () => number;
   color: () => string;
   events: () => VisualObjectEventDecl[];
+  fontWeight: () => number;
 
   /**
    * Displays given text.
@@ -47,6 +55,7 @@ export class TextBox extends VisualObject {
     this.fontSize = toFunc(DEFAULT_FONT_SIZE, props.fontSize);
     this.color = toFunc(DEFAULT_TEXT_COLOR, props.color);
     this.events = toFunc([], props.events)
+    this.fontWeight = toFunc(DEFAULT_FONT_WEIGHT, props.fontWeight)
   }
 
   boundingBox(): BoundingBox {
@@ -74,9 +83,12 @@ export class TextBox extends VisualObject {
   setTextColor(color: string | (() => string)) {
     this.color = toFunc(this.color(), color);
   }
+  setFontWeight(weight: number | (() => number)) {
+    this.fontWeight = toFunc(this.fontWeight(), weight)
+  }
 
   override render(svg: any, parent_masks: BoundingBox[]) {
-
+    console.log(`text: ${this.text()} weight: ${this.fontWeight()}`)
     let maskIdentifier: string = '';
 
     let render_masks: BoundingBox[];
@@ -94,10 +106,12 @@ export class TextBox extends VisualObject {
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central')
       .attr('font-size', this.fontSize)
+      .attr('font-weight', this.fontWeight)
       .attr('mask', (render_masks.length > 0) ? `url(#${maskIdentifier})` : '')
       .attr('fill', this.color)
       .text(this.text);
 
+    // Finally, register callbacks
     // Because of how props are lifted to a function, they can
     // never themselves have function type. Instead, have one 
     // event prop (object), which is more extensible anyway. 

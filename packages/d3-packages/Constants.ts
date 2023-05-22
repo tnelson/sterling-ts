@@ -3,6 +3,11 @@ export const DEFAULT_COLOR: string = "rgb(255, 255, 255)"; // Default to white
 export const DEFAULT_STROKE_WIDTH: number = 2;
 export const DEFAULT_BORDER_COLOR: string = "rgb(0, 0, 0)"; // Default to black background
 
+/**
+ * Textbox font weight [100-1000]; defaults to CSS 'normal' value of 400
+ */
+export const DEFAULT_FONT_WEIGHT: number = 400;
+
 export const DEFAULT_FONT_SIZE: number = 15;
 export const DEFAULT_TEXT_COLOR: string = "rgb(0, 0, 0)"
 

@@ -209,7 +209,7 @@ export class Line extends VisualObject {
 
   private buildPathString(truePoints: Coords[]): string {
     const curveSpec = this.curve()
-    console.log(curveSpec)
+    //console.log(curveSpec)
     switch(curveSpec.curveType) {
       case 'none': 
         const path = d3.path();    
