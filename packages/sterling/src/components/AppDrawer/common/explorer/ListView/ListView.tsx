@@ -1,7 +1,7 @@
 import { DatumParsed } from '@/sterling-connection';
 import { useCallback, MouseEvent } from 'react';
-import { activeDatumSet } from '../../../state/data/dataSlice';
-import { useSterlingDispatch } from '../../../state/hooks';
+import { activeDatumSet } from '../../../../../state/data/dataSlice';
+import { useSterlingDispatch } from '../../../../../state/hooks';
 import { ListViewItem } from './ListViewItem';
 
 interface ListViewProps {

@@ -4,11 +4,11 @@ import { MouseEvent } from 'react';
 import { FaFilm } from 'react-icons/fa';
 import { GoTerminal } from 'react-icons/go';
 import { GiFilmProjector } from 'react-icons/gi';
-import { useSterlingSelector } from '../../../state/hooks';
+import { useSterlingSelector } from '../../../../../state/hooks';
 import {
   selectDatumIsStateful,
   selectDatumIsStatefulProjected
-} from '../../../state/selectors';
+} from '../../../../../state/selectors';
 import { Row, RowItem } from './Row';
 
 interface ListViewItemProps {

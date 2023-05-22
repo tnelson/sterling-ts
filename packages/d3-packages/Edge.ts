@@ -146,7 +146,6 @@ export class Edge extends VisualObject {
       if(arcloc !== undefined) return arcloc
       return mid_point(this.obj1Coords(), this.obj2Coords()) 
     };
-    console.log(lineMidPoint())
 
     switch (this.textLocation) {
       case 'above':
