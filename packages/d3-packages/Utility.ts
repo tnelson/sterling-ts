@@ -5,14 +5,16 @@
 
 export function toFunc<T>(defaultValue: T, t?: T | (() => T)): (() => T)  {
     let constOrFunction: T | (() => T) = t ?? defaultValue
-    if (typeof constOrFunction !== "function") {
+    // This will require a typecast below:
+    //if (typeof constOrFunction !== "function") {
+    // This does not:
+    if(!(constOrFunction instanceof Function)) {
         let constVal: T = constOrFunction
         return () => constVal
     } else {
-        // This is a bit wonky because typescript is worried that constOrFunction
-        // is both T and a function. Note that this sort of narrowing will NOT
-        // work in the case of T being a function type itself! It has to be something else
-        return constOrFunction as () => T
+        // Note that this sort of narrowing will NOT work in the case of T 
+        // being a function type itself! It has to be something else.
+        return constOrFunction
     }
 }
 

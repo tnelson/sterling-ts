@@ -2,6 +2,9 @@
   "folders": [
     {
       "path": "."
+    },
+    {
+      "path": "../sterling-e2e"
     }
   ],
   "settings": {

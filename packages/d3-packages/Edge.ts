@@ -7,20 +7,20 @@ import {
   mid_point,
   get_minimum_distance,
   bounding_box_to_lambda,
-  normalize
+  normalize,
+  svgArcEndpointToCenter
 } from './geometricHelpers';
 import { VisualObject } from './VisualObject';
 import { BoundingBox, Coords, pointsOnBorder } from './Utility';
 import { EDGE_PRECISION} from './Constants'
 
-
 export interface EdgeProps {
   obj1: VisualObject;
   obj2: VisualObject;
-  lineProps: LineProps;
-  textProps: TextBoxProps;
-  textLocation: string;
-  optimize ?: boolean;
+  lineProps?: LineProps;
+  textProps?: TextBoxProps;
+  textLocation?: string;
+  fast_imprecise ?: boolean;
 }
 
 export class Edge extends VisualObject {
@@ -34,7 +34,7 @@ export class Edge extends VisualObject {
   lineProps: LineProps; // Using lineProps object instead
   textProps: TextBoxProps;
   textLocation: string;
-  optimize: boolean;
+  fast_imprecise: boolean;
 
   //the simplest design of this is as a pointer between two objects
   constructor(props: EdgeProps) {
@@ -44,10 +44,10 @@ export class Edge extends VisualObject {
     this.obj2 = props.obj2;
     this.textProps = props.textProps ?? {};
     this.lineProps = props.lineProps ?? { points: [] };
-    this.textLocation = props.textLocation;
+    this.textLocation = props.textLocation ?? "none";
     this.obj1CoordsStore = {x:0,y:0}
     this.obj2CoordsStore = {x:0,y:0}
-    this.optimize = props.optimize ?? false;
+    this.fast_imprecise = props.fast_imprecise ?? false;
     this.obj1Coords = () => {
       return { x: 0, y: 0 };
     };
@@ -61,7 +61,7 @@ export class Edge extends VisualObject {
 
   compute_points(precision: number) {
     const target_point: Coords = mid_point(
-      //we set a point to optimize distance from
+      //we set a point to fast_imprecise distance from
       this.obj1.center(),
       this.obj2.center()
     );
@@ -76,8 +76,8 @@ export class Edge extends VisualObject {
     precision: number,
     coordsStore: string //indicate if we want to modify this for obj1 or obj2
   ): Coords {
-    if(this.optimize){
-      //if the user wants to optimize edge production, we create a range (obj.boundingBox() )that our
+    if(this.fast_imprecise){
+      //if the user wants to fast_imprecise edge production, we create a range (obj.boundingBox() )that our
       //final location values could fall between. If the current stores for edge location are
       //within these ranges we just return whatever we currently have
       let currGuess:Coords;
@@ -121,19 +121,32 @@ export class Edge extends VisualObject {
   }
 
   makeText() {
+    if(this.textLocation == "none"){
+      return;
+    }
     let text: TextBox = new TextBox(this.textProps);
 
     let angle: () => number = () =>
       lineAngle(this.obj1Coords(), this.obj2Coords());
-    let textBounding: () => BoundingBox = () => text.boundingBox();
+
+    // TODO: is this no longer needed?
+    //let textBounding: () => BoundingBox = () => text.boundingBox();
+
+    // Approximating based on font size (may not work for all fonts)
     let cornerDist: () => number = () => {
       return Math.sqrt(
         Math.pow(text.fontSize(), 2) +
           Math.pow(text.text().length * 0.14 * text.fontSize(), 2)
       );
     };
-    let lineMidPoint: () => Coords = () =>
-      mid_point(this.obj1Coords(), this.obj2Coords());
+
+    // Adjust midpoint (for text location) if this is a curved line
+    let lineMidPoint: () => Coords = () => {
+      const arcloc = this.arcMidpoint()
+      if(arcloc !== undefined) return arcloc
+      return mid_point(this.obj1Coords(), this.obj2Coords()) 
+    };
+    console.log(lineMidPoint())
 
     switch (this.textLocation) {
       case 'above':
@@ -224,9 +237,54 @@ export class Edge extends VisualObject {
           };
         });
         break;
+      default:
+        console.log(`default text position: midpoint of line or arc: at ${JSON.stringify(lineMidPoint())}`)
+        // Default in case someone uses an invalid positioning keyword
+        text.setCenter(() => {
+            return {
+              x: lineMidPoint().x, 
+              y: lineMidPoint().y
+            }})
     }
     this.children.push(text);
   }
+
+  private arcMidpoint(): Coords | undefined {
+    if(!this.lineProps) return undefined
+    const curveConfig = this.lineProps.curve instanceof Function ? 
+        this.lineProps.curve() : this.lineProps.curve
+    if(!curveConfig) return undefined
+
+    switch(curveConfig.curveType) {
+      case 'arc':
+        // Find the center of the _ellipse_:
+        const centerConfig = svgArcEndpointToCenter({
+          x1: this.obj1Coords().x, y1: this.obj1Coords().y,
+          rx: curveConfig.xradius, ry: curveConfig.yradius, 
+          phi: 0, fA: false, fS: curveConfig.sweep === 1, 
+          x2: this.obj2Coords().x, y2: this.obj2Coords().y})
+
+        // TODO: non-horizontal lines        
+
+        // console.log(this.obj1Coords())
+        // console.log(this.obj2Coords())
+        // console.log(curveConfig)
+        // console.log(centerConfig)
+
+        // Note: using centerConfig's ry, not curveConfig's ry, because possible scaling
+        const flipy = curveConfig.sweep === 0 
+        // TODO: this works only for *horizontal* lines! Need to do some trig with the angles.
+        return {
+          x: centerConfig.cx,
+          y: flipy ? centerConfig.cy + centerConfig.ry : 
+                     centerConfig.cy - centerConfig.ry
+        }
+      default: 
+        console.log(`unsupported curve type: ${curveConfig.curveType}`)
+        throw new Error(`unsupported curve type: ${curveConfig.curveType}`)
+    }
+  }
+
 }
 
 /**

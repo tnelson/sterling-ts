@@ -77,7 +77,7 @@ export class Ellipse extends Shape {
       .attr('stroke-width', this.borderWidth())
       .attr('stroke', this.borderColor())
       .attr('fill', this.color())
-      .attr('mask', `url(#${maskIdentifier})`)
+      .attr('mask', (render_masks.length > 0) ? `url(#${maskIdentifier})` : '')
       .attr('opacity', this.opacity());
     super.render(svg, render_masks);
   }
