@@ -2,6 +2,10 @@ import { AlloyInstance } from '@/alloy-instance';
 import { GraphProps } from '@/graph-svg';
 import { SterlingTheme } from '@/sterling-theme';
 
+export interface VisualizerConfig {
+  script?: string
+}
+
 export interface AlloyDatum {
   instances: AlloyInstance[];
   bitwidth?: number;
@@ -11,6 +15,7 @@ export interface AlloyDatum {
   maxTrace?: number;
   minTrace?: number;
   traceLength?: number;
+  visualizerConfig?: VisualizerConfig;
 }
 
 export interface AlloyDatumTrace extends AlloyDatum {

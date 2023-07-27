@@ -116,7 +116,6 @@ class AlloyField extends AlloyTypedSet {
             const varname = count > 1
                 ? multiFieldName(label, parent)
                 : label;
-                
             
             const tuples = AlloyTuple.tuplesFromXML(fieldElement.querySelectorAll('tuple'), allTypes);
 

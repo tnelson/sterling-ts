@@ -3,7 +3,7 @@ import { useDimensions } from '@/sterling-hooks';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
 import { useToast } from '@chakra-ui/react';
 import { editor } from 'monaco-editor';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { ScriptStageElement } from '../../state/script/script';
 import {
@@ -29,9 +29,19 @@ interface ScriptViewDatumProps {
 
 const ScriptViewDatum = (props: ScriptViewDatumProps) => {
   const { datum } = props;
-
+  
   const dispatch = useSterlingDispatch();
   const toast = useToast();
+
+  // If this datum contains a vis script, update (but only once -- BEFORE render)
+  // We want stale values from old renders in case the script was edited in Sterling.
+  useMemo(() => {
+    console.log(' in useEffect ');
+    if(datum.parsed.visualizerConfig) {
+      console.log(' in if ');
+      dispatch(scriptTextSet(datum.parsed.visualizerConfig.script))
+    }
+  }, [])
 
   const stage = useSterlingSelector(selectScriptStage);
   const size = useSterlingSelector(selectScriptStageDimensions);
