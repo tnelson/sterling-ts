@@ -36,9 +36,7 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
   // If this datum contains a vis script, update (but only once -- BEFORE render)
   // We want stale values from old renders in case the script was edited in Sterling.
   useMemo(() => {
-    console.log(' in useEffect ');
     if(datum.parsed.visualizerConfig) {
-      console.log(' in if ');
       dispatch(scriptTextSet(datum.parsed.visualizerConfig.script))
     }
   }, [])
