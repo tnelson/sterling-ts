@@ -24,8 +24,12 @@ module.exports = (env, argv) => {
 
   return {
     mode: isDev ? 'development' : 'production',
+    // If you need better source-map info in development, change this
+    // https://webpack.js.org/configuration/devtool/
+    devtool: isDev ? 'eval' : false,
     context: __dirname,
     devServer: {
+      // Exchange, add, or remove modules while app is running
       hot: true,
       port: 8081
     },
