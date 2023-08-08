@@ -51,8 +51,8 @@ class AlloySkolem extends AlloyTypedSet {
         return skolems.map(skolemElement => {
 
             const label = skolemElement.getAttribute('label');
-            const types = AlloySignature.typesFromXML(skolemElement, sigIDs);
-            const tuples = AlloyTuple.tuplesFromXML(skolemElement.querySelectorAll('tuple'), types);
+            const allTypes: AlloySignature[][] = AlloySignature.typesFromXML(skolemElement, sigIDs);
+            const tuples = AlloyTuple.tuplesFromXML(skolemElement.querySelectorAll('tuple'), allTypes);
 
             if (!label) throw AlloyError.missingAttribute('AlloySkolem', 'label');
 
