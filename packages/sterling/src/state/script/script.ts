@@ -9,7 +9,7 @@ export type ScriptStageElement =
 export interface ScriptState {
   stage: ScriptStageType;
   stageDimensions: { width: number; height: number };
-  text: string;
+  text: Map<string, string>;
 }
 
 export interface ScriptVariable {
@@ -26,6 +26,6 @@ export function newScriptState(): ScriptState {
       width: 0,
       height: 0
     },
-    text: ''
+    text: []
   };
 }

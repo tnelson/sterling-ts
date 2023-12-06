@@ -16,7 +16,7 @@ const scriptSlice = createSlice({
     scriptStageSet(state, action: PayloadAction<ScriptStageType>) {
       state.stage = action.payload;
     },
-    scriptTextSet(state, action: PayloadAction<string>) {
+    scriptTextSet(state, action: PayloadAction<string[]>) {
       state.text = action.payload;
     }
   }

@@ -75,13 +75,17 @@ const ScriptEditor = (props: ScriptEditorProps) => {
     <MonacoEditor      
       data-testid='script-view-monaco-editor'
       language='javascript'
+      value={initialText}
+      // These refer to monaco-editor options, not to the React wrapper
+      // The React wrapper seems to overwrite some options here, thus 
+      // passing 'value' within this object has no effect. 
       options={{
         automaticLayout: true,
         scrollBeyondLastLine: false,
         scrollbar: {
           verticalScrollbarSize: 12
         },
-        value: initialText
+        //value: initialText
       }}
       editorDidMount={editorDidMount}
       editorWillUnmount={(editor) => {

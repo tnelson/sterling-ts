@@ -3,7 +3,7 @@ import { useDimensions } from '@/sterling-hooks';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
 import { useToast } from '@chakra-ui/react';
 import { editor } from 'monaco-editor';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { ScriptStageElement } from '../../state/script/script';
 import {
@@ -27,19 +27,34 @@ interface ScriptViewDatumProps {
   datum: DatumParsed<any>;
 }
 
+/**
+ * Update the script-content map for this datum ID. 
+ * @param dispatch dispatch function
+ * @param id datum ID to update for
+ * @param txt new script text
+ */
+function setScriptText(dispatch: ThunkDispatch, id: string, txt: string) {
+  dispatch(scriptTextSet(id, txt))
+} 
+
 const ScriptViewDatum = (props: ScriptViewDatumProps) => {
   const { datum } = props;
   
   const dispatch = useSterlingDispatch();
   const toast = useToast();
 
-  // If this datum contains a vis script, update (but only once -- BEFORE render)
-  // We want stale values from old renders in case the script was edited in Sterling.
-  useMemo(() => {
+  // If this datum contains a vis script, we want to load with it as the default.
+  useEffect(() => {
     if(datum.parsed.visualizerConfig) {
-      dispatch(scriptTextSet(datum.parsed.visualizerConfig.script))
+      setScriptText(dispatch, datum.id, datum.visualizerConfig.text)
     }
-  }, [])
+    
+    // No dependencies = do not refresh. This is the conservative choice, 
+    // to prevent potential lost work from editing in script view.
+    // Unfortunately, this isn't strong enough: if the user tabs out of this
+    // view, then back in, and React re-creates the component, we will overwrite.
+    // TODO: store *per datum id* script info in the slice
+  })
 
   const stage = useSterlingSelector(selectScriptStage);
   const size = useSterlingSelector(selectScriptStageDimensions);
@@ -61,7 +76,7 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
     );
   });
 
-  // TN: todo more sanitization
+  // TODO: more sanitization; these become JS identifiers 
   function sanitizeLibNames(ln: string): string {
     return ln.replaceAll('-', '_')
   }
@@ -85,6 +100,7 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
 
   const onExecute = useCallback(() => {
     const text = editor?.getValue();
+    
     if (text && stageRef && size) {
       // save the script text before executing
       dispatch(scriptTextSet(text));
