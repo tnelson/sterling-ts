@@ -59,7 +59,6 @@ export class TextBox extends VisualObject {
   }
 
   boundingBox(): BoundingBox {
-    console.log('getting textBox bounding box');
     return {
       top_left: {
         // No easy solution here. Just returning a square of the text's size.
@@ -88,7 +87,6 @@ export class TextBox extends VisualObject {
   }
 
   override render(svg: any, parent_masks: BoundingBox[]) {
-    console.log(`text: ${this.text()} weight: ${this.fontWeight()}`)
     let maskIdentifier: string = '';
 
     let render_masks: BoundingBox[];
