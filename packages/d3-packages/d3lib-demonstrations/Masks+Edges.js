@@ -12,4 +12,4 @@ const e = new Edge({obj1: r1, obj2: c1})
 stage.addAll([r1,c1, e])
 stage.addMask({top_left: {x:80,y:80}, bottom_right: {x:150,y:150}})
 
-stage.render(svg) 
+stage.render(svg)
