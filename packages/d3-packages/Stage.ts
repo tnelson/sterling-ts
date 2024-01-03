@@ -65,7 +65,7 @@ export class Stage{
         
     // }
     render(svg:any, document?:any){
-        d3.selectAll("svg > *").remove();
+        d3.select(svg).selectAll('*').remove()
         this.Children.forEach(pane => pane.render(svg, this.masks))
         if(document){
             const svgContainer = document.getElementById('svg-container')
