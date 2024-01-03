@@ -56,7 +56,7 @@ class AlloySkolem extends AlloyTypedSet {
 
             if (!label) throw AlloyError.missingAttribute('AlloySkolem', 'label');
 
-            return new AlloySkolem(label, types, tuples, proxy);
+            return new AlloySkolem(label, allTypes, tuples, proxy);
 
         });
 
