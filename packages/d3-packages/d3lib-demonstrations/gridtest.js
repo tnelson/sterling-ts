@@ -3,6 +3,9 @@
   The intended output is a 3x3 grid with squares in its corner cells, and a 3x3 grid in its inside cell
     The inner grid has the same pattern, with an even smaller 3x3 grid in its inner cell
       The innermost grid has tiny rectangles in all 9 cells. 
+
+  To check offsetting, the middle left grid cell should contain an offset rectangle, slightly to the 
+  right and down from the cell's center. The offset rectangle will be blue and taller than it is wide.
 */
 
 
@@ -36,6 +39,16 @@ for(let i = 0; i < 3; i++){
       }
     }
 }
+
+const offsetRect = new Rectangle({height: 50, width: 30, coords:{x:50,y:25}, color:'blue'});
+// starts out with only its own parameters: 30/2 + 50 = 65; 50/2 + 25 = 50
+offsetRect.sterlingExpectCenter("offsetRect", 65, 50) 
+bigGrid.add({x:0,y:1}, offsetRect)
+// After being added to the grid, we expect the offset to be preserved
+// y: one cell down (150) + cell center (75) + offset (25)
+// x: first cell (0) + cell center (75) + offset (50)
+offsetRect.sterlingExpectCenter("offsetRect", 125, 250) 
+// ...but it was 75
 
 ///////////////////////////////////////////////////////////
 

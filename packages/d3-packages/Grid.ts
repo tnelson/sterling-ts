@@ -55,9 +55,9 @@ export class Grid extends VisualObject{
             }
         }
         
-        this.cells = new Array(this.config.grid_dimensions.x_size).fill([])
+        this.cells = new Array(this.config.grid_dimensions.y_size).fill([])
         for(var row = 0; row<this.cells.length;row++) { 
-            this.cells[row] = new Array(this.config.grid_dimensions.y_size) 
+            this.cells[row] = new Array(this.config.grid_dimensions.x_size) 
         }
         this.gridlines = []
         this.fill_grid_lines()
@@ -112,7 +112,7 @@ export class Grid extends VisualObject{
         this.check_coords(coords)
 
         if(!ignore_warning){this.check_bounding_box(add_object.boundingBox())}
-        this.children.push(add_object)        
+        this.children.push(add_object) 
         add_object.center = this.center_helper(coords, add_object.origin_offset) 
         this.cells[coords.x][coords.y] = add_object // provide easy indexing for children
     }

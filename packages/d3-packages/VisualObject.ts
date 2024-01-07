@@ -46,7 +46,7 @@ export class VisualObject {
    */
   constructor(coords?: Coords | (() => Coords)) {
     this.center = toFunc({ x: 0, y: 0 }, coords);
-    this.origin_offset = toFunc({ x: 0, y: 0 }, coords);
+    this.origin_offset = toFunc({ x: 0, y: 0 }, coords);    
     this.bounding_box_lam = (r: number) => { return this.center() };
     this.hasBoundingBox = false;
     this.children = [];

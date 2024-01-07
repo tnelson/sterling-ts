@@ -5,7 +5,8 @@ import { BoundingBox, Coords, toFunc } from './Utility';
 export interface RectangleProps extends ShapeProps {
   height: number | (() => number);
   width: number | (() => number);
-  coords?: Coords | (() => Coords);
+  // Deprecated
+  //coords?: Coords | (() => Coords);
   labelLocation?: string;
 }
 
@@ -18,7 +19,7 @@ export class Rectangle extends Shape {
    * Creates a logical rectangle object
    * @param height height (y direction)
    * @param width width (x direction)
-   * @param coords coordinates of the top-left point
+   * @param center coordinates of the center of the shape
    * @param color color for interior
    * @param borderWidth width of border
    * @param borderColor color of border
@@ -30,7 +31,8 @@ export class Rectangle extends Shape {
     super(props);
     this.height = toFunc(0, props.height);
     this.width = toFunc(0, props.width);
-    let coordsFunc = toFunc({ x: 0, y: 0 }, props.coords);
+    // Shape uses props.center; props.coords is deprecated
+    let coordsFunc = toFunc({ x: 0, y: 0 }, props.center);
     this.labelLocation = props.labelLocation ?? 'center';
     this.center = () => {
       return {

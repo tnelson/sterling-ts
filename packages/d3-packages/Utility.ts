@@ -4,12 +4,13 @@
  */
 
 export function toFunc<T>(defaultValue: T, t?: T | (() => T)): (() => T)  {
+    //console.log(`toFunc: t=${JSON.stringify(t)} ??=${JSON.stringify(t ?? defaultValue)}`)
     let constOrFunction: T | (() => T) = t ?? defaultValue
     // This will require a typecast below:
     //if (typeof constOrFunction !== "function") {
     // This does not:
     if(!(constOrFunction instanceof Function)) {
-        let constVal: T = constOrFunction
+        let constVal: T = constOrFunction      
         return () => constVal
     } else {
         // Note that this sort of narrowing will NOT work in the case of T 
