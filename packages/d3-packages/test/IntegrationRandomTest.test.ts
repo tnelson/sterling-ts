@@ -32,7 +32,7 @@ describe('Random tests for rendering shapes', () => {
     }
     const produceRectangleFromCharacteristics = (chars: Record<string,number>) =>
     { 
-      return new Rectangle({width: chars.width, height: chars.height, coords: {x: chars.x, y: chars.y}});
+      return new Rectangle({width: chars.width, height: chars.height, center: {x: chars.x, y: chars.y}});
     }
     FuzzTestFactory('rect', produceRectangleFromCharacteristics, produceRandomRectangleCharacteristics)
   })
