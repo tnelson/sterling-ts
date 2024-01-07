@@ -56,7 +56,7 @@ const smallGridConfig = {
 const smallGrid = new Grid(smallGridConfig)
 // This sub-grid will automatically have a center() value of {x:0,y:0}; if 
 // that isn't the case, raise an alarm while running this test. (45*3 = 135; 135 / 2 = 67.5)
-//smallGrid.sterlingExpectCenter("smallGrid on creation", 67.5, 67.5)
+smallGrid.sterlingExpectCenter("smallGrid on creation", 67.5, 67.5)
 for(let i = 0; i < 3; i++){
     for(let j =0; j<3; j++){
       if(i != 1 & j!= 1){
