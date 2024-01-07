@@ -21,7 +21,15 @@ export type {Coords};
 export type BoundingBoxGenerator = (r: number) => Coords;
 
 export class VisualObject {
+  /** The center of the object (possibly adjusted by object-specific logic or parent logic. 
+   *  E.g., a Rectangle may have (0,0) as origin, but its center will be set to its middle.
+  */
   center: () => Coords;
+  /** The original origin of the object as passed to its constructor; used for offset 
+   *  calculation in container objects like grids. This should not be modified, since 
+   *  it represent's the caller's intent for an offset from the context origin.
+   */
+  origin_offset: () => Coords;
   children: VisualObject[];
   dependents: VisualObject[];
 
@@ -38,6 +46,7 @@ export class VisualObject {
    */
   constructor(coords?: Coords | (() => Coords)) {
     this.center = toFunc({ x: 0, y: 0 }, coords);
+    this.origin_offset = toFunc({ x: 0, y: 0 }, coords);
     this.bounding_box_lam = (r: number) => { return this.center() };
     this.hasBoundingBox = false;
     this.children = [];
@@ -131,5 +140,19 @@ export class VisualObject {
       render_masks = this.masks;
     }
     this.children.forEach((child: VisualObject) => {child.render(svg, render_masks)});
+  }
+
+  /**
+   * Helper function used for internal testing outside Jest, since SVG elements are not 
+   * always easy to inspect (e.g., <path> strings)
+   * @param label a string label for this test case
+   * @param x the expected x coordinate of this object's center
+   * @param y the expected y coordinate of this object's center
+   */
+  sterlingExpectCenter(label: string, x: number | undefined, y: number | undefined) {
+    if(this.center().x !== x) 
+      throw new Error(`${label}: center().x was not expected value (${x}); was ${this.center().x}`)
+    if(this.center().y !== y) 
+      throw new Error(`${label}: center().y was not expected value (${y}); was ${this.center().y}`)
   }
 }
