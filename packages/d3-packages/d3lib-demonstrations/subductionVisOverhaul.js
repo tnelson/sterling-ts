@@ -185,7 +185,7 @@ topBox = boxUnion(
   ['sM1', 'sM5', 'sM3'].map((id) => objectMap[id].boundingBox())
 );
 topRect = new Rectangle({
-  coords: {
+  center: {
     x: topBox.top_left.x - BOUNDBOXPADDING,
     y: topBox.top_left.y - BOUNDBOXPADDING
   },
@@ -203,7 +203,7 @@ bottomBox = boxUnion(
   ['gM0', 'gM1', 'gM2', 'gM3', 'gM4'].map((id) => objectMap[id].boundingBox())
 );
 bottomRect = new Rectangle({
-  coords: {
+  center: {
     x: bottomBox.top_left.x - BOUNDBOXPADDING,
     y: bottomBox.top_left.y - BOUNDBOXPADDING
   },

@@ -1,1 +1,0 @@
-const stage = new stage()

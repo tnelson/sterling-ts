@@ -156,7 +156,7 @@ attachments.concat(generalLinks).concat(specialLinks).forEach((link) => {
 
 topBox = boxUnion(["sM1", "sM5", "sM3"].map(id => objectMap[id].boundingBox()))
 topRect = new Rectangle({
-    coords: {
+    center: {
         x: topBox.top_left.x - 20,
         y: topBox.top_left.y - 20
         },

@@ -1,7 +1,7 @@
 const stage = new Stage()
 
 
-const rect = new Rectangle({width: 50, height: 50, coords: {x:200, y:50}})
+const rect = new Rectangle({width: 50, height: 50, center: {x:200, y:50}})
 const circ1 = new Circle({radius: 25, center: {x:100, y:300}})
 const circ2 = new Circle({radius: 25, center: {x:350, y:300}})
 

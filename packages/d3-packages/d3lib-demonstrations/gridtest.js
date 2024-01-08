@@ -40,7 +40,7 @@ for(let i = 0; i < 3; i++){
     }
 }
 
-const offsetRect = new Rectangle({height: 50, width: 30, coords:{x:50,y:25}, color:'blue'});
+const offsetRect = new Rectangle({height: 50, width: 30, center:{x:50,y:25}, color:'blue'});
 // starts out with only its own parameters: 30/2 + 50 = 65; 50/2 + 25 = 50
 offsetRect.sterlingExpectCenter("offsetRect", 65, 50) 
 bigGrid.add({x:0,y:1}, offsetRect)
