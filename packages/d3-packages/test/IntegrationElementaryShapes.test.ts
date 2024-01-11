@@ -34,7 +34,7 @@ describe('Rendering Elementary Shapes', () => {
 
     const exp_x = 150, exp_y = 200, exp_h = 123, exp_w = 4213;
     const r1: Rectangle = new Rectangle( { width: exp_w, height: exp_h, 
-                                        center: {x: exp_x, y : exp_y} } )
+                                        coords: {x: exp_x, y : exp_y} } )
     stage.add(r1)
     stage.render(svg)
 
