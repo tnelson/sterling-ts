@@ -36,6 +36,42 @@ describe('Random tests for rendering shapes', () => {
     }
     FuzzTestFactory('rect', produceRectangleFromCharacteristics, produceRandomRectangleCharacteristics)
   })
+
+  it('Can render many random rectangles that are created by center', () => {
+    const min_rand = 0, max_rand = 200;
+    const produceRandomRectangleCharacteristics = () => 
+    { 
+      return {
+        x: getRandomInt(min_rand, max_rand),
+        y: getRandomInt(min_rand, max_rand),
+        height: getRandomInt(min_rand, max_rand),
+        width: getRandomInt(min_rand, max_rand)
+      }
+    }
+    const produceRectangleFromCharacteristics = (chars: Record<string,number>) =>
+    { 
+      return new Rectangle({width: chars.width, height: chars.height, center: {x: chars.x, y: chars.y}});
+    }
+
+    /* 
+     * As the dom will give us the coords for a rectangle by top left, we need to convert the expected
+     * center (and to avoid floating point issues we use a epsilon value)
+     */
+    const eps = 0.0001
+    const checkEquality = (obj: Element, characteristics: Record<string, Object>) => {
+      const topLeftX = parseFloat(obj.getAttribute("x") ?? "0") 
+      const topLeftY = parseFloat(obj.getAttribute("y") ?? "0") 
+      const height = parseFloat(obj.getAttribute("height") ?? "1")
+      const width = parseFloat(obj.getAttribute("width") ?? "1")
+      const observedCenterX = topLeftX + width/2
+      const observedCenterY = topLeftY + height/2
+      const xDiff = Math.abs(observedCenterX - parseFloat(characteristics.x.toString()))
+      const yDiff = Math.abs(observedCenterY - parseFloat(characteristics.y.toString()))
+      return xDiff <= eps && yDiff <= eps 
+      
+    }
+    FuzzTestFactory('rect', produceRectangleFromCharacteristics, produceRandomRectangleCharacteristics, checkEquality)
+  }),
   it('Can render many random circles', () => {
     const min_rand = 0, max_rand = 200;
     const produceRandomCircleCharacteristics = () => 
