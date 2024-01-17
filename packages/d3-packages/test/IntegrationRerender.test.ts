@@ -23,8 +23,8 @@ describe('Verify re-rendering related functionality', () => {
 
     const removedX = 30, removedY = 35, removedH = 40, removedW = 60;
     const persistentX = 20, persistentY = 25, persistentH = 30, persistentW = 50;
-    const removeRect = new Rectangle({width: removedW, height: removedH, center: {x:removedX, y:removedY}})
-    const persistRect = new Rectangle({width: persistentW, height: persistentH, center: {x:persistentX, y:persistentY}})
+    const removeRect = new Rectangle({width: removedW, height: removedH, coords: {x:removedX, y:removedY}})
+    const persistRect = new Rectangle({width: persistentW, height: persistentH, coords: {x:persistentX, y:persistentY}})
     stage.add(removeRect)
     stage.add(persistRect)
     stage.render(svg)
@@ -48,7 +48,7 @@ describe('Verify re-rendering related functionality', () => {
     let svg = CreateMockSVG()
 
     const oldX = 10, oldY = 10, oldHeight = 10, oldWidth = 10;
-    const testRect = new Rectangle({width: oldWidth, height: oldHeight, center: {x:oldX, y:oldY}})
+    const testRect = new Rectangle({width: oldWidth, height: oldHeight, coords: {x:oldX, y:oldY}})
     stage.add(testRect)
     const newWidth = 40, newHeight = 40
     testRect.setWidth(newWidth)

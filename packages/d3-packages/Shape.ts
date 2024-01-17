@@ -43,9 +43,9 @@ export class Shape extends VisualObject {
 
     // Disallow a `coords` field in props, because this is a common error;
     //   Shapes take `center` instead.    
-    if('coords' in props) {
-      throw Error("Shape constructor was given a 'coords' field; use 'center' instead.")
-    }
+    // if('coords' in props) {
+    //   throw Error("Shape constructor was given a 'coords' field; use 'center' instead.")
+    // }
 
     this.color = toFunc(DEFAULT_BORDER_COLOR, props.color);
     this.borderWidth = toFunc(DEFAULT_STROKE_WIDTH, props.borderWidth);

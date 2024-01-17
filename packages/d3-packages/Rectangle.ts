@@ -6,7 +6,7 @@ export interface RectangleProps extends ShapeProps {
   height: number | (() => number);
   width: number | (() => number);
   // Deprecated
-  //coords?: Coords | (() => Coords);
+  coords?: Coords | (() => Coords);
   labelLocation?: string;
 }
 
@@ -31,15 +31,26 @@ export class Rectangle extends Shape {
     super(props);
     this.height = toFunc(0, props.height);
     this.width = toFunc(0, props.width);
-    // Shape uses props.center; props.coords is deprecated
-    let coordsFunc = toFunc({ x: 0, y: 0 }, props.center);
     this.labelLocation = props.labelLocation ?? 'center';
-    this.center = () => {
-      return {
-        x: coordsFunc().x + this.width() / 2,
-        y: coordsFunc().y + this.height() / 2
-      };
-    };
+    const defaultCoord = {x:0, y:0}
+    if(props.center && props.coords)
+    {
+      throw("you cannot include both coords and a center as the two define the same thing");
+    }
+    this.center = (() => {
+      if(props.center)
+      {
+        return toFunc(defaultCoord, props.center)
+      } 
+      else
+      {
+        const coordsFunc = toFunc(defaultCoord, props.coords);
+          return () => {return {
+            x: coordsFunc().x + this.width() / 2,
+            y: coordsFunc().y + this.height() / 2
+          }};
+      }
+    })()
     this.setLabelLocation();
   }
 
