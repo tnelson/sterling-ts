@@ -55,6 +55,7 @@ export class Grid extends VisualObject{
             }
         }
         
+        // Cells is indexed by rows first, which are y-coordinates
         this.cells = new Array(this.config.grid_dimensions.y_size).fill([])
         for(var row = 0; row<this.cells.length;row++) { 
             this.cells[row] = new Array(this.config.grid_dimensions.x_size) 
@@ -114,7 +115,8 @@ export class Grid extends VisualObject{
         if(!ignore_warning){this.check_bounding_box(add_object.boundingBox())}
         this.children.push(add_object) 
         add_object.center = this.center_helper(coords, add_object.origin_offset) 
-        this.cells[coords.x][coords.y] = add_object // provide easy indexing for children
+        // Cells are indexed by rows first, which are y-coordinates
+        this.cells[coords.y][coords.x] = add_object // provide easy indexing for children
     }
 
     private center_helper(coords: Coords, offset: () => Coords): (() => Coords) {        

@@ -93,6 +93,7 @@ export class Tree extends VisualObject{
             let prevWidth: number = currTotalWidth
             currTotalWidth += childWidth
 
+            console.log(`subtree: ${this.coords().x + (prevWidth / totalWidth) * this.width} ${this.coords().y + layerHeight}`)
             return new Tree({
                 root: childTree, 
                 height: layerHeight * (treeHeight(childTree) - 1),
