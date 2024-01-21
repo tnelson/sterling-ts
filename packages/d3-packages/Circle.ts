@@ -32,9 +32,11 @@ export class Circle extends Shape {
     this.radius = toFunc(0, props.radius);
 
     this.bounding_box_lam = (radians: number) => {
+      const rad = this.radius()
+      const ctr = this.center()
       return {
-        x: this.radius() * Math.cos(radians) + this.center().x,
-        y: this.radius() * Math.sin(radians) + this.center().y
+        x: rad * Math.cos(radians) + ctr.x,
+        y: rad * Math.sin(radians) + ctr.y
       };
     };
     this.hasBoundingBox = true;

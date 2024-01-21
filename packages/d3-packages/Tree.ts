@@ -97,27 +97,33 @@ export class Tree extends VisualObject{
             let prevWidth: number = currTotalWidth
             currTotalWidth += childWidth
 
-            console.log(`subtree: ${this.coords().x + (prevWidth / totalWidth) * this.width} ${this.coords().y + layerHeight}`)
+            //console.log(`subtree: ${this.coords().x + (prevWidth / totalWidth) * this.width} ${this.coords().y + layerHeight}`)
             return new Tree({
                 root: childTree, 
                 height: layerHeight * (treeHeight(childTree) - 1),
                 width: this.width * treeWidth(childTree) / totalWidth,
-                coords: () => { return {
-                    x: this.coords().x + (prevWidth / totalWidth) * this.width,
-                    y: this.coords().y + layerHeight
+                coords: () => { 
+                    const thiscs = this.coords()
+                    return {
+                        x: thiscs.x + (prevWidth / totalWidth) * this.width,
+                        y: thiscs.y + layerHeight
                 }} // Might need to set line color? Needs testing. 
             })
         })
 
         this.subTrees.forEach((subTree) => {
             this.lines.push(new Line({
-                points: [() => { return {
-                    x: this.root.visualObject.center().x,
-                    y: this.root.visualObject.center().y
+                points: [() => { 
+                    const vocs = this.root.visualObject.center()
+                    return {
+                        x: vocs.x,
+                        y: vocs.y
                 }},
-                () => { return {
-                    x: subTree.root.visualObject.center().x,
-                    y: subTree.root.visualObject.center().y
+                () => { 
+                    const subvocs = subTree.root.visualObject.center()
+                    return {
+                        x: subvocs.x,
+                        y: subvocs.y
                 }}],
                 color: DEFAULT_LINE_COLOR,
                 width: DEFAULT_STROKE_WIDTH // Need to make default later
