@@ -6,7 +6,11 @@ export function parseAlloyXML(xml: string): AlloyDatum {
   const document = parser.parseFromString(xml, 'application/xml');
   const instances = Array.from(document.querySelectorAll('instance'));
   if (!instances.length) throw new Error(`No Alloy instance in XML: ${xml}`);
-
+  
+  const maybeVisualizer = document.querySelector('visualizer');
+  const maybeVizScriptText = maybeVisualizer === null ? 
+                               undefined : 
+                               parseStringAttribute(maybeVisualizer, 'script')
   return {
     instances: instances.map(instanceFromElement),
     bitwidth: parseNumericAttribute(instances[0], 'bitwidth'),
@@ -18,7 +22,8 @@ export function parseAlloyXML(xml: string): AlloyDatum {
     maxSeq: parseNumericAttribute(instances[0], 'maxseq'),
     maxTrace: parseNumericAttribute(instances[0], 'maxtrace'),
     minTrace: parseNumericAttribute(instances[0], 'mintrace'),
-    traceLength: parseNumericAttribute(instances[0], 'tracelength')
+    traceLength: parseNumericAttribute(instances[0], 'tracelength'),
+    visualizerConfig: {script: deEscape(maybeVizScriptText)}
   };
 }
 
@@ -36,6 +41,14 @@ function parseStringAttribute(
 ): string | undefined {
   const value = element.getAttribute(attribute);
   return value ? `${value}` : undefined;
+}
+
+// Could use decodeURIComponent, but start small
+function deEscape(s: string | undefined): string | undefined {
+  return s?.replaceAll("&quot;", "\"")
+           .replaceAll("\\\"", "\"")
+           .replaceAll("&gt;", ">")
+           .replaceAll("&lt;", "<")
 }
 
 export function sigElementIsSet(sigElement: Element): boolean {

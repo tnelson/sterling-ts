@@ -177,8 +177,10 @@ class AlloyTuple extends AlloySet {
         });
     } 
 
-    private static buildTuple(types: AlloySignature[], tupleElement: Element): AlloyTuple {        
+    private static buildTuple(types: AlloySignature[], tupleElement: Element): AlloyTuple { 
+        //console.log(`In buildtuple; types: ${types}; tupleElement: ${tupleElement}`)
         const atoms = Array.from(tupleElement.querySelectorAll('atom')).map((atomElement, index) => {
+            //console.log(`${index}: ${JSON.stringify(atomElement)}`)
             const type = types[index];
             const label = atomElement.getAttribute('label');
             if (!label) throw AlloyError.missingAttribute('AlloyField', 'label');                

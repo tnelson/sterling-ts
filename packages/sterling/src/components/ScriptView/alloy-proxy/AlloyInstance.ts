@@ -27,6 +27,7 @@ class AlloyInstance {
   private _command: string;
   private _filename: string;
   private _sources: Map<string, string>;
+  private _visScriptText: string | undefined;
 
   /**
    * Create a new Alloy instance. If no text is provided, an empty instance
@@ -143,6 +144,14 @@ class AlloyInstance {
   filename(): string {
     return this._filename;
   }
+
+  /**
+   * Get the visualization script that was sent, if any.
+   */
+  visScriptText(): string | undefined {
+    return this._visScriptText;
+  }
+
 
   /**
    * Project the instance over the specified atoms. There may be a maximum of
@@ -396,6 +405,11 @@ class AlloyInstance {
         throw AlloyError.missingAttribute('AlloyInstance', 'content');
       this._sources.set(filename, source);
     });
+
+    // Optional visualization-script text (not path, because Sterling might be running
+    // remotely. Client needs to provide the full script.)
+    this._visScriptText = 
+      document.querySelector('visualizer')?.getAttribute('script') ?? undefined;
   }
 }
 
