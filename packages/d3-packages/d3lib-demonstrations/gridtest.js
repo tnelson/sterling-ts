@@ -15,8 +15,8 @@ const stage = new Stage()
 
 const bigGridConfig = {
     grid_location :{
-        x:0,
-        y:0
+        x:10,
+        y:10
     },
     cell_size:{
         x_size:150,
@@ -40,15 +40,14 @@ for(let i = 0; i < 3; i++){
     }
 }
 
-const offsetRect = new Rectangle({height: 50, width: 30, center:{x:50,y:25}, color:'blue'});
-// starts out with only its own parameters: 30/2 + 50 = 65; 50/2 + 25 = 50
-offsetRect.sterlingExpectCenter("offsetRect", 65, 50) 
+const offsetRect = new Rectangle({height: 50, width: 30, center:{x:45,y:25}, color:'blue'});
+// starts out with only its own parameters (here we provide center)
+offsetRect.sterlingExpectCenter("offsetRect", 45, 25) 
 bigGrid.add({x:0,y:1}, offsetRect)
 // After being added to the grid, we expect the offset to be preserved
 // y: one cell down (150) + cell center (75) + offset (25)
 // x: first cell (0) + cell center (75) + offset (50)
-offsetRect.sterlingExpectCenter("offsetRect", 125, 250) 
-// ...but it was 75
+offsetRect.sterlingExpectCenter("offsetRect", 130, 260) 
 
 ///////////////////////////////////////////////////////////
 
@@ -121,5 +120,5 @@ stage.render(svg)
 // Property: the extent of a child visual object is always contained within the parent.
 //  (This is technically checked by Grid.add() already.)
 // Instead, we can be more specific for this particular test script. We know where everything should go.
-bigGrid.cells[0][0].sterlingExpectCenter("bigGrid 0,0", 75, 75) // half of cell size: 150/2
-bigGrid.cells[2][2].sterlingExpectCenter("bigGrid 2,2", 375, 375) // half of cell size: 150/2, plus two full cells 
+bigGrid.cells[0][0].sterlingExpectCenter("bigGrid 0,0", 85, 85) // half of cell size: 150/2
+bigGrid.cells[2][2].sterlingExpectCenter("bigGrid 2,2", 385, 385) // half of cell size: 150/2, plus two full cells 
