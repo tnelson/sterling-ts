@@ -52,9 +52,10 @@ export class Tree extends VisualObject{
         // to be defined in terms of the center for use within the system, however, as that's
         // What's going to be edited to move the grid. 
         this.coords = () => {
-            return {
-                x: this.center().x - this.width / 2,
-                y: this.center().y - this.height / 2
+            const ctr = this.center()
+            return {                
+                x: ctr.x - this.width / 2,
+                y: ctr.y - this.height / 2
             }
         }
 
@@ -63,9 +64,12 @@ export class Tree extends VisualObject{
         this.root = props.root;
         
         let oldCenterFunc: () => Coords = this.root.visualObject.center
-        this.root.visualObject.setCenter(() => { return {
-            x: this.coords().x + this.width / 2 + oldCenterFunc().x,
-            y: this.coords().y + oldCenterFunc().y
+        this.root.visualObject.setCenter(() => { 
+            const cs = this.coords() 
+            const octr = oldCenterFunc()
+            return {
+                x: cs.x + this.width / 2 + octr.x,
+                y: cs.y + octr.y
         }})
 
         this.lines = []
