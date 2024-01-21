@@ -44,11 +44,13 @@ export class Rectangle extends Shape {
       } 
       else
       {
-        const coordsFunc = toFunc(defaultCoord, props.coords);
-          return () => {return {
-            x: coordsFunc().x + this.width() / 2,
-            y: coordsFunc().y + this.height() / 2
-          }};
+        const coordsFunc = toFunc(defaultCoord, props.coords);        
+        return () => {
+          const cs = coordsFunc()
+          return {
+            x: cs.x + this.width() / 2,
+            y: cs.y + this.height() / 2
+        }};
       }
     })()
     this.setLabelLocation();

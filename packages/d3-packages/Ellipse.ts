@@ -30,9 +30,10 @@ export class Ellipse extends Shape {
     this.width = toFunc(0, props.width);
     let coordsFunc = toFunc({ x: 0, y: 0 }, props.coords);
     this.center = () => {
+      const cf = coordsFunc()
       return {
-        x: coordsFunc().x + this.width() / 2,
-        y: coordsFunc().y + this.height() / 2
+        x: cf.x + this.width() / 2,
+        y: cf.y + this.height() / 2
       };
     };
   }

@@ -40,18 +40,20 @@ export class Grid extends VisualObject{
 
         let coordsFunc = toFunc({x: 0, y:0}, this.config.grid_location)
         this.center = () => {
+            const cs = coordsFunc()
             return {
-                x: coordsFunc().x + (this.config.grid_dimensions.x_size * this.config.cell_size.x_size / 2),
-                y: coordsFunc().y + (this.config.grid_dimensions.y_size * this.config.cell_size.y_size / 2)
+                x: cs.x + (this.config.grid_dimensions.x_size * this.config.cell_size.x_size / 2),
+                y: cs.y + (this.config.grid_dimensions.y_size * this.config.cell_size.y_size / 2)
             }
         }
         // Coords is essentially a helper function because it's easier to deal with. It needs
         // to be defined in terms of the center for use within the system, however, as that's
         // What's going to be edited to move the grid. 
         this.coords = () => {
+            const ctr = this.center()
             return {
-                x: this.center().x - (this.config.grid_dimensions.x_size * this.config.cell_size.x_size / 2),
-                y: this.center().y - (this.config.grid_dimensions.y_size * this.config.cell_size.y_size / 2)
+                x: ctr.x - (this.config.grid_dimensions.x_size * this.config.cell_size.x_size / 2),
+                y: ctr.y - (this.config.grid_dimensions.y_size * this.config.cell_size.y_size / 2)
             }
         }
         
@@ -121,10 +123,11 @@ export class Grid extends VisualObject{
 
     private center_helper(coords: Coords, offset: () => Coords): (() => Coords) {        
         return () => { 
-            let off: Coords = offset()                        
+            let off: Coords = offset()  
+            const thiscs = this.coords()
             return {            
-            x: this.coords().x + this.config.cell_size.x_size * (coords.x + .5) + off.x,
-            y: this.coords().y + this.config.cell_size.y_size * (coords.y + .5) + off.y
+            x: thiscs.x + this.config.cell_size.x_size * (coords.x + .5) + off.x,
+            y: thiscs.y + this.config.cell_size.y_size * (coords.y + .5) + off.y
         }}
     }
 
@@ -152,25 +155,34 @@ export class Grid extends VisualObject{
      */
         //cols
         for(let y_coord = 0; y_coord <= this.config.grid_dimensions.y_size; y_coord++){
-            let newLine: (() => Coords)[] = [() => { return {
-                x: this.coords().x,
-                y: this.coords().y + y_coord * this.config.cell_size.y_size
-            }}, () => { return {
-                x: this.coords().x + this.config.grid_dimensions.x_size*this.config.cell_size.x_size,
-                y: this.coords().y + y_coord * this.config.cell_size.y_size
+            let newLine: (() => Coords)[] = [() => { 
+                const thiscs = this.coords()
+                return {
+                    x: thiscs.x,
+                    y: thiscs.y + y_coord * this.config.cell_size.y_size
+            }}, () => { 
+                const thiscs = this.coords()
+                return {
+                    x: thiscs.x + this.config.grid_dimensions.x_size*this.config.cell_size.x_size,
+                    y: thiscs.y + y_coord * this.config.cell_size.y_size
             }}]
             const horizLine: Line = new Line({points: newLine});
             this.gridlines.push(horizLine)
             this.children.push(horizLine)
         }
+
         //rows
         for(let x_coord = 0; x_coord <= this.config.grid_dimensions.x_size; x_coord++){
-            let newLine: (() => Coords)[] = [() => {return {
-                x: this.coords().x + x_coord*this.config.cell_size.x_size,
-                y: this.coords().y
-            }}, () => { return {
-                x: this.coords().x + x_coord*this.config.cell_size.x_size,
-                y: this.coords().y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size
+            let newLine: (() => Coords)[] = [() => {
+                const thiscs = this.coords()
+                return {
+                    x: thiscs.x + x_coord*this.config.cell_size.x_size,
+                    y: thiscs.y
+            }}, () => { 
+                const thiscs = this.coords()
+                return {
+                    x: thiscs.x + x_coord*this.config.cell_size.x_size,
+                    y: thiscs.y + this.config.grid_dimensions.y_size*this.config.cell_size.y_size
             }}]
             
             const vertLine: Line = new Line({points: newLine});
