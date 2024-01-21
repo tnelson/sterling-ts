@@ -62,10 +62,13 @@ const smallerGridConfig = {
 
 describe('Rendering Nested Grid', () => {
   it('Nested grid alignment check with offsets', () => {
-    const stage: Stage = new Stage()
-    let svg = CreateMockSVG()
+    // Not looking at the DOM in this test yet
+    //const stage: Stage = new Stage()
+    //let svg = CreateMockSVG()
 
     const bigGrid = new Grid(bigGridConfig)
+    bigGrid.sterlingExpectCenter("bigGrid", 235, 235) 
+
     for(let i = 0; i < 3; i++){
       for(let j =0; j<3; j++){
         if(j != 1 && i != 1){
@@ -100,6 +103,7 @@ describe('Rendering Nested Grid', () => {
         }
     }
 
+
     const smallerGrid = new Grid(smallerGridConfig)
     for(let i = 0; i < 3; i++){
         for(let j =0; j<3; j++){
@@ -107,10 +111,17 @@ describe('Rendering Nested Grid', () => {
             smallerGrid.add({x:i,y:j}, newRect)
         }
     }
-
-    smallGrid.add({x:1,y:1},smallerGrid)
+    
     bigGrid.add({x:1,y:1}, smallGrid)    
-    stage.add(bigGrid)
-    stage.render(svg)    
+    smallGrid.add({x:1,y:1},smallerGrid)
+
+    // Expect the offsets to apply together with the parent locations, now.
+    // Because the smaller grid is in the very center, the centers are the same:
+    smallGrid.sterlingExpectCenter("smallGrid", 235, 235) 
+    smallerGrid.sterlingExpectCenter("smallerGrid", 235, 235) 
+
+    // Don't render; we're not looking at the DOM in this test yet.
+    //stage.add(bigGrid)
+    //stage.render(svg)    
   })
 })
