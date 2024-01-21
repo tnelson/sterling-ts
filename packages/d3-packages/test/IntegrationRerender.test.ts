@@ -7,7 +7,7 @@ describe('Verify re-rendering related functionality', () => {
     const stage:Stage = new Stage()
     let svg = CreateMockSVG()
 
-    const testRect = new Rectangle({width: 10, height: 10, coords: {x:10, y:10}})
+    const testRect = new Rectangle({width: 10, height: 10, center: {x:10, y:10}})
     stage.add(testRect)
     stage.render(svg)
 

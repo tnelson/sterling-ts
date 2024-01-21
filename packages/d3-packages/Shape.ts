@@ -37,19 +37,16 @@ export class Shape extends VisualObject {
    * Constructs a generic shape object. This is a top-level class,
    * which should not be used except as super class for other specific
    * shapes.
-   * @param coords coordinates of the shape
-   * @param color color of shape's interior
-   * @param borderWidth width of Shape's border
-   * @param borderColor color of border
-   * @param label text to display atop the shape
-   * @param labelColor color of text
-   * @param labelSize size of text
-   * @param style
    */
-  constructor(
-    props: ShapeProps
-  ) {
+  constructor(props: ShapeProps) {
     super(props.center);
+
+    // Disallow a `coords` field in props, because this is a common error;
+    //   Shapes take `center` instead.    
+    // if('coords' in props) {
+    //   throw Error("Shape constructor was given a 'coords' field; use 'center' instead.")
+    // }
+
     this.color = toFunc(DEFAULT_BORDER_COLOR, props.color);
     this.borderWidth = toFunc(DEFAULT_STROKE_WIDTH, props.borderWidth);
     this.borderColor = toFunc(DEFAULT_COLOR, props.borderColor);

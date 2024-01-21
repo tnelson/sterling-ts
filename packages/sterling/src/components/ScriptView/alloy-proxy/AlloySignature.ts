@@ -64,6 +64,18 @@ class AlloySignature extends AlloySet {
     }
 
     /**
+     * Get an array of all tuples in this sig. This will always 
+     * include all tuples in sub-sigs as well; this is contrary 
+     * to how .atoms() works by default (accepting a parameter, with default 
+     * _not_ including sub-sigs) because .tuples() is used internally, e.g.,
+     * for .join(), which needs this behavior to preserve Alloy semantics.
+     */
+    tuples (): AlloyTuple[] {
+        return this.atoms(true).map(a => new AlloyTuple([a]))
+    }
+
+
+    /**
      * Create a clone of this signature.
      * @param proxy If provided, a proxied clone will be returned.
      */

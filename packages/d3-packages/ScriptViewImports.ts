@@ -14,6 +14,8 @@ import { Hull } from './Hull';
 import { ConjoinedObject } from './ConjoinedObject'
 import { Ellipse } from './Ellipse';
 import { ImageBox } from './ImageBox';
+import { AlloySet } from '../sterling/src/components/ScriptView/alloy-proxy/AlloySet';
+import { AlloyAtom } from '../sterling/src/components/ScriptView/alloy-proxy/AlloyAtom';
 
 interface scriptViewImport {
   name: string;
@@ -43,7 +45,10 @@ const scriptViewImports: scriptViewImport[] = [
   { name: 'ConjoinedObject', value: ConjoinedObject },
   { name: 'boxUnion', value: boxUnion },
   { name: 'Ellipse', value: Ellipse},
-  { name: 'ImageBox', value: ImageBox}
+  { name: 'ImageBox', value: ImageBox},
+  // For debugging and workaround purposes, expose some constructors 
+  { name: 'AlloySet', value: AlloySet},
+  { name: 'AlloyAtom', value: AlloyAtom}
 ];
 
 export { scriptViewImports };

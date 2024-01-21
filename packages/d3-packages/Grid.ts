@@ -29,7 +29,7 @@ export class Grid extends VisualObject{
      */
     private coords: () => Coords // For easier math
     config: gridProps
-    cells: Array<Array<VisualObject>>
+    private cells: Array<Array<VisualObject>>
     gridlines: Array<Line>
 
     constructor(props: gridProps){ // renamed to props for consistency
@@ -55,7 +55,11 @@ export class Grid extends VisualObject{
             }
         }
         
-        this.cells = []
+        // Cells is indexed by rows first, which are y-coordinates
+        this.cells = new Array(this.config.grid_dimensions.y_size).fill([])
+        for(var row = 0; row<this.cells.length;row++) { 
+            this.cells[row] = new Array(this.config.grid_dimensions.x_size) 
+        }
         this.gridlines = []
         this.fill_grid_lines()
     }
@@ -88,6 +92,13 @@ export class Grid extends VisualObject{
         }
     }
 
+    /**
+     * Add a child object, positioned in the appropriate row/column of this grid. 
+     * 
+     * @param coords the row and column indexes to place this object in
+     * @param add_object the object to add as a child of this grid
+     * @param ignore_warning set true to ignore insufficient-space warnings
+     */
     add(coords: Coords, add_object:VisualObject, ignore_warning?:boolean){
         /**
          * Given valid coordinates of our grid, we add and center an object to a given
@@ -102,15 +113,16 @@ export class Grid extends VisualObject{
         this.check_coords(coords)
 
         if(!ignore_warning){this.check_bounding_box(add_object.boundingBox())}
-        
-        this.children.push(add_object)
-        add_object.center = this.center_helper(coords, add_object.center) //center object
+        this.children.push(add_object) 
+        add_object.center = this.center_helper(coords, add_object.origin_offset) 
+        // Cells are indexed by rows first, which are y-coordinates
+        this.cells[coords.y][coords.x] = add_object // provide easy indexing for children
     }
 
-    private center_helper(coords: Coords, offset: () => Coords): (() => Coords) {
+    private center_helper(coords: Coords, offset: () => Coords): (() => Coords) {        
         return () => { 
-            let off: Coords = offset()
-            return {
+            let off: Coords = offset()                        
+            return {            
             x: this.coords().x + this.config.cell_size.x_size * (coords.x + .5) + off.x,
             y: this.coords().y + this.config.cell_size.y_size * (coords.y + .5) + off.y
         }}
@@ -207,5 +219,17 @@ export class Grid extends VisualObject{
             throw `coordinates out of bounds. Grid is of x_size ${this.config.grid_dimensions.x_size} and y_size ${this.config.grid_dimensions.y_size}\n
             Note: passing in 2 refers to index 2 which is the third element of the grid`
         }
+    }
+
+    /**
+     * Convenience accessor to get child at a given row,col index, if one exists
+     * @param x row index
+     * @param y column index
+     * @returns child at that index if one exists, undefined otherwise 
+     */
+    childAt(x: number, y: number): VisualObject | undefined {
+        if(this.cells[x] === undefined) return undefined
+        if(this.cells[x][y] === undefined) return undefined
+        return this.cells[x][y]
     }
 }
