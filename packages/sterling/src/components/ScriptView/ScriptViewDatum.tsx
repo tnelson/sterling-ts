@@ -8,7 +8,7 @@ import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { ScriptStageElement } from '../../state/script/script';
 import {
   scriptStageDimensionsSet,
-  scriptTextSet
+  scriptTextSet  
 } from '../../state/script/scriptSlice';
 import {
   selectScriptStage,
@@ -33,17 +33,19 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
   const dispatch = useSterlingDispatch();
   const toast = useToast();
 
+  const stage = useSterlingSelector(selectScriptStage);
+  const size = useSterlingSelector(selectScriptStageDimensions);
+  const initialText = useSterlingSelector(selectScriptText);
+
   // If this datum contains a vis script, update (but only once -- BEFORE render)
   // We want stale values from old renders in case the script was edited in Sterling.
-  useMemo(() => {
-    if(datum.parsed.visualizerConfig) {
+  useMemo(() => {        
+    if(datum.parsed.visualizerConfig && initialText === '') {
+      console.log(`Loading parsed visualizer script from XML (possibly twice, if in dev mode)...`)
       dispatch(scriptTextSet(datum.parsed.visualizerConfig.script))
     }
   }, [])
 
-  const stage = useSterlingSelector(selectScriptStage);
-  const size = useSterlingSelector(selectScriptStageDimensions);
-  const initialText = useSterlingSelector(selectScriptText);
   const datumVariables = useSterlingSelector((state) =>
     selectScriptVariables(state, datum)
   );
