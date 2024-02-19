@@ -2,6 +2,7 @@ import {
   AlloyInstance,
   getAtomType,
   getInstanceRelations,
+  getInstanceSkolems,
   getRelationTuples
 } from '@/alloy-instance';
 import { Edge, getEdges, getNodes, PositionedGraph } from '@/graph-lib';
@@ -70,6 +71,17 @@ export function generateGraphProps(
         }
       });
     }
+  });
+
+  // Generate added attribute labels from Skolem relations
+  getInstanceSkolems(instance).forEach((skolem) => {     
+    getRelationTuples(skolem).forEach((tuple) => {            
+      const atom = tuple.atoms[0];
+      if (!attributeLabels[atom]) attributeLabels[atom] = [];
+      attributeLabels[atom].push(
+        `${skolem.name}`
+      );      
+    });
   });
 
   // Generate node labels and styles

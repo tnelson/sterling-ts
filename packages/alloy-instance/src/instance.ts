@@ -14,9 +14,14 @@ import {
 import { keyBy } from './util';
 import { typeHierarchiesFromElement, typeNamesFromElement } from './xml';
 
+/**
+ * An Alloy-format instance. Note that this is a distinct type from the AlloyInstance used 
+ * in the ScriptView component's alloy-proxy. 
+ */
 export interface AlloyInstance {
   types: Record<string, AlloyType>;
   relations: Record<string, AlloyRelation>;
+  skolems: Record<string, AlloyRelation>;
 }
 
 export function getInstanceAtom(
@@ -57,6 +62,17 @@ export function getInstanceRelation(
 export function getInstanceRelations(instance: AlloyInstance): AlloyRelation[] {
   return Object.values(instance.relations);
 }
+
+export function getInstanceSkolems(instance: AlloyInstance): AlloyRelation[] {
+  return Object.values(instance.skolems)
+}
+
+export function getInstanceRelationsAndSkolems(instance: AlloyInstance): AlloyRelation[] {
+  const skolemsArray = getInstanceSkolems(instance)
+  const relationsArray = getInstanceRelations(instance)
+  return skolemsArray.concat(relationsArray)
+}
+
 
 export function getInstanceTuples(instance: AlloyInstance): AlloyTuple[] {
   return getInstanceRelations(instance)
@@ -100,10 +116,16 @@ export function instanceFromElement(element: Element): AlloyInstance {
     typeNames,
     element.querySelectorAll('field')
   );
+  
+  const skolems = relationsFromElements(
+    typeNames,
+    element.querySelectorAll('skolem')
+  )
 
   findAndPopulateIntType(parseInt(bitwidth), types);
   return {
     types: keyBy(types, (t) => t.id),
-    relations: keyBy(relations, (r) => r.id)
+    relations: keyBy(relations, (r) => r.id),
+    skolems: keyBy(skolems, (s) => s.id)
   };
 }

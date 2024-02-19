@@ -25,7 +25,8 @@ export function applyProjections(
 
   return {
     types: projectTypes(instance, projections),
-    relations: projectRelations(instance, projections)
+    relations: projectRelations(instance, projections),
+    skolems: instance.skolems
   };
 }
 

@@ -10,6 +10,7 @@ import {
   applyProjections,
   getInstanceAtomsOfType,
   getInstanceRelations,
+  getInstanceRelationsAndSkolems,
   getInstanceType,
   getInstanceTypes,
   getProjectableTypes,
@@ -536,7 +537,7 @@ export const selectGraphProps = createSelector(
       isDatumAlloy(datum) &&
       hidden
     ) {
-      const instance = datum.parsed.instances[time];
+      const instance = datum.parsed.instances[time];      
       const projections = theme.projections || [];
       const timeProjections = projections.filter((p) => p.time === true);
 
@@ -600,7 +601,8 @@ export const selectTables = createSelector(
   (datum, time) => {
     if (isDatumAlloy(datum)) {
       const instance = datum.parsed.instances[time];
-      const relations: TableData[] = getInstanceRelations(instance).map(
+      // Show Skolem relations alongside field relations
+      const relations: TableData[] = getInstanceRelationsAndSkolems(instance).map(
         (relation) => {
           return {
             title: relation.name,
