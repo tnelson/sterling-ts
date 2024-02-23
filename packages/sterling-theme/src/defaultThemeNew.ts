@@ -53,3 +53,14 @@ export function defaultThemeNew(): SterlingTheme {
     ]
   };
 }
+
+export function noAtomsBox(): NodeDef {
+  return  {
+    id: '0', 
+    position: {x: 0, y:0},
+    shape: { shape: 'rectangle', width: 550, height: 50},
+    style: {fill: 'transparent', stroke: 'black'},
+    labels: [{text: 'There are no atoms to display (or the current theme has hidden them)', style:{
+      fontSize:12,textAnchor:"middle",fontFamily:"monospace",userSelect:"none"}}]
+  }
+}

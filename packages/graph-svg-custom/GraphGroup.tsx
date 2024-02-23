@@ -15,6 +15,7 @@ import { buildPath } from './paths/buildPath';
 import { useInteraction } from './providers/interaction/InteractionProvider';
 import { ArrowDef, EdgeDef, NodeDef } from './types';
 import { isDefined } from './util';
+import { noAtomsBox } from '@/sterling-theme';
 
 const GraphGroup = memo(
   <N extends PositionedNode, E extends RoutedEdge>(
@@ -41,6 +42,8 @@ const GraphGroup = memo(
           const shape = nodeShapes[node.id];
           const style = nodeStyles[node.id];
           const labels = nodeLabels ? nodeLabels[node.id] : undefined;
+          // console.log(JSON.stringify(style))
+          // console.log(JSON.stringify(labels))
           return {
             id: node.id,
             position,
@@ -89,6 +92,12 @@ const GraphGroup = memo(
     );
 
     const arrows: ArrowDef[] = extractArrowHeads(Object.values(edgeStyles));
+
+    // If there were no nodes, display an informative message 
+    if(nodes.length < 1) {
+      nodes.push(noAtomsBox())
+    }
+
 
     return (
       <g id={id} {...rest}>
