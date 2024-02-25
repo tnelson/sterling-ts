@@ -198,8 +198,11 @@ function buildErrorDescription(e: any): string {
     const stackMatchArray = e.stack.match(new RegExp('.*(Function|<anonymous>):[0-9]+:[0-9]+.*', 'g')) 
     if(stackMatchArray) {      
       const stackLine = stackMatchArray[0]
-      const splitPreamble = stackLine.split('Function:')
+      //console.log(`stackLine: ${JSON.stringify(stackLine)}`)
+      const splitPreamble = stackLine.split(new RegExp('.*Function:|<anonymous>:'))
+      //console.log(`splitPreamble[1]: ${JSON.stringify(splitPreamble[1])}`)
       const rowCol = splitPreamble[1].split(':')      
+      console.log(`rowCol: ${JSON.stringify(rowCol)}`)
       const row = +rowCol[0] - LINE_OFFSET
       const col = rowCol[1]      
         return `${e.message} Around line ${row} (computed via parsing error stack)`
@@ -209,6 +212,32 @@ function buildErrorDescription(e: any): string {
   // Default to the error message by itself (Safari, as of Jan 2023; some syntax errors also)
   return `${e.message} (error location was not provided by the browser)`
 }
+
+/*
+  As of February, 2024, example stack strings:
+
+  ** SAFARI **
+  Doesn't provide enough information.
+
+  ** CHROME ** 
+  Error stack: Error: Stage can only add VisualObjects as children.
+    at Stage.add (webpack://sterling-ts/./packages/d3-packages/Stage.ts?:27:13)
+    at eval (eval at <anonymous> (webpack://sterling-ts/./packages/sterling/src/components/ScriptView/ScriptViewDatum.tsx?), <anonymous>:39:7)
+    at eval (webpack://sterling-ts/./packages/sterling/src/components/ScriptView/ScriptViewDatum.tsx?:103:11)
+
+  ** BRAVE ** 
+  Error stack: Error: Stage can only add VisualObjects as children.
+    at Stage.add (webpack://sterling-ts/./packages/d3-packages/Stage.ts?:27:13)
+    at eval (eval at <anonymous> (webpack://sterling-ts/./packages/sterling/src/components/ScriptView/ScriptViewDatum.tsx?), <anonymous>:39:7)
+    at eval (webpack://sterling-ts/./packages/sterling/src/components/ScriptView/ScriptViewDatum.tsx?:103:11)
+
+  ** FIREFOX ** 
+   Error stack: add@webpack://sterling-ts/./packages/d3-packages/Stage.ts?:27:13
+anonymous@http://localhost:8081/main.bundle.js line 2589 > eval line 102 > Function:39:7
+ScriptViewDatum/onExecute</<@webpack://sterling-ts/./packages/sterling/src/components/ScriptView/ScriptViewDatum.tsx?:103:21
+
+
+*/
 
 export { ScriptViewDatum };
 
