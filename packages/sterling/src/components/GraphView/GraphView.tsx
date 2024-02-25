@@ -6,7 +6,7 @@ import { GraphViewHeader } from './GraphViewHeader';
 
 const GraphView = () => {
   const datum = useSterlingSelector(selectActiveDatum);
-  const props = useSterlingSelector((state) => selectGraphProps(state, datum));
+  const props = useSterlingSelector((state) => selectGraphProps(state, datum));  
 
   return (
     <Pane className='grid grid-flow-col divide-x divide-dashed'>

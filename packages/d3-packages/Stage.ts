@@ -14,6 +14,10 @@ export class Stage{
         this.masks = []
     }
     add(addObject:VisualObject){
+        // Runtime check, since the input script isn't necessarily type-checked
+        if(!(addObject instanceof VisualObject)) {
+            throw new Error('Stage can only add VisualObjects as children.')
+        }
         this.Children.push(addObject)
     }
     

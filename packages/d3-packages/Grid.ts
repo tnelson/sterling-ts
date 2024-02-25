@@ -112,6 +112,12 @@ export class Grid extends VisualObject{
          * 
          * (creating a conjoined visual object shouldn't be too tough) 
          */
+        
+        // Runtime check, since the input script isn't necessarily type-checked
+        if(!(add_object instanceof VisualObject)) {
+            throw new Error('Grid can only add VisualObjects as children.')
+        }
+
         this.check_coords(coords)
 
         if(!ignore_warning){this.check_bounding_box(add_object.boundingBox())}

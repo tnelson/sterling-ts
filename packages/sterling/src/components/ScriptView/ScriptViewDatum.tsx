@@ -175,22 +175,39 @@ function buildErrorDescription(e: any): string {
   if(!(e instanceof Error)) return `${e}`
 
   console.log(`Error stack: ${e.stack}`)
+  
+  //if('fileName' in e) console.log(`Error fileName: ${e.fileName}`)
+  //if('lineNumber' in e) console.log(`Error lineNumber: ${e.lineNumber}`)
+
+  // The exception's lineNumber field, if present, may not be reporting the accurate *file*
+  // If this happens, confusion may ensue since Sterling will report the wrong line number.
+  // Also see:
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+
 
   // Is there a lineNumber field?
-  if('lineNumber' in e && typeof(e.lineNumber) === 'number') {
-    return `${e.message} near line ${e.lineNumber - LINE_OFFSET} (obtained via lineNumber field)`
-  }
+  // if('lineNumber' in e && typeof(e.lineNumber) === 'number') {
+  //   return `${e.message} near line ${e.lineNumber - LINE_OFFSET} (obtained via lineNumber field)`
+  // }  
 
-  // Otherwise, try to extract the error's line number from the stack 
-  // Firefox (Function:x:y) / Chrome (<anonymous>:x:y) patterns
-  if (e.stack != undefined && e.stack.match(new RegExp('.*(Function|<anonymous>):[0-9]+:[0-9]+.*'))) {
-    let stackArray = e.stack.split(":")
-    if(stackArray.length >= 4)
-      return `${e.message} near line ${+stackArray[3] - LINE_OFFSET} (computed via stack)`
+  // Try to extract the error's line number from the stack. Here, at least, we can be confident there 
+  // isn't a mixup between the file and the line. We're looking for the line in the anonymous function:
+  // Firefox (Function:x:y) / Chrome (<anonymous>:x:y) patterns  
+  if (e.stack != undefined) {
+    // Match, with "g" flag to not get capturing groups, just the exact match
+    const stackMatchArray = e.stack.match(new RegExp('.*(Function|<anonymous>):[0-9]+:[0-9]+.*', 'g')) 
+    if(stackMatchArray) {      
+      const stackLine = stackMatchArray[0]
+      const splitPreamble = stackLine.split('Function:')
+      const rowCol = splitPreamble[1].split(':')      
+      const row = +rowCol[0] - LINE_OFFSET
+      const col = rowCol[1]      
+        return `${e.message} Around line ${row} (computed via parsing error stack)`
+    }
   } 
   
   // Default to the error message by itself (Safari, as of Jan 2023; some syntax errors also)
-  return `${e.message} (location information was not provided by the browser)`
+  return `${e.message} (error location was not provided by the browser)`
 }
 
 export { ScriptViewDatum };

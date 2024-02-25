@@ -38,8 +38,7 @@ function get_minimum_distance(
   //returns the coordinates of the closest of the inputted points.
   let curr_min_point: Coords = compare_points[0];
   if (compare_points.length == 0) {
-    throw `Error: no points to compare. Talk to Sidney about this one I'd say.
-     Problem in geometricHelpers.ts`;
+    throw Error(`Error: no points to compare. Please report this error.`);
   }
   compare_points.forEach((p) => {
     if (distance(p, target_point) < distance(curr_min_point, target_point)) {
@@ -128,7 +127,7 @@ function bounding_box_to_lambda(
       }
       return { x: xval, y: yval };
     } else {
-      throw 'not supposed to get to this case. Error in geometricHelpers.ts';
+      throw Error('Error in geometricHelpers.ts; Please report this error.');
     }
   };
 }
