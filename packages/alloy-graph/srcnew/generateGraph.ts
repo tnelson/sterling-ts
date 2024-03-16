@@ -1,5 +1,7 @@
 import {
   AlloyInstance,
+  AlloyRelation,
+  AlloyAtom,
   atomIsBuiltin,
   getInstanceAtom,
   getInstanceAtoms,
@@ -7,7 +9,7 @@ import {
   getRelationTuples
 } from '@/alloy-instance';
 import { newGraph } from '@/graph-lib';
-import { getRelationIsAttribute, SterlingTheme } from '@/sterling-theme';
+import { getRelationIsAttribute, getRelationSTIndexes, SterlingTheme } from '@/sterling-theme';
 import { WritableDraft } from 'immer/dist/types/types-external';
 import { first, last } from 'lodash-es';
 import { generateEdgeId, generateNodeId } from './ids';
@@ -33,7 +35,8 @@ export function generateGraph(
   const { nodeIds, edgeIds } = getVisibleGraphComponents(
     instance,
     hideDisconnected,
-    hideDisconnectedBuiltins
+    hideDisconnectedBuiltins,
+    theme
   );
 
   const nodes: AlloyNode[] = [];
@@ -55,8 +58,15 @@ export function generateGraph(
       getRelationTuples(relation).forEach((tuple) => {
         const edgeId = generateEdgeId(relation, tuple);
         const atoms = tuple.atoms;
-        const source = first(atoms);
-        const target = last(atoms);
+        
+        // If the relation has arity 3 or higher, use theming settings to
+        // determine how to lay out the arc. This is useful for, e.g., models 
+        // that define a weighted directed graph on 3-ary edges: Node->Node->Int
+        const [sourceIndex,targetIndex] = getRelationSTIndexes(theme, relation.id, atoms.length)
+        
+        const source = sourceIndex ? atoms[sourceIndex] : first(atoms);
+        const target = targetIndex ? atoms[targetIndex] : last(atoms);
+
         if (source && target && edgeIds.has(edgeId))
           edges.push({
             id: edgeId,
@@ -86,7 +96,8 @@ export function generateGraph(
 function getVisibleGraphComponents(
   instance: AlloyInstance,
   hideDisconnected: boolean,
-  hideDisconnectedBuiltins: boolean
+  hideDisconnectedBuiltins: boolean,
+  theme?: SterlingTheme | WritableDraft<SterlingTheme>
 ): { nodeIds: Set<string>; edgeIds: Set<string> } {
   const nodeIds: Set<string> = new Set<string>();
   const edgeIds: Set<string> = new Set<string>();
@@ -97,8 +108,10 @@ function getVisibleGraphComponents(
       const atoms = tuple.atoms.map((atomId) =>
         getInstanceAtom(instance, atomId)
       );
-      const source = first(atoms);
-      const target = last(atoms);
+
+      // NOTE: code duplication with caller
+      const [source, target] = resolveSourceAndTarget(relation, atoms, theme)
+
       if (source && target) {
         nodeIds.add(generateNodeId(source));
         nodeIds.add(generateNodeId(target));
@@ -124,4 +137,20 @@ function getVisibleGraphComponents(
     nodeIds,
     edgeIds
   };
+}
+
+function resolveSourceAndTarget(
+    relation: AlloyRelation, atoms: AlloyAtom[],
+    theme?: SterlingTheme| WritableDraft<SterlingTheme>): [AlloyAtom|undefined, AlloyAtom|undefined] {
+  if(theme) {
+    const [sourceIndex,targetIndex] = getRelationSTIndexes(theme, relation.id, atoms.length)
+    const source = sourceIndex ? atoms[sourceIndex] : first(atoms);
+    const target = targetIndex ? atoms[targetIndex] : last(atoms);
+    return [source,target]
+  } else {
+    const source = first(atoms);
+    const target = last(atoms);  
+    return [source,target]
+  }
+
 }

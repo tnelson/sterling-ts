@@ -45,6 +45,10 @@ export interface EdgeStyleSpec {
   hidden?: boolean;
   // whether to display the targets as an attribute rather than an edge
   asAttribute?: boolean;
+  // if high-arity relation, what is the tuple index for the source node?
+  sourceIndex?: number;
+  // if high-arity relation, what is the tuple index for the target node?
+  targetIndex?: number;
   // the shape of the curve
   curve?: CurveDef;
   // props

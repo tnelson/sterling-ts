@@ -47,6 +47,7 @@ export function generateLayout(
   });
 
   forEach(edges, (edge, edgeId) => {
+    //console.log(`layout: ${edgeId} ${edge.source} ${edge.target}`)
     graph.setEdge(edge.source, edge.target, { id: edgeId });
   });
 

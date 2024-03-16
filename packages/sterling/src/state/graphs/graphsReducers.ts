@@ -21,6 +21,7 @@ import { forEach, remove, set, unset } from 'lodash-es';
 import { Matrix } from 'transformation-matrix';
 import { generateLayoutId, GraphsState } from './graphs';
 import { DEFAULT_LAYOUT_SETTINGS } from './graphsDefaults';
+import { LiteralUnion } from 'prettier';
 
 /**
  * An Immer draft of a GraphsState object, so that we can "mutate" the state
@@ -59,6 +60,47 @@ function asAttributeSet(
     }
   }
 }
+
+function edgeIndexSet(
+  state: DraftState,
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    relation: string;
+    which: 'sourceIndex' | 'targetIndex';
+    value: number
+  }>
+) {
+  const { datum, relation, which, value } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
+  if (theme) {
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+
+    if (spec) {
+        set(spec, [which], value);
+    } else {
+      const newSpec: EdgeStyleSpec = {
+        targets: [{ relation }]
+      };
+      newSpec[which] = value
+      if (!theme.edges) theme.edges = [];
+      theme.edges.push(castDraft(newSpec));
+    }
+    // This call will re-generate the layout around the new source/target indexes
+    validateLayouts(state, datum);
+  }
+}
+function edgeIndexRemoved(
+  state: DraftState,
+  action: PayloadAction<{ datum: DatumParsed<any>; relation: string; which: string; }>
+) {
+  const { datum, relation, which } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
+  if (theme) {
+    const spec = getEdgeStyleSpecUnique(theme, relation);
+    if (spec) unset(spec, [which]);
+  }
+}
+
 
 function curveRemoved(
   state: DraftState,
@@ -191,12 +233,14 @@ function edgeStyleSet(
 ) {
   const { datum, relation, style, value } = action.payload;
   const theme = state.themeByDatumId[datum.id];
+  
   if (theme) {
     // get the edge style spec where the given relation is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
 
     if (spec) {
       // if there is one, set the new value
+      // console.log(`edgeStyleSet spec: ${relation}: ${style}=${value}`)
       set(spec, ['styles', 'edge', style], value);
     } else {
       // if there isn't one, create a new one and add it to the array of edge
@@ -427,6 +471,7 @@ function projectionAdded(
   } else {
     theme.projections = [castDraft(projection)];
   }
+  // Generate new layout
   validateLayouts(state, datum);
 }
 
@@ -468,6 +513,7 @@ function projectionRemoved(
   if (theme.projections) {
     remove(theme.projections, (p) => p.type === type);
   }
+  // Generate new layout
   validateLayouts(state, datum);
 }
 
@@ -508,6 +554,7 @@ function projectionSet(
   if (projection) {
     projection.atom = atom;
   }
+  // Generate new layout
   validateLayouts(state, datum);
 }
 
@@ -627,6 +674,7 @@ function themeFileLoaded(
 ) {
   const { datum, data } = action.payload;
   state.themeByDatumId[datum.id] = JSON.parse(data);
+    // Generate new layout
   validateLayouts(state, datum);
 }
 
@@ -681,7 +729,9 @@ function getNodeStyleSpecUnique(
 
 /**
  * Validate layouts by making sure that one exists for the current set of
- * projections for the given datum.
+ * projections for the given datum. This function will also generate a new 
+ * layout when called; this supports on-demand layout changes when certain 
+ * theme elements are changed. 
  */
 function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
   if (isDatumAlloy(datum)) {
@@ -704,7 +754,9 @@ function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
 
     const layoutId = generateLayoutId(projections);
 
-    if (!state.layoutsByDatumId[datum.id].layoutById[layoutId]) {
+    // TN removed to allow on-demand layout changes; this function now always generates 
+    // a new layout.
+    //if (!state.layoutsByDatumId[datum.id].layoutById[layoutId]) {
       const instances = datum.parsed.instances;
       const atoms = projections.map((proj) => proj.atom).filter(isDefined);
       const projected = instances.map((inst) => applyProjections(inst, atoms));
@@ -714,7 +766,7 @@ function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
         graphs,
         DEFAULT_LAYOUT_SETTINGS
       );
-    }
+    //}
   }
 }
 
@@ -726,6 +778,8 @@ export default {
   edgeLabelStyleSet,
   edgeStyleRemoved,
   edgeStyleSet,
+  edgeIndexSet,
+  edgeIndexRemoved,
   graphSpread,
   graphZoomed,
   hiddenRelationAdded,

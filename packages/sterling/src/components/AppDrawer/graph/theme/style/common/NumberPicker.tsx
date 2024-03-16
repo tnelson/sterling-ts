@@ -1,3 +1,4 @@
+import { NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper } from '@chakra-ui/react';
 import { CloseButton } from './CloseButton';
 import { InheritedLabel } from './InheritedLabel';
 
@@ -16,7 +17,22 @@ const NumberPicker = (props: NumberPickerProps) => {
       <div className='grow text-sm'>{label}</div>
       {inherited && <InheritedLabel />}
       {!inherited && <CloseButton onClick={onRemove} />}
-      <input
+      <NumberInput 
+        size='sm' 
+        className='w-20 text-xs' 
+        min={0}
+        max={100}
+        value={value}
+        onChange={(event) => {
+          onChange(+event);
+        }}>
+        <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+      </NumberInput>
+      {/* <input
         className='w-16 text-xs h-6'
         type='number'
         min='0'
@@ -25,7 +41,7 @@ const NumberPicker = (props: NumberPickerProps) => {
         onChange={(event) => {
           onChange(+event.target.value);
         }}
-      />
+      /> */}
     </div>
   );
 };
