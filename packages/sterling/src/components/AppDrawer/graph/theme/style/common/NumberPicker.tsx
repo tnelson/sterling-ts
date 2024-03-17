@@ -4,7 +4,7 @@ import { InheritedLabel } from './InheritedLabel';
 
 interface NumberPickerProps {
   label: string;
-  value: number;
+  value: number | '';
   inherited: boolean;
   onChange: (value: number | undefined) => void;
   onRemove: () => void;

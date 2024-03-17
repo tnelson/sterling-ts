@@ -57,7 +57,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
       edgeIndexRemoved({
         datum,
         relation: id,
-        style
+        which
       })
     );
   };
@@ -155,7 +155,7 @@ const RelationStylePanel = (props: StylesTreePanel) => {
       {(
         <NumberPicker
           label='Target Index'
-          value={targetIndex ? targetIndex : 1}
+          value={targetIndex ? targetIndex : ''}
           inherited={false}
           onChange={(value) => onEdgeIndexChange('targetIndex', value ? value : 1)}
           onRemove={() => onEdgeIndexRemove('targetIndex')}
