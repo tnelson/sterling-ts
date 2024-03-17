@@ -20,6 +20,8 @@ export const {
   edgeLabelStyleSet,
   edgeStyleRemoved,
   edgeStyleSet,
+  edgeIndexSet,
+  edgeIndexRemoved,
   curveRemoved,
   curveSet,
   graphSpread,

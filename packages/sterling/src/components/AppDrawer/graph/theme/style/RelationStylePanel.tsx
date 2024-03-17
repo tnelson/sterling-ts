@@ -6,7 +6,9 @@ import {
   edgeLabelStyleRemoved,
   edgeLabelStyleSet,
   edgeStyleRemoved,
-  edgeStyleSet
+  edgeStyleSet,
+  edgeIndexSet,
+  edgeIndexRemoved
 } from '../../../../../state/graphs/graphsSlice';
 import {
   useSterlingDispatch,
@@ -26,8 +28,9 @@ const RelationStylePanel = (props: StylesTreePanel) => {
   const style = useSterlingSelector((state) =>
     selectRelationStyle(state, datum, id)
   );
-  const { asAttribute, curve, stroke, strokeWidth, fontSize, textColor } =
-    style;
+  
+  const { asAttribute, curve, stroke, strokeWidth, fontSize, textColor,
+          sourceIndex, targetIndex } = style;
 
   const onAsAttributeChange = (selected: boolean) => {
     dispatch(
@@ -38,6 +41,28 @@ const RelationStylePanel = (props: StylesTreePanel) => {
       })
     );
   };
+
+  const onEdgeIndexChange = (which: 'sourceIndex'|'targetIndex', value: number) => {
+    dispatch(
+      edgeIndexSet({
+        datum,
+        relation: id,
+        which: which,
+        value: value
+      })
+    ); 
+  };
+  const onEdgeIndexRemove = (which: string) => {
+    dispatch(
+      edgeIndexRemoved({
+        datum,
+        relation: id,
+        which
+      })
+    );
+  };
+
+
 
   const onCurveChange = (curve: CurveDef) => {
     dispatch(
@@ -116,6 +141,24 @@ const RelationStylePanel = (props: StylesTreePanel) => {
           label='Display as attribute'
           value={asAttribute}
           onChange={onAsAttributeChange}
+        />
+      )}
+      {(
+        <NumberPicker
+          label='Source Index'
+          value={sourceIndex ? sourceIndex : 0}
+          inherited={false}
+          onChange={(value) => onEdgeIndexChange('sourceIndex', value ? value : 0)}
+          onRemove={() => onEdgeIndexRemove('sourceIndex')}
+        />
+      )}
+      {(
+        <NumberPicker
+          label='Target Index'
+          value={targetIndex ? targetIndex : ''}
+          inherited={false}
+          onChange={(value) => onEdgeIndexChange('targetIndex', value ? value : 1)}
+          onRemove={() => onEdgeIndexRemove('targetIndex')}
         />
       )}
       {stroke && (

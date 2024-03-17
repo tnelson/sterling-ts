@@ -50,6 +50,8 @@ type Inheritable<T> = {
 
 export interface RelationStyle {
   asAttribute?: boolean;
+  sourceIndex?: number;
+  targetIndex?: number;
   curve?: Inheritable<CurveDef>;
   stroke?: Inheritable<string>;
   strokeWidth?: Inheritable<number>;

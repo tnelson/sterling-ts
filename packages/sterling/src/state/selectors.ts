@@ -400,10 +400,13 @@ export function selectRelationStyle(
 
     const style: RelationStyle = {};
     const relations = ['*', relationId];
-
     relations.forEach((relation) => {
       specs[relation].forEach((spec) => {
+        
         const asAttribute = get(spec, ['asAttribute']);
+        const sourceIndex = get(spec, ['sourceIndex']);
+        const targetIndex = get(spec, ['targetIndex']);
+        
         const curve = get(spec, ['curve']);
         const stroke = get(spec, ['styles', 'edge', 'stroke']);
         const strokeWidth = get(spec, ['styles', 'edge', 'strokeWidth']);
@@ -411,6 +414,8 @@ export function selectRelationStyle(
         const textColor = get(spec, ['styles', 'label', 'fill']);
 
         set(style, ['asAttribute'], asAttribute === true);
+        set(style, ['sourceIndex'], sourceIndex);
+        set(style, ['targetIndex'], targetIndex);
         if (curve) {
           set(style, ['curve', 'value'], curve);
           set(style, ['curve', 'inherited'], relation !== relationId);

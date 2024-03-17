@@ -17,6 +17,7 @@ import {
 import {
   EdgeStyleSpec,
   getRelationIsAttribute,
+  getRelationSTIndexes,
   NodeStyleSpec,
   SterlingTheme
 } from '@/sterling-theme';
@@ -109,8 +110,17 @@ export function generateGraphProps(
 
   const generateEdgeLabel = (edge: AlloyEdge) => {
     if (edge.tuple.atoms.length > 2) {
+      // In this case, we must apply an edge label. By default, the _middle_ atoms of the tuple 
+      // will be shown, but the theme may contain overrides for sourceIndex and targetIndex. 
+      // We have source and target here, which are correct, but that isn't enough -- consider duplicates
+      // of the same atom in the tuple. Check in the theme. Watch out: use id, not name, of the relation.
+      const [sourceIndex, targetIndex] = getRelationSTIndexes(theme, edge.relation.id, edge.tuple.atoms.length)
+      const spliced = edge.tuple.atoms.slice() 
+      spliced.splice(sourceIndex, 1)
+      spliced.splice(targetIndex-1, 1)
       return (
-        edge.relation.name + `[${edge.tuple.atoms.slice(1, -1).join(', ')}]`
+        //edge.relation.name + `[${edge.tuple.atoms.slice(1, -1).join(', ')}]`
+        edge.relation.name + `[${spliced.join(', ')}]`
       );
     }
     return edge.relation.name;

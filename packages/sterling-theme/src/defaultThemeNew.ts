@@ -1,4 +1,5 @@
 import { SterlingTheme } from '@/sterling-theme';
+import { NodeDef } from 'graph-svg-custom/types';
 
 export function defaultThemeNew(): SterlingTheme {
   return {
@@ -32,6 +33,8 @@ export function defaultThemeNew(): SterlingTheme {
     ],
     edges: [
       {
+        asAttribute: false,
+        sourceIndex: 0,
         curve: {
           type: 'bspline'
         },
