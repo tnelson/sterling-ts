@@ -64,7 +64,7 @@ export class Polygon extends Shape{
         maskIdentifier = this.addMaskRender(render_masks, svg);
         d3.select(svg)
             .append('path')
-            .attr('d', path.toString)
+            .attr('d', path.toString())
             .attr('stroke-width', this.borderWidth)
             .attr('stroke', this.borderColor)
             .attr('fill', this.color)
