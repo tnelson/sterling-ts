@@ -23,7 +23,13 @@ export function VerifyObjectCharacteristics(obj: any, expected_characteristics: 
   let object_equality = true;
   for(const [characteristic, expected_value] of Object.entries(expected_characteristics))
   {
-    object_equality = object_equality && (obj.getAttribute(characteristic) === expected_value)
+    const actualValue = obj.getAttribute(characteristic)
+    const isEq = (actualValue === expected_value)
+    object_equality = object_equality && isEq
+    if(!isEq) { 
+      console.log(`Verifying object characteristics failed; field ${characteristic} was ${actualValue}; expected ${expected_value}.`)
+      console.log(`Object was: ${JSON.stringify(obj)}`)
+    }
   }
   return object_equality
 }

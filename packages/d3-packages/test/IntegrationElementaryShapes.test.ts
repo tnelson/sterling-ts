@@ -5,6 +5,7 @@
 import { Circle } from '../Circle';
 import { Rectangle } from '../Rectangle'
 import { Stage } from '../Stage'
+import { Polygon } from '../Polygon'
 import {  CreateMockSVG, VerifyObjectCharacteristics } from './IntegrationTestEngine'
 
 describe('Rendering Elementary Shapes', () => {
@@ -50,4 +51,61 @@ describe('Rendering Elementary Shapes', () => {
       })).toBe(true)
     }
   })
+  it('Can render a polygon', () => {
+    const stage: Stage = new Stage()
+    let svg = CreateMockSVG()
+    
+    const polypoints = [
+      {x:100, y:50},
+      {x:300, y:50},
+      {x:100, y:150},
+      {x:300, y:150}
+    ]
+    const strokeWidth = 2
+    const borderWidth = 2
+    const color = "orange"
+    const borderColor = "black"
+    const label = "Hi!"
+    const labelColor = "black"
+    const opacity = 0.7
+    const poly = new Polygon({
+      points: polypoints, 
+      color: color, 
+      borderWidth: borderWidth, 
+      borderColor: borderColor, 
+      label: label,
+      labelColor: labelColor,
+      opacity: opacity
+    });
+    stage.add(poly)
+    stage.render(svg)
+
+    const paths: HTMLCollectionOf<SVGPathElement> = svg.getElementsByTagName('path');
+    expect(paths.length).toBe(1)
+    const texts: HTMLCollectionOf<SVGTextElement> = svg.getElementsByTagName('text');
+    expect(texts.length).toBe(1)
+
+    for(const path of paths)
+    {
+      //console.log([...path.attributes].map(attr => attr.name))
+      expect(VerifyObjectCharacteristics(path, {
+        opacity: opacity.toString(),
+        fill: color.toString(),
+        stroke: borderColor.toString(),
+        // This is brittle, but we had trouble finding a library method that auto-parsed this, so
+        // adding this so we have some test for display of lines. 
+        d: "M100,50L100,50L300,50L100,150L300,150Z"
+      })).toBe(true)
+    }
+    for(const text of texts)
+    {
+        //console.log([...text.attributes].map(attr => attr.name))
+        //console.log(text.firstChild?.textContent)
+        // expect(VerifyObjectCharacteristics(text, {
+        //   innerText: "Hi!"
+        // })).toBe(true)
+        expect(text.firstChild?.textContent).toBe("Hi!")
+    }
+  })
+
 })
