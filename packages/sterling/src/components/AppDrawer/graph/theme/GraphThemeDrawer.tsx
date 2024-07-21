@@ -6,9 +6,10 @@ import { selectActiveDatum } from '../../../../state/selectors';
 import { ProjectionSection } from './projection/ProjectionSection';
 import { StyleSection } from './style/StyleSection';
 import { ThemeFileSection } from './ThemeFileSection';
+import { MagicLayoutButton } from './projection/MagicLayoutButton';
 
 const GraphThemeDrawer = () => {
-  const datum = useSterlingSelector(selectActiveDatum);
+  const datum = useSterlingSelector(selectActiveDatum); 
 
   if (!datum) return null;
   return (
@@ -16,6 +17,7 @@ const GraphThemeDrawer = () => {
       <ThemeFileSection datum={datum} />
       <ProjectionSection datum={datum} />
       <StyleSection datum={datum} />
+      <MagicLayoutButton datum={datum} />
     </div>
   );
 };
