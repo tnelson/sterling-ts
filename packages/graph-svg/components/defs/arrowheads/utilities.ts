@@ -15,5 +15,6 @@ export function arrowheadColor (style: CSSProperties): string {
  * @param style A style object
  */
 export function arrowheadID (style: CSSProperties): string {
+    console.log(style)
     return `arrow[${arrowheadColor(style)}]`;
 }

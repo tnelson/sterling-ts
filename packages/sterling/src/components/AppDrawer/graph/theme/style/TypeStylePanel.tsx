@@ -5,7 +5,7 @@ import {
   shapeRemoved,
   shapeSet,
   shapeStyleRemoved,
-  shapeStyleSet
+  shapeStyleSet,
 } from '../../../../../state/graphs/graphsSlice';
 import {
   useSterlingDispatch,

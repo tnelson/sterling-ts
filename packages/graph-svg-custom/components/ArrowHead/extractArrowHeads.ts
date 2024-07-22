@@ -7,11 +7,10 @@ export function extractArrowHeads(styles: CSSProperties[]): ArrowDef[] {
   const defs: ArrowDef[] = [];
   styles.forEach((style) => {
     const size = 10;
-    const color = style.stroke;
-    const id = arrowheadId(size, color);
+    const id = arrowheadId(size, style);
     if (!ids.has(id)) {
       ids.add(id);
-      defs.push({ size, color });
+      defs.push({ size, style });
     }
   });
   return defs;

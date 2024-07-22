@@ -42,6 +42,7 @@ export const {
   shapeStyleRemoved,
   shapeStyleSet,
   themeFileLoaded,
-  timeIndexSet
+  timeIndexSet,
+  renameSet
 } = graphsSlice.actions;
 export default graphsSlice.reducer;

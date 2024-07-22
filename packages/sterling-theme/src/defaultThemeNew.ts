@@ -3,6 +3,7 @@ import { NodeDef } from 'graph-svg-custom/types';
 
 export function defaultThemeNew(): SterlingTheme {
   return {
+    rename: false,
     hidden: {
       builtinDisconnected: true
     },

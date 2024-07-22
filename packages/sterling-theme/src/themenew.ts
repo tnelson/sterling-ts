@@ -15,6 +15,8 @@ export interface SterlingTheme {
     // whether to hide only disconnected builtin nodes (hiding does effect layout)
     builtinDisconnected?: boolean;
   };
+  // policy for renaming atoms, if any
+  rename?: boolean
 }
 
 export interface NodeStyleSpec {

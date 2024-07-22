@@ -18,7 +18,8 @@ const Path = (props: PathProps) => {
   const renderRef = useRef<SVGPathElement>(null);
   const generator = useMemo(() => pathGenerator(curve), [curve]);
   const d = useMemo(() => generator(path) || '', [generator, path]);
-  const marker = `url(#${arrowheadId(10, style.stroke)})`;
+  const markerId = arrowheadId(10, style);
+  const marker = `url(#${markerId})`;
 
   useLayoutEffect(() => {
     const hover = hoverRef.current;

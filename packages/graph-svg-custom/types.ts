@@ -94,7 +94,7 @@ export type EdgeDef = {
 // Arrowheads
 export type ArrowDef = {
   size: number;
-  color?: string;
+  style?: CSSProperties;
 };
 
 // The components required to render a graph

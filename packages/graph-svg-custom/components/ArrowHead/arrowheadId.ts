@@ -1,3 +1,7 @@
-export function arrowheadId(size: number, color?: string): string {
-  return `arrow-${size}-[${color}]`;
+import { CSSProperties } from "react";
+
+export function arrowheadId(size: number, style: CSSProperties|undefined): string {
+  const fill = style?.fill
+  const stroke = style?.stroke
+  return `arrow-${size}-${stroke?.replace('#', '')}-${fill?.replace('#', '')}`;
 }

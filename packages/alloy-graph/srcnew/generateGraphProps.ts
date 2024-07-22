@@ -5,7 +5,7 @@ import {
   getInstanceSkolems,
   getRelationTuples
 } from '@/alloy-instance';
-import { Edge, getEdges, getNodes, PositionedGraph } from '@/graph-lib';
+import { Node, getEdges, getNodes, PositionedGraph } from '@/graph-lib';
 import {
   CurveDef,
   EdgeLabelDef,
@@ -26,6 +26,7 @@ import { CSSProperties } from 'react';
 import { getInstanceEdgeStyleSpecs } from './getInstanceEdgeStyleSpecs';
 import { getInstanceNodeStyleSpecs } from './getInstanceNodeStyleSpecs';
 import { AlloyEdge, AlloyGraph } from './types';
+import { VscTypeHierarchySuper } from 'react-icons/vsc';
 
 /**
  * TODO: This function needs to accept an array of themes so that we can apply
@@ -85,11 +86,32 @@ export function generateGraphProps(
     });
   });
 
+  // If we are renaming nodes, keep separate indexes for each sig
+  const perSigNames = new Map<string, number>();
+  
   // Generate node labels and styles
   getNodes(graph).forEach((node) => {
+
+    const maybeRename = () => {
+      const type = getAtomType(instance, node.atom);
+      if(!theme.rename) return node.atom.id
+      // otherwise, rename by sig
+      const current = perSigNames.get(type.id)
+      if(current != undefined) { 
+        perSigNames.set(type.id, current + 1)
+      } else { 
+        perSigNames.set(type.id, 0) 
+      }
+      return `${type.id}${perSigNames.get(type.id)}`
+    }
+
     nodeLabels[node.id] = [
       {
-        text: node.atom.id,
+        // node.atom.id is the actual atom string provided by the engine.
+        // If there is a sig hierarchy, it may be helpful to rename these 
+        // according to their most-specific sig. But it would be _unhelpful_
+        // to do so if the user has given specific atom names. 
+        text: maybeRename(),
         props: {},
         style: {}
       }

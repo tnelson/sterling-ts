@@ -60,6 +60,7 @@ export interface RelationStyle {
 }
 
 export interface TypeStyle {
+  rename?: Inheritable<boolean>;
   shape?: Inheritable<ShapeDef>;
   fill?: Inheritable<string>;
   stroke?: Inheritable<string>;

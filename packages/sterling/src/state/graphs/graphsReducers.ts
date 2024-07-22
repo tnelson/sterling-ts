@@ -386,6 +386,36 @@ function nodeLabelStyleSet(
   }
 }
 
+/**
+ * Set whether atoms of a specific sig should have their names rewritten
+ */
+function renameSet(
+  state: DraftState,
+  action: PayloadAction<{
+    datum: DatumParsed<any>;
+    rename: boolean;
+  }>
+) {
+  const { datum, rename } = action.payload;
+  const theme = state.themeByDatumId[datum.id];
+  if (theme) {
+    theme.rename = rename
+    // const spec = getNodeStyleSpecUnique(theme, type);
+    // if (spec) {
+    //   set(spec, ['rename'], rename)
+    // } else {
+    //   const newSpec: NodeStyleSpec = {
+    //     targets: [{ type }],
+    //     rename
+    //   };
+
+    //   if (!theme.nodes) theme.nodes = [];
+    //   theme.nodes.push(castDraft(newSpec));
+    // }
+
+  }
+}
+
 function nodesOffset(
   state: DraftState,
   action: PayloadAction<{
@@ -798,7 +828,8 @@ export default {
   shapeStyleRemoved,
   shapeStyleSet,
   themeFileLoaded,
-  timeIndexSet
+  timeIndexSet,
+  renameSet
 };
 
 export { validateLayouts };
