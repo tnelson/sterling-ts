@@ -1,3 +1,4 @@
+import { GiConsoleController } from 'react-icons/gi';
 import { AlloyAtom, atomsFromElements, buildIntAtoms } from './atom';
 import { AlloyInstance, getInstanceType } from './instance';
 import { isDefined } from './util';
@@ -25,10 +26,21 @@ interface TypeMeta {
   private?: boolean;
 }
 
+/**
+ * Add Int atoms to the Int type, based on the given bitwidth, if none were 
+ * passed in the XML. 
+ * 
+ * If there are atoms present already, this function will do nothing. Note that
+ * if the _intent_ was to pass the empty set of atoms, Sterling will still 
+ * overwrite that empty set with the bitwidth-generated set.
+ * @param bitwidth 
+ * @param types 
+ */
 export function findAndPopulateIntType(bitwidth: number, types: AlloyType[]) {
   const intType = types.find((t) => t.id === 'Int');
   if (!intType) throw new Error('Could not find Int type');
-  intType.atoms = buildIntAtoms(bitwidth);
+  if(intType.atoms.length == 0)
+    intType.atoms = buildIntAtoms(bitwidth);
 }
 
 export function getTopLevelTypeId(type: AlloyType): string {
