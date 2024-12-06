@@ -6,7 +6,7 @@ const JsonView = () => {
   const datum = useSterlingSelector(selectActiveDatum);
   if (!datum) return null;
   
-  return <b>Hi!</b>  // <ScriptViewDatum datum={datum} data-testid='script-view-datum'/>;
+  return <b>{JSON.stringify(Object.keys(datum.parsed))}</b>  // <ScriptViewDatum datum={datum} data-testid='script-view-datum'/>;
 };
 
 export { JsonView };
