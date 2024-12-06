@@ -79,5 +79,5 @@ export interface ProviderMeta {
   /**
    * The Sterling views the provider wants available to the user.
    */
-  views?: ('graph' | 'table' | 'script')[];
+  views?: ('graph' | 'table' | 'script' | 'json')[];
 }
