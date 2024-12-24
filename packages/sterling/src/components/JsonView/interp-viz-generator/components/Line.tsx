@@ -1,0 +1,51 @@
+import React, { useEffect, useRef } from 'react';
+import * as d3 from 'd3';
+
+export interface LineProps {
+  startX: number;
+  endX: number;
+  startY: number;
+  endY: number;
+  strokeWidth?: number;
+  strokeColor?: string;
+  svgRef?: React.MutableRefObject<SVGSVGElement | null>;
+}
+
+export default function Line(props: LineProps) {
+  const strokeWidth = props.strokeWidth ? props.strokeWidth : 3;
+
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const ref = props.svgRef || svgRef;
+
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const svg = d3.select(ref.current);
+    svg.selectAll('*').remove(); // remove previous render
+
+    const top = Math.min(props.startY, props.endY);
+    const left = Math.min(props.startX, props.endX);
+
+    svg
+      .append('line')
+      .attr('x1', props.startX - left + strokeWidth / 2)
+      .attr('x2', props.endX - left + strokeWidth / 2)
+      .attr('y1', props.startY - top + strokeWidth / 2)
+      .attr('y2', props.endY - top + strokeWidth / 2)
+      .attr('stroke-width', strokeWidth)
+      .attr('stroke', props.strokeColor ? props.strokeColor : 'black');
+  }, [props.startX, props.endX, props.startY, props.endY, strokeWidth]);
+
+  return (
+    <svg
+      ref={ref}
+      width={Math.max(props.endX, props.startX) + 20}
+      height={Math.max(props.endY, props.startY) + 5}
+      style={{
+        position: 'absolute',
+        top: Math.min(props.startY, props.endY),
+        left: Math.min(props.startX, props.endX)
+      }}
+    />
+  );
+}
