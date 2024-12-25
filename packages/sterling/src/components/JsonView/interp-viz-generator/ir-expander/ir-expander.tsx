@@ -3,6 +3,7 @@ import { ConditionalComponent } from './conditional/conditional';
 import { TextComponent } from './components/text';
 import { DatumParsed } from '@/sterling-connection';
 import { SterlingDispatch } from 'sterling/src/state/store';
+import { LineComponent } from './components/line';
 
 // [TODO] maybe it's possible to define this in a better way -- we
 // could define a separate type for `properties` for each kind of
@@ -45,6 +46,18 @@ export function SingleComponent(props: SingleComponentProps) {
         vizCol={undefined}
       />
     );
+  }
+
+  if (elementJson.type === 'line') {
+    return (
+      <LineComponent
+        json={elementJson}
+        datum={datum}
+        dynamics={{}}
+        vizRow={undefined}
+        vizCol={undefined}
+      />
+    )
   }
 
   return <div>unknown component</div>;
