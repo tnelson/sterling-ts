@@ -6,20 +6,7 @@ import { useLocalNextExpressionId } from '../../LocalNextExpressionIdProvider';
 import { selectEvaluatorExpressions, selectNextExpressionId } from 'sterling/src/state/selectors';
 import { Expression } from 'sterling/src/state/evaluator/evaluator';
 import DoNothing from '../../components/DoNothing';
-
-// Utility function to check if a value is a conditional
-export function isConditional(value: any): boolean {
-  return value && typeof value === 'object' && value.type === 'conditional';
-}
-
-export function parseBoolean(str: string): boolean {
-  if (str.toLowerCase() === '#t') {
-    return true;
-  } else if (str.toLowerCase() === '#f') {
-    return false;
-  }
-  throw new Error(`Invalid boolean string: ${str}`);
-}
+import { parseBoolean } from '../util';
 
 
 interface ConditionalComponentProps {

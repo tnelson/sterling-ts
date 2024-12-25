@@ -1,4 +1,4 @@
-import { isConditional } from '../conditional/conditional';
+import { isConditional, isForgeExpression } from '../util';
 import React, { useState, useEffect, useRef } from 'react';
 import TextDisplay from '../../components/TextDisplay';
 import { DatumParsed, evalRequested } from '@/sterling-connection';
@@ -129,8 +129,7 @@ export function TextComponent(props: TextComponentProps) {
 
   // evaluate props as forge expressions when specified by the user 
   useEffect(() => {
-    if (textConditionResult !== undefined && typeof textConditionResult === 'string'
-        && textConditionResult.startsWith('~')) {
+    if (textConditionResult !== undefined && isForgeExpression(textConditionResult)) {
       makeEvaluatorRequest(
         textConditionResult.substring(1),
         datum,
@@ -139,8 +138,7 @@ export function TextComponent(props: TextComponentProps) {
         textConditionResultSetter
       );
     }
-    if (topYConditionResult !== undefined && typeof topYConditionResult === 'string'
-        && topYConditionResult.startsWith('~')) {
+    if (topYConditionResult !== undefined && isForgeExpression(topYConditionResult)) {
       makeEvaluatorRequest(
         topYConditionResult.substring(1),
         datum,
@@ -149,8 +147,7 @@ export function TextComponent(props: TextComponentProps) {
         topYConditionResultSetter
       );
     }
-    if (leftXConditionResult !== undefined && typeof leftXConditionResult === 'string'
-        && leftXConditionResult.startsWith('~')) {
+    if (leftXConditionResult !== undefined && isForgeExpression(leftXConditionResult)) {
       makeEvaluatorRequest(
         leftXConditionResult.substring(1),
         datum,
@@ -159,8 +156,7 @@ export function TextComponent(props: TextComponentProps) {
         leftXConditionResultSetter
       );
     }
-    if (textColorConditionResult !== undefined && typeof textColorConditionResult === 'string'
-        && textColorConditionResult.startsWith('~')) {
+    if (textColorConditionResult !== undefined && isForgeExpression(textColorConditionResult)) {
       makeEvaluatorRequest(
         textColorConditionResult.substring(1),
         datum,
