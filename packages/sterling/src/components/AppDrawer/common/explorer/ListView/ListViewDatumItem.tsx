@@ -11,13 +11,13 @@ import {
 } from '../../../../../state/selectors';
 import { Row, RowItem } from './Row';
 
-interface ListViewItemProps {
+interface ListViewDatumItemProps {
   datum: DatumParsed<any>;
   active: boolean;
   onClickItem: (event: MouseEvent, datum: DatumParsed<any>) => void;
 }
 
-const ListViewItem = (props: ListViewItemProps) => {
+const ListViewDatumItem = (props: ListViewDatumItemProps) => {
   const { datum, active, onClickItem } = props;
   const statefulNative = useSterlingSelector((state) =>
     selectDatumIsStateful(state, datum)
@@ -41,4 +41,4 @@ const ListViewItem = (props: ListViewItemProps) => {
   );
 };
 
-export { ListViewItem };
+export { ListViewDatumItem };

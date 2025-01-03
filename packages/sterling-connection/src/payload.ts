@@ -1,9 +1,11 @@
 import { Datum, DatumMeta } from './types';
 
 /**
- * A payload containing metadata about the click of an action button.
+ * A payload containing metadata about the click of an action button. The 
+ * (optional) type parameter indicates the structure of any added context 
+ * that the provider should be sent.
  */
-export interface Click {
+export interface Click<T = any> {
   /**
    * The id of the datum associated with the button that was clicked.
    */
@@ -12,6 +14,12 @@ export interface Click {
    * The string value from the onClick field of the button that was clicked.
    */
   onClick: string;
+  /**
+   * Optional context that may be carried with this button click. May be 
+   * semantic (e.g., requesting a next-instance for a specific generator) 
+   * or purely for validation or logging by the provider.
+   */
+  context?: T;
 }
 
 /**

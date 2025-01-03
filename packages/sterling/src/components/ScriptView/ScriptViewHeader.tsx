@@ -20,7 +20,7 @@ const ScriptViewHeader = (props: ScriptViewHeaderProps) => {
       <ScriptViewHeaderButtons onExecute={onExecute} />
       {buttons &&
         buttons.map((button: Button, index: number) => {
-          return <ViewHeaderButton key={index} datumId={id} button={button} />;
+          return <ViewHeaderButton key={index} datumId={id} generatorId={datum.generatorName} button={button} />;
         })}
     </div>
   );

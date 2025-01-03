@@ -7,18 +7,20 @@ import { useSterlingDispatch } from '../../state/hooks';
 interface ViewHeaderButtonProps {
   datumId: string;
   button: Button;
+  generatorId?: string;
 }
 
 const ViewHeaderButton = (props: ViewHeaderButtonProps) => {
   const dispatch = useSterlingDispatch();
-  const { datumId, button } = props;
+  const { datumId, button, generatorId } = props;
   const { text, onClick, mouseover } = button;
 
   const handleClick = useCallback(() => {
     dispatch(
       buttonClicked({
         id: datumId,
-        onClick: onClick
+        onClick: onClick,
+        context: {generatorName: generatorId, id: datumId}
       })
     );
   }, [datumId, button]);

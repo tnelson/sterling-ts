@@ -1,12 +1,13 @@
 import { PaneTitle } from '@/sterling-ui';
-import { Box, Icon } from '@chakra-ui/react';
+import { Divider, Icon } from '@chakra-ui/react';
 import { FaFilm } from 'react-icons/fa';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum, selectData, selectProviderGeneratorNames,  } from '../../../../state/selectors';
-//import { GraphPreview } from '../../../GraphPreview/GraphPreview';
-import { ListView } from './ListView/ListView';
+import { ListViewData } from './ListView/ListViewData';
+import { ListViewGenerators } from './ListView/ListViewGenerators';
 
 const ExplorerDrawer = () => {
+  // The datum contains its generator ID, if any
   const activeDatum = useSterlingSelector(selectActiveDatum);
   const data = useSterlingSelector(selectData);
   const generatorNames = useSterlingSelector(selectProviderGeneratorNames);
@@ -15,12 +16,13 @@ const ExplorerDrawer = () => {
   return (
     <>
       <div aria-label='explorer pane run selector' className='flex flex-col'>
-        {generatorNames ?? 'no generators'}
+        <ListViewGenerators generators={generatorNames ?? []} activeDatum={activeDatum} />
       </div>
+      <Divider orientation='vertical' mx={2} />
       <hr/>
-      <div aria-label='explorer pane instance selector' className='absolute inset-0 flex flex-col overflow-y-auto'>
-          <ListView data={data} active={activeDatum} />
-      </div>
+      {/* <div aria-label='explorer pane instance selector' className='absolute inset-0 flex flex-col overflow-y-auto'>
+          <ListViewData data={data} active={activeDatum} />
+      </div> */}
     </>
   );
 };
