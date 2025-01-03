@@ -1,5 +1,5 @@
 import { PaneTitle } from '@/sterling-ui';
-import { Divider, Icon } from '@chakra-ui/react';
+import { Box, Divider, Heading, Icon, Stack, Text } from '@chakra-ui/react';
 import { FaFilm } from 'react-icons/fa';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum, selectData, selectProviderGeneratorNames,  } from '../../../../state/selectors';
@@ -12,17 +12,30 @@ const ExplorerDrawer = () => {
   const data = useSterlingSelector(selectData);
   const generatorNames = useSterlingSelector(selectProviderGeneratorNames);
 
+  // TODO: if there are no generator names given by the provider, don't show the command 
+  // selection list.
+
   if (!activeDatum) return null;
   return (
     <>
+      
+      <Box p={1} shadow='md' borderWidth='1px'>
+        <Heading fontSize='l' align='center'>Available Commands</Heading>
+      </Box>
+
       <div aria-label='explorer pane run selector' className='flex flex-col'>
         <ListViewGenerators generators={generatorNames ?? []} activeDatum={activeDatum} />
       </div>
-      <Divider orientation='vertical' mx={2} />
+
+      <Box p={1} shadow='md' borderWidth='1px'>
+        <Heading fontSize='l' align='center'>Instance History</Heading>
+      </Box>
+      
       <hr/>
-      {/* <div aria-label='explorer pane instance selector' className='absolute inset-0 flex flex-col overflow-y-auto'>
+      {/* Used to have: inset-0  */}
+      <div aria-label='explorer pane instance selector' className='absolute flex flex-col overflow-y-auto'>
           <ListViewData data={data} active={activeDatum} />
-      </div> */}
+      </div>
     </>
   );
 };

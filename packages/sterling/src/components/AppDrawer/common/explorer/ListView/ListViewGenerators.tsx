@@ -1,5 +1,6 @@
 import { buttonClicked, DatumParsed } from '@/sterling-connection';
 import { useCallback, MouseEvent } from 'react';
+import { DatumControls } from 'sterling/src/components/DatumControls/DatumControls';
 import { useSterlingDispatch } from '../../../../../state/hooks';
 import { ListViewGeneratorItem } from './ListViewGeneratorItem';
 
@@ -14,14 +15,11 @@ const ListViewGenerators = (props: ListViewGeneratorsProps) => {
 
   const onClickRow = useCallback(
     (event: MouseEvent, generatorName: string) => {
-      console.log(`Starting the query for ${generatorName}`)
-      // TODO Problem: how can we _programmatically_ ask for a new instance?
-      // We'd like to click the next button with the "context" field populated 
-      // with the target generator name (among other things, perhaps). 
-      // Do we just click "a button" with "next" as the button name?
-      dispatch(buttonClicked(generatorName));
-      
-      
+      if(activeDatum !== undefined) {
+        dispatch(buttonClicked({id: activeDatum.id, 
+                                onClick: "next", 
+                                context: {generatorName: generatorName}}));
+      }      
     },
     []
   );
