@@ -285,6 +285,13 @@ export function selectProviderName(state: SterlingState): string {
 }
 
 /**
+ * Select the generators that the provider uses. 
+ */
+export function selectProviderGeneratorNames(state: SterlingState): string[] | undefined {
+  return providerSelectors.selectProviderGeneratorNames(state.provider);
+}
+
+/**
  * Select all relations from a datum.
  */
 export function selectRelations(

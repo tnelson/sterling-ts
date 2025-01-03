@@ -29,7 +29,7 @@ const ListViewItem = (props: ListViewItemProps) => {
 
   return (
     <Row onClick={(event) => onClickItem(event, datum)}>
-      <RowItem className={cn}>Datum ID: {datum.id}</RowItem>
+      <RowItem className={cn}>Instance {datum.id} (from: '{datum.generatorName ?? 'UNNAMED'}')</RowItem>
       <RowItem className={cn}>
         {datum.evaluator && <Icon as={GoTerminal} />}
       </RowItem>
