@@ -22,7 +22,9 @@ const ListViewData = (props: ListViewDataProps) => {
 
   return (
     <div className='w-full grid grid-cols-[minmax(max-content,auto)_repeat(2,min-content)]'>
-      {data.map((datum) => {
+      {data
+      .filter((datum) => datum.generatorName === active?.generatorName)
+      .map((datum) => {
         const { id } = datum;
         return (
           <ListViewDatumItem

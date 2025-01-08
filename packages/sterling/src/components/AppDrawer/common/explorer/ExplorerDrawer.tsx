@@ -23,7 +23,7 @@ const ExplorerDrawer = () => {
     <>
       
       <Box p={1} shadow='md' borderWidth='1px'>
-        <Heading fontSize='l' align='center'>Available Commands</Heading>
+        <Heading fontSize='l' align='center'>Select an Available Command</Heading>
       </Box>
 
       <div aria-label='explorer pane run selector' className='flex flex-col'>

@@ -13,6 +13,9 @@ const ListViewGenerators = (props: ListViewGeneratorsProps) => {
   const { generators, activeDatum } = props;
   const dispatch = useSterlingDispatch();
 
+  // When clicking a generator name, it should request an instance if we have no
+  // data for that generator yet. Otherwise, it should just change the active datum. 
+  // ^ ***TODO***
   const onClickRow = useCallback(
     (event: MouseEvent, generatorName: string) => {
       if(activeDatum !== undefined || generatorName !== undefined) {
