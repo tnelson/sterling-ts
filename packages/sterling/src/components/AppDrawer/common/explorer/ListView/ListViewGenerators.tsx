@@ -15,8 +15,8 @@ const ListViewGenerators = (props: ListViewGeneratorsProps) => {
 
   const onClickRow = useCallback(
     (event: MouseEvent, generatorName: string) => {
-      if(activeDatum !== undefined) {
-        dispatch(buttonClicked({id: activeDatum.id, 
+      if(activeDatum !== undefined || generatorName !== undefined) {
+        dispatch(buttonClicked({id: activeDatum?.id, 
                                 onClick: "next", 
                                 context: {generatorName: generatorName}}));
       }      

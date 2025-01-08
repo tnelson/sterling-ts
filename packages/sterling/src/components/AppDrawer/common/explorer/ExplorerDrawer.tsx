@@ -12,10 +12,13 @@ const ExplorerDrawer = () => {
   const data = useSterlingSelector(selectData);
   const generatorNames = useSterlingSelector(selectProviderGeneratorNames);
 
-  // TODO: if there are no generator names given by the provider, don't show the command 
-  // selection list.
+  // There are two expected cases here:
+  //   (1) We have an active datum (and thus a generator name, if the provider uses generators);
+  //   (2) We have no active datum (and thus should give the user a menu of commands).
+  // In the event we have neither an active datum /or/ a list of generator names, don't show the tab.
 
-  if (!activeDatum) return null;
+  if (!activeDatum && (!generatorNames || generatorNames.length < 1)) return null;
+  
   return (
     <>
       

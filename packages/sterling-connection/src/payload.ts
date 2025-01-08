@@ -7,9 +7,10 @@ import { Datum, DatumMeta } from './types';
  */
 export interface Click<T = any> {
   /**
-   * The id of the datum associated with the button that was clicked.
+   * The id of the datum associated with the button that was clicked. Not all
+   * buttons will necessarily be clicked before an active datum is present.
    */
-  id: string;
+  id: string | undefined;
   /**
    * The string value from the onClick field of the button that was clicked.
    */
