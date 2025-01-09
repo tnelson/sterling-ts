@@ -23,6 +23,7 @@ export function onMessage<D extends Dispatch, S>(
   } else if (isRecvEvalMsg(msg)) {
     api.dispatch(evalReceived(msg.payload));
   } else if (isRecvMetaMsg(msg)) {
+    // Both the provider slice and UI slice have this action:
     api.dispatch(metaReceived(msg.payload));
   }
 }
