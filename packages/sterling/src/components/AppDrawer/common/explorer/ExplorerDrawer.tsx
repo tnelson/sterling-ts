@@ -1,13 +1,14 @@
-import { buttonClicked, DatumParsed } from '@/sterling-connection';
+import { buttonClicked } from '@/sterling-connection';
 import { PaneTitle } from '@/sterling-ui';
-import { Box, Button, Divider, Flex, Heading, Icon, Select, Spacer, Stack, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Icon, Select, Tooltip } from '@chakra-ui/react';
 import { useCallback, useState } from 'react';
 import { FaFilm } from 'react-icons/fa';
 import { useSterlingSelector } from '../../../../state/hooks';
-import { selectActiveDatum, selectData, selectProviderGeneratorNames,  } from '../../../../state/selectors';
+import { selectActiveDatum, selectData, selectProviderGeneratorNames, selectSelectedGenerator,  } from '../../../../state/selectors';
 import { ListViewData } from './ListView/ListViewData';
 import { useSterlingDispatch } from '../../../../state/hooks';
 import { activeDatumSet } from 'sterling/src/state/data/dataSlice';
+import { selectedGeneratorChanged } from 'sterling/src/state/ui/uiSlice';
 
 const ExplorerDrawer = () => {
   // The datum contains its generator ID, if any
@@ -15,7 +16,12 @@ const ExplorerDrawer = () => {
   const data = useSterlingSelector(selectData);
   const generatorNames = useSterlingSelector(selectProviderGeneratorNames);
   const dispatch = useSterlingDispatch();
-  const [generator, setGenerator] = useState<string|undefined>(generatorNames ? generatorNames[0]: undefined);
+
+  // We want this to persist, even if the user tabs to another drawer and back (which may 
+  // recreate the component, losing state). Thus, the state needs to live higher in the 
+  // component hierarchy. Since Sterling uses Redux, we'll use Redux for this.
+  // const [generator, setGenerator] = useState<string|undefined>(generatorNames ? generatorNames[0]: undefined);
+  const generator = useSterlingSelector(selectSelectedGenerator);
 
   // There are two expected cases here:
   //   (1) We have an active datum (and thus a generator name, if the provider uses generators);
@@ -34,7 +40,7 @@ const ExplorerDrawer = () => {
     () => {
       if(generator !== undefined && generatorIsNew) {
         console.log(`Running new generator: ${generator}`)
-        dispatch(buttonClicked({id: activeDatum?.id, 
+        dispatch(buttonClicked({id: undefined, 
                                 onClick: "next", 
                                 context: {generatorName: generator}}))}},
     [generator, data]
@@ -47,11 +53,16 @@ const ExplorerDrawer = () => {
         <Heading fontSize='l' align='center'>Select an Available Command</Heading>
         <Flex>
           <Select isDisabled={!generatorNames || generatorNames.length < 1} 
+                  value={generator}
                   onChange={ev => {
-                    console.log(`Selecting generator: ${ev.target.value}`); 
-                    const latestForGenerator = data.filter(d => d.generatorName == generator).reverse()[0]
-                    if(latestForGenerator) dispatch(activeDatumSet(latestForGenerator.id));
-                    setGenerator(ev.target.value)}}>
+                    const newGenerator = ev.target.value
+                    const latestForNewGenerator = data.filter(d => d.generatorName == newGenerator).reverse()[0]
+                    console.log(`Selecting generator: ${newGenerator}. Latest id: ${latestForNewGenerator?.id}`); 
+                    dispatch(selectedGeneratorChanged({generatorName: newGenerator}))
+                    if(latestForNewGenerator) 
+                      dispatch(activeDatumSet(latestForNewGenerator.id));
+                    else 
+                      dispatch(activeDatumSet(''))}}>
             {generatorNames?.map((name,idx) => <option key={idx}>{name}</option>)}
           </Select>
           
@@ -60,7 +71,7 @@ const ExplorerDrawer = () => {
                   onClick={onClickRun} 
                   isDisabled={!generatorNames || 
                                generatorNames.length < 1 || 
-                               activeDatum?.generatorName === generator || 
+                               (generator && activeDatum?.generatorName === generator) || 
                                !generatorIsNew}>
             <Tooltip hasArrow label={'Re-run Forge to refresh this command.'} 
                      isDisabled={generatorIsNew}>Run</Tooltip>

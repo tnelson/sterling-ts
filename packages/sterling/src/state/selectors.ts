@@ -56,6 +56,16 @@ export function selectActiveDatum(
 }
 
 /**
+ * Select the currently selected (in the explorer pane) generator.
+ */
+export function selectSelectedGenerator(
+  state: SterlingState
+): string | undefined {
+  return uiSelectors.selectSelectedGenerator(state.ui);
+}
+
+
+/**
  * Select the available projectable types and their atoms.
  */
 export function selectAvailableProjectableTypes(

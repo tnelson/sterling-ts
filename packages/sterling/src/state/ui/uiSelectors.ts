@@ -112,6 +112,14 @@ const selectDrawerView = createSelector(
   }
 );
 
+/**
+ * The generator name that has been selected in the explorer dropdown.
+ */
+function selectSelectedGenerator(state: UiState): string | undefined {
+  return state.selectedGenerator;
+}
+
+
 export default {
   selectAvailableViews,
   selectMainView,
@@ -121,5 +129,6 @@ export default {
   selectTableDrawer,
   selectScriptDrawer,
   selectDrawerIsCollapsed,
-  selectDrawerView
+  selectDrawerView,
+  selectSelectedGenerator
 };
