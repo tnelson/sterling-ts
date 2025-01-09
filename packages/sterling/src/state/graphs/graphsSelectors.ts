@@ -46,13 +46,15 @@ function selectSpreadMatrix(
 }
 
 /**
- * Select the theme associated with a datum.
+ * Select the theme associated with a datum. This is indexed by generator name;
+ * if the provider has not given generator names, all data are associated with 
+ * the same generator (internally named '').
  */
 function selectTheme(
   state: GraphsState,
   datum: DatumParsed<any>
 ): SterlingTheme {
-  return state.themeByDatumId[datum.id];
+  return state.themeByGeneratorName[datum.generatorName ?? ''];
 }
 
 /**

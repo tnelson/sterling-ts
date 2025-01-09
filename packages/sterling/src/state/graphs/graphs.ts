@@ -27,7 +27,8 @@ export interface GraphsState {
       zoomMatrix: Matrix;
     }
   >;
-  themeByDatumId: Record<string, SterlingTheme>;
+  /** If the provider has not provided a generator name, '' will be used */
+  themeByGeneratorName: Record<string, SterlingTheme>;
   timeByDatumId: Record<string, number>;
 
   // TODO: Refactor this
@@ -75,7 +76,7 @@ export function newGraphsState(): GraphsState {
   return {
     layoutsByDatumId: {},
     matricesByDatumId: {},
-    themeByDatumId: {},
+    themeByGeneratorName: {},
     timeByDatumId: {},
     hiddenByDatumId: {}
   };

@@ -38,7 +38,7 @@ function asAttributeSet(
   }>
 ) {
   const { datum, relation, asAttribute } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the edge style spec where the given type is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -71,7 +71,7 @@ function edgeIndexSet(
   }>
 ) {
   const { datum, relation, which, value } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     const spec = getEdgeStyleSpecUnique(theme, relation);
 
@@ -94,7 +94,7 @@ function edgeIndexRemoved(
   action: PayloadAction<{ datum: DatumParsed<any>; relation: string; which: string; }>
 ) {
   const { datum, relation, which } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     const spec = getEdgeStyleSpecUnique(theme, relation);
     if (spec) unset(spec, [which]);
@@ -107,7 +107,7 @@ function curveRemoved(
   action: PayloadAction<{ datum: DatumParsed<any>; relation: string }>
 ) {
   const { datum, relation } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the edge style spec where the given type is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -126,7 +126,7 @@ function curveSet(
   }>
 ) {
   const { datum, relation, curve } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the edge style spec where the given relation in the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -157,7 +157,7 @@ function edgeLabelStyleRemoved(
   }>
 ) {
   const { datum, relation, style } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -177,7 +177,7 @@ function edgeLabelStyleSet(
   }>
 ) {
   const { datum, relation, style, value } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -212,7 +212,7 @@ function edgeStyleRemoved(
   }>
 ) {
   const { datum, relation, style } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the edge style spec where the given relation is the only target
     const spec = getEdgeStyleSpecUnique(theme, relation);
@@ -232,7 +232,7 @@ function edgeStyleSet(
   }>
 ) {
   const { datum, relation, style, value } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   
   if (theme) {
     // get the edge style spec where the given relation is the only target
@@ -315,7 +315,7 @@ function nodeLabelPropRemoved(
   action: PayloadAction<{ datum: DatumParsed<any>; type: string; prop: string }>
 ) {
   const { datum, type, prop } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -337,7 +337,7 @@ function nodeLabelStyleRemoved(
   }>
 ) {
   const { datum, type, style } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -360,7 +360,7 @@ function nodeLabelStyleSet(
   }>
 ) {
   const { datum, type, style, value } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -394,7 +394,7 @@ function nodesOffset(
   }>
 ) {
   const { datum, offsets } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   const projections = theme ? theme.projections || [] : [];
   const layoutId = generateLayoutId(projections);
   const layout = state.layoutsByDatumId[datum.id].layoutById[layoutId];
@@ -417,7 +417,7 @@ function nodeLabelPropSet(
   }>
 ) {
   const { datum, type, prop, value } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
 
   if (theme) {
     // get the node style spec where the given type is the only target
@@ -465,7 +465,7 @@ function projectionAdded(
     time,
     timeOrdering
   };
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme.projections) {
     theme.projections.push(castDraft(projection));
   } else {
@@ -488,7 +488,7 @@ function projectionOrderingSet(
 ) {
   const { datum, type, relation } = action.payload;
 
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   const projections = theme ? theme.projections || [] : [];
   const projection = projections.find((p) => p.type === type);
   if (projection) {
@@ -509,7 +509,7 @@ function projectionRemoved(
 ) {
   const { datum, type } = action.payload;
 
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme.projections) {
     remove(theme.projections, (p) => p.type === type);
   }
@@ -522,7 +522,7 @@ function saveThemeRequested(
   action: PayloadAction<{ datum: DatumParsed<any> }>
 ) {
   const { datum } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     const snapshot = current(theme);
     const cleaned = produce(snapshot, (draft) => {
@@ -548,7 +548,7 @@ function projectionSet(
 ) {
   const { datum, type, atom } = action.payload;
 
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   const projections = theme ? theme.projections || [] : [];
   const projection = projections.find((p) => p.type === type);
   if (projection) {
@@ -563,7 +563,7 @@ function shapeRemoved(
   action: PayloadAction<{ datum: DatumParsed<any>; type: string }>
 ) {
   const { datum, type } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -585,7 +585,7 @@ function shapeSet(
   }>
 ) {
   const { datum, type, shape } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -619,7 +619,7 @@ function shapeStyleRemoved(
   }>
 ) {
   const { datum, type, style } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -642,7 +642,7 @@ function shapeStyleSet(
   }>
 ) {
   const { datum, type, style, value } = action.payload;
-  const theme = state.themeByDatumId[datum.id];
+  const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
   if (theme) {
     // get the node style spec where the given type is the only target
     const spec = getNodeStyleSpecUnique(theme, type);
@@ -673,7 +673,7 @@ function themeFileLoaded(
   action: PayloadAction<{ datum: DatumParsed<any>; data: string }>
 ) {
   const { datum, data } = action.payload;
-  state.themeByDatumId[datum.id] = JSON.parse(data);
+  state.themeByGeneratorName[datum.generatorName ?? ''] = JSON.parse(data);
     // Generate new layout
   validateLayouts(state, datum);
 }
@@ -735,7 +735,7 @@ function getNodeStyleSpecUnique(
  */
 function validateLayouts(state: DraftState, datum: DatumParsed<any>) {
   if (isDatumAlloy(datum)) {
-    const theme = state.themeByDatumId[datum.id];
+    const theme = state.themeByGeneratorName[datum.generatorName ?? ''];
     const projections = theme ? theme.projections || [] : [];
 
     // make sure each projection has a node assigned if possible
