@@ -9,7 +9,11 @@ export type ScriptStageElement =
 export interface ScriptState {
   stage: ScriptStageType;
   stageDimensions: { width: number; height: number };
+
+  /** Actively loaded text */
   text: string;
+  /** Script texts for each datum, in order to support swapping between instances */
+  scriptTextByDatumId: Record<string, string>;
 }
 
 export interface ScriptVariable {
@@ -26,6 +30,7 @@ export function newScriptState(): ScriptState {
       width: 0,
       height: 0
     },
-    text: ''
+    text: '',
+    scriptTextByDatumId: {}
   };
 }

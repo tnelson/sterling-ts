@@ -3,11 +3,12 @@ import { useDimensions } from '@/sterling-hooks';
 import { Pane, PaneBody, PaneHeader } from '@/sterling-ui';
 import { useToast } from '@chakra-ui/react';
 import { editor } from 'monaco-editor';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSterlingDispatch, useSterlingSelector } from '../../state/hooks';
 import { ScriptStageElement } from '../../state/script/script';
 import {
   scriptStageDimensionsSet,
+  scriptTextByDatumSet,
   scriptTextSet  
 } from '../../state/script/scriptSlice';
 import {
@@ -36,15 +37,6 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
   const stage = useSterlingSelector(selectScriptStage);
   const size = useSterlingSelector(selectScriptStageDimensions);
   const initialText = useSterlingSelector(selectScriptText);
-
-  // If this datum contains a vis script, update (but only once -- BEFORE render)
-  // We want stale values from old renders in case the script was edited in Sterling.
-  useMemo(() => {        
-    if(datum.parsed.visualizerConfig && initialText === '') {
-      console.log(`Loading parsed visualizer script from XML (possibly twice, if in dev mode)...`)
-      dispatch(scriptTextSet(datum.parsed.visualizerConfig.script))
-    }
-  }, [])
 
   const datumVariables = useSterlingSelector((state) =>
     selectScriptVariables(state, datum)
@@ -81,15 +73,20 @@ const ScriptViewDatum = (props: ScriptViewDatumProps) => {
     if (node) setStageRef(node);
   }, []);
 
+
+  // Only "reactive values" can be used as dependencies here, but `datum` 
+  // is reactive since it is a prop. (See docs for `useCallback`.)
   const beforeUnmount = useCallback((text: string) => {
     dispatch(scriptTextSet(text));
-  }, []);
+    dispatch(scriptTextByDatumSet({id: datum.id, text: text}))
+  }, [datum]);
 
   const onExecute = useCallback(() => {
     const text = editor?.getValue();
     if (text && stageRef && size) {
       // save the script text before executing
       dispatch(scriptTextSet(text));
+      dispatch(scriptTextByDatumSet({id: datum.id, text: text}))
 
       // extract any required libraries from the script
       const [libNames, script] = extractRequires(text);
