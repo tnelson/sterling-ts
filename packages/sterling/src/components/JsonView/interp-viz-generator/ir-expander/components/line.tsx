@@ -88,39 +88,39 @@ export function LineComponent(props: LineComponentProps) {
   // make initial requests to evaluate conditional expressions for props
   useEffect(() => {
     if (isConditional(startX)) {
-      makeEvaluatorRequest(startX.condition, datum, nextExpressionId, setStartXConditionResult, startXConditionResultSetter);
+      makeEvaluatorRequest(startX.condition.substring(1), datum, nextExpressionId, setStartXConditionResult, startXConditionResultSetter);
     } else {
       setStartXConditionResult(startX);
     }
 
     if (isConditional(endX)) {
-      makeEvaluatorRequest(endX.condition, datum, nextExpressionId, setEndXConditionResult, endXConditionResultSetter);
+      makeEvaluatorRequest(endX.condition.substring(1), datum, nextExpressionId, setEndXConditionResult, endXConditionResultSetter);
     } else {
       setEndXConditionResult(endX);
     }
 
     if (isConditional(startY)) {
-      makeEvaluatorRequest(startY.condition, datum, nextExpressionId, setStartYConditionResult, startYConditionResultSetter);
+      makeEvaluatorRequest(startY.condition.substring(1), datum, nextExpressionId, setStartYConditionResult, startYConditionResultSetter);
     } else {
       setStartYConditionResult(startY);
     }
 
     if (isConditional(endY)) {
-      makeEvaluatorRequest(endY.condition, datum, nextExpressionId, setEndYConditionResult, endYConditionResultSetter);
+      makeEvaluatorRequest(endY.condition.substring(1), datum, nextExpressionId, setEndYConditionResult, endYConditionResultSetter);
     } else {
       setEndYConditionResult(endY);
     }
 
     const strokeWidth = lineStyle && lineStyle.strokeWidth ? lineStyle.strokeWidth : undefined;
     if (isConditional(strokeWidth)) {
-      makeEvaluatorRequest(strokeWidth.condition, datum, nextExpressionId, setStrokeWidthConditionResult, strokeWidthConditionResultSetter);
+      makeEvaluatorRequest(strokeWidth.condition.substring(1), datum, nextExpressionId, setStrokeWidthConditionResult, strokeWidthConditionResultSetter);
     } else {
       setStrokeWidthConditionResult(strokeWidth);
     }
 
     const strokeColor = lineStyle && lineStyle.strokeColor ? lineStyle.strokeColor : undefined;
     if (isConditional(strokeColor)) {
-      makeEvaluatorRequest(strokeColor.condition, datum, nextExpressionId, setStrokeColorConditionResult, strokeColorConditionResultSetter);
+      makeEvaluatorRequest(strokeColor.condition.substring(1), datum, nextExpressionId, setStrokeColorConditionResult, strokeColorConditionResultSetter);
     } else {
       setStrokeColorConditionResult(strokeColor);
     }
