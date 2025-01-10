@@ -1,4 +1,4 @@
-import { isConditional, isForgeExpression } from '../util';
+import { isConditional, isForgeBoolean, isForgeExpression, parseBoolean } from '../util';
 import React, { useState, useEffect, useRef } from 'react';
 import TextDisplay from '../../components/TextDisplay';
 import { DatumParsed, evalRequested } from '@/sterling-connection';
@@ -16,10 +16,10 @@ interface TextComponentProps {
 }
 
 export function TextComponent(props: TextComponentProps) {
-  // [TODO] update this to use dynamics, vizRow, and vizCol where necessary 
+  // [TODO] update this to use dynamics, vizRow, and vizCol where necessary
   const { json, dynamics, vizRow, vizCol, datum } = props;
-  const { id, properties } = json;
-  const { text, topY, leftX, textStyle } = properties;
+  const { id, properties, shouldGlow } = json;
+  let { text, topY, leftX, textStyle } = properties;
 
   const dispatch = useSterlingDispatch();
 
@@ -36,12 +36,17 @@ export function TextComponent(props: TextComponentProps) {
   // the same logic for each (potentially conditional) prop
   const [textConditionResult, setTextConditionResult] = useState<undefined | string>(undefined);
   const textConditionResultSetter = useRef<null | ((expressions: Expression[]) => void)>(null);
+  const [isTextConditionalRequestMade, setIsTextConditionalRequestMade] = useState(false);
+  const [isTextConditionSet, setIsTextConditionSet] = useState(false);
+  const [textValue, setTextValue] = useState(text);
   const [topYConditionResult, setTopYConditionResult] = useState<undefined | string>(undefined);
   const topYConditionResultSetter = useRef<null | ((expressions: Expression[]) => void)>(null);
   const [leftXConditionResult, setLeftXConditionResult] = useState<undefined | string>(undefined);
   const leftXConditionResultSetter = useRef<null | ((expressions: Expression[]) => void)>(null);
   const [textColorConditionResult, setTextColorConditionResult] = useState<undefined | string>(undefined);
   const textColorConditionResultSetter = useRef<null | ((expressions: Expression[]) => void)>(null);
+
+  console.log('textConditionResult:', textConditionResult);
 
   // [TODO] this function isn't specific to this component; we should
   // move it to its own file so all components can use it to make eval requests
@@ -68,7 +73,7 @@ export function TextComponent(props: TextComponentProps) {
         const result = expressions.find(
           (expression: Expression) => expression.id === `${expressionId}`
         );
-        if (result !== undefined) {
+        if (result !== undefined && result.result !== '') {
           setConditionResult(result.result);
         }
       };
@@ -81,40 +86,90 @@ export function TextComponent(props: TextComponentProps) {
     selectEvaluatorExpressions(state, datum)
   );
 
-  // make initial requests to evaluate conditional expressions for props 
+  // make initial requests to evaluate conditional expressions for props
   useEffect(() => {
-    if (isConditional(text)) {
-      makeEvaluatorRequest(text.condition, datum, nextExpressionId, setTextConditionResult, textConditionResultSetter);
+    if (isConditional(textValue)) {
+      if (!isTextConditionalRequestMade) {
+        makeEvaluatorRequest(
+          textValue.condition.substring(1),
+          datum,
+          nextExpressionId,
+          setTextConditionResult,
+          textConditionResultSetter
+        );
+        setIsTextConditionalRequestMade(true);
+      }
     } else {
-      setTextConditionResult(text);
+      setTextConditionResult(textValue);
     }
 
-    if (isConditional(topY)) {
-      makeEvaluatorRequest(topY.condition, datum, nextExpressionId, setTopYConditionResult, topYConditionResultSetter);
+    if (isConditional(topY) && !isTextConditionalRequestMade) {
+      // fix second part of condition
+      makeEvaluatorRequest(
+        topY.condition.substring(1),
+        datum,
+        nextExpressionId,
+        setTopYConditionResult,
+        topYConditionResultSetter
+      );
     } else {
       setTopYConditionResult(topY);
     }
 
-    if (isConditional(leftX)) {
-      makeEvaluatorRequest(leftX.condition, datum, nextExpressionId, setLeftXConditionResult, leftXConditionResultSetter);
+    if (isConditional(leftX) && !isTextConditionalRequestMade) {
+      // fix second part of condition
+      makeEvaluatorRequest(
+        leftX.condition.substring(1),
+        datum,
+        nextExpressionId,
+        setLeftXConditionResult,
+        leftXConditionResultSetter
+      );
     } else {
       setLeftXConditionResult(leftX);
     }
 
-    const textColor =
-      textStyle && textStyle.textColor ? textStyle.textColor : undefined;
-    if (isConditional(textColor)) {
-      makeEvaluatorRequest(textColor.condition, datum, nextExpressionId, setTextColorConditionResult, textColorConditionResultSetter);
+    const textColor = textStyle && textStyle.textColor ? textStyle.textColor : undefined;
+    if (isConditional(textColor) && !isTextConditionalRequestMade) {
+      // fix second part of condition
+      makeEvaluatorRequest(
+        textColor.condition.substring(1),
+        datum,
+        nextExpressionId,
+        setTextColorConditionResult,
+        textColorConditionResultSetter
+      );
     } else {
       setTextColorConditionResult(textColor);
     }
-  }, []);
+  }, [isTextConditionalRequestMade]);
 
   // update stateful variable values when results are obtained after evaluation
-  // using the Forge evaluator 
+  // using the Forge evaluator
   useEffect(() => {
-    if (textConditionResultSetter.current !== null) {
+    if (textConditionResultSetter.current !== null && !isTextConditionSet) {
       textConditionResultSetter.current(expressions);
+      if (
+        isConditional(textValue) &&
+        textConditionResult !== undefined &&
+        isForgeBoolean(textConditionResult)
+      ) {
+        if (parseBoolean(textConditionResult)) {
+          setTextConditionResult(undefined);
+          setIsTextConditionalRequestMade(false);
+          textConditionResultSetter.current = null;
+          setTextValue(textValue.then);
+        } else {
+          setTextConditionResult(undefined);
+          setIsTextConditionalRequestMade(false);
+          textConditionResultSetter.current = null;
+          setTextValue(textValue.else);
+        }
+        // if not a nested condition, no need for further conditional evaluation
+        if (!isConditional(textValue)) {
+          setIsTextConditionSet(true);
+        }
+      }
     }
     if (topYConditionResultSetter.current !== null) {
       topYConditionResultSetter.current(expressions);
@@ -127,7 +182,7 @@ export function TextComponent(props: TextComponentProps) {
     }
   }, [expressions]);
 
-  // evaluate props as forge expressions when specified by the user 
+  // evaluate props as forge expressions when specified by the user
   useEffect(() => {
     if (textConditionResult !== undefined && isForgeExpression(textConditionResult)) {
       makeEvaluatorRequest(
@@ -180,6 +235,8 @@ export function TextComponent(props: TextComponentProps) {
             ? { textColor: String(textColorConditionResult) }
             : undefined
         }
+        shouldGlow={shouldGlow}
+        id={id}
       />
     );
   }
