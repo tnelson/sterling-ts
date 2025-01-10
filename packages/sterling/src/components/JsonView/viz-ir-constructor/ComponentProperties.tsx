@@ -41,30 +41,6 @@ export const gridComponentProperties: ComponentProperty[] = [
   // (cellDataRelation is easier since we can just have them enter 2 separate values
   // but the nested component requires some more thought)
 ];
-// interface GridStyle {
-//   dashedStroke?: boolean;
-//   strokeWidth?: number;
-//   strokeColor?: string;
-// }
-
-// export interface GridProps {
-//   datum: DatumParsed<any>;
-//   rows: number;
-//   columns: number;
-//   height: number;
-//   width: number;
-//   absolutePosition: boolean;
-//   topY?: number; // required if absolutePosition is true
-//   leftX?: number; // required if absolutePosition is true
-//   gridStyle?: GridStyle;
-
-//   // cellDataRelation: DataRelation;
-//   // [TODO] add props for all the nested/triggered viz funcs here
-//   // cellText?: (curr: CellInput) => string;
-//   cellText?: string | any;
-//   cellVisualization?: any;
-//   cellDataRelation?: DataRelation;
-// }
 
 function getInputType(propertyType: PropertyType) {
   // switch (propertyType) {

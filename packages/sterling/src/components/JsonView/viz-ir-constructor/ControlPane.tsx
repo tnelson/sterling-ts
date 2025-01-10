@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import {
   ComponentProperty,
-  ComponentPropertyInput,
-  ComponentPropertyValue,
-  PropertyValue,
   textComponentProperties,
   gridComponentProperties
 } from './ComponentProperties';
 import { ComponentData } from './VizConstructor';
 import AddComponent from './AddComponent';
 import EditComponent from './EditComponent';
-import { add } from 'lodash';
 
 export enum ComponentType {
   GRID = 'grid',
