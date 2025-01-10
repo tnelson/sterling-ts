@@ -4,6 +4,7 @@ import { TextComponent } from './components/text';
 import { DatumParsed } from '@/sterling-connection';
 import { SterlingDispatch } from 'sterling/src/state/store';
 import { LineComponent } from './components/line';
+import { GridComponent } from './components/grid';
 
 // [TODO] maybe it's possible to define this in a better way -- we
 // could define a separate type for `properties` for each kind of
@@ -27,13 +28,15 @@ export type JsonEntry = JsonComponent | Conditional;
 interface SingleComponentProps {
   elementJson: JsonEntry;
   datum: DatumParsed<any>;
+  vizRow?: number;
+  vizCol?: number;
 }
 
 export function SingleComponent(props: SingleComponentProps) {
-  const { elementJson, datum } = props;
+  const { elementJson, datum, vizRow, vizCol } = props;
 
   if (elementJson.type === 'conditional') {
-    return <ConditionalComponent elementJson={elementJson} datum={datum} />;
+    return <ConditionalComponent elementJson={elementJson} datum={datum} vizRow={vizRow} vizCol={vizCol} />;
   }
 
   if (elementJson.type === 'text') {
@@ -42,8 +45,8 @@ export function SingleComponent(props: SingleComponentProps) {
         json={elementJson}
         datum={datum}
         dynamics={{}}
-        vizRow={undefined}
-        vizCol={undefined}
+        vizRow={vizRow}
+        vizCol={vizCol}
       />
     );
   }
@@ -54,8 +57,20 @@ export function SingleComponent(props: SingleComponentProps) {
         json={elementJson}
         datum={datum}
         dynamics={{}}
-        vizRow={undefined}
-        vizCol={undefined}
+        vizRow={vizRow}
+        vizCol={vizCol}
+      />
+    )
+  }
+
+  if (elementJson.type === 'grid') {
+    return (
+      <GridComponent
+        json={elementJson}
+        datum={datum}
+        dynamics={{}}
+        vizRow={vizRow}
+        vizCol={vizCol}
       />
     )
   }
