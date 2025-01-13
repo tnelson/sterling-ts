@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ComponentData } from './VizConstructor';
+import { PropertyValue } from './ComponentProperties';
+import ComponentForm from './ComponentForm';
 
 function getComponentDescriber(componentData: ComponentData) {
   switch (componentData.type) {
@@ -52,6 +54,8 @@ export default function EditComponent(props: EditComponentProps) {
     number | undefined
   >(undefined);
   const [isMoveMode, setIsMoveMode] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const holographicRef = useRef<HTMLDivElement | null>(null);
 
   const setGlow = (idx: number, glowValue: boolean) => {
@@ -94,6 +98,7 @@ export default function EditComponent(props: EditComponentProps) {
 
   const startMoveMode = () => {
     if (selectedComponentIdx !== undefined) {
+      setIsEditing(false); // can't be in move mode and edit mode together
       setIsMoveMode(true);
 
       // Create holographic clone of the selected component
@@ -127,12 +132,6 @@ export default function EditComponent(props: EditComponentProps) {
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!isMoveMode || !holographicRef.current) return;
-
-    // const clone = containerRef.current.querySelector('.moving-clone') as HTMLElement;
-    // if (clone) {
-    //   clone.style.left = `${e.clientX}px`;
-    //   clone.style.top = `${e.clientY}px`;
-    // }
 
     const offsetX = parseFloat(holographicRef.current.dataset.offsetX || '0');
     const offsetY = parseFloat(holographicRef.current.dataset.offsetY || '0');
@@ -169,18 +168,16 @@ export default function EditComponent(props: EditComponentProps) {
           updatedComponents[selectedComponentIdx].properties.map((property) => 
             property.name === 'absolutePosition' ? { ...property, value: `${true}` } : property);
         if (updatedComponents[selectedComponentIdx].properties.find((property) => property.name === 'topY') === undefined) {
-          updatedComponents[selectedComponentIdx].properties.push({ name: 'topY', type: 'number', value: newY, isStyle: false });
+          updatedComponents[selectedComponentIdx].properties.push({ name: 'topY', type: 'number', value: newY, required: false, isStyle: false });
         }
         if (updatedComponents[selectedComponentIdx].properties.find((property) => property.name === 'leftX') === undefined) {
-          updatedComponents[selectedComponentIdx].properties.push({ name: 'leftX', type: 'number', value: newX, isStyle: false });
+          updatedComponents[selectedComponentIdx].properties.push({ name: 'leftX', type: 'number', value: newX, required: false, isStyle: false });
         }
       }
       return updatedComponents;
     });
 
     // clean up and exit move mode
-    // document.querySelector('.moving-clone')?.remove();
-    // setIsMoveMode(false);
     holographicRef.current?.remove();
     holographicRef.current = null;
     setIsMoveMode(false);
@@ -201,27 +198,25 @@ export default function EditComponent(props: EditComponentProps) {
     };
   }, [isMoveMode]);
 
-  // const cloneComponent = () => {
-  //   if (selectedComponentIdx === undefined || !containerRef.current) return;
+  const handleSaveEdits = (componentPropertyValues: Record<string, PropertyValue>) => {
+    if (selectedComponentIdx === undefined) return;
 
-  //   const node = document.querySelector(`#component-${selectedComponentIdx}`);
-  //   if (node) {
-  //     const clone = node.cloneNode(true) as HTMLElement;
-  //     clone.classList.add('moving-clone');
-  //     clone.style.position = 'absolute';
-  //     clone.style.opacity = '0.5';
-  //     clone.style.pointerEvents = 'none';
-  //     clone.style.left = `${node.getBoundingClientRect().left}px`;
-  //     clone.style.top = `${node.getBoundingClientRect().top}px`;
-  //     document.body.appendChild(clone);
-  //   }
-  // };
+    setComponentsData((prev) =>
+      prev.map((componentData, idx) => 
+        idx === selectedComponentIdx
+          ? {
+            ...componentData,
+            properties: componentData.properties.map((property) => ({
+              ...property,
+              value: componentPropertyValues[property.name] // || property.value
+            })),
+          }
+          : componentData
+      )
+    );
 
-  // useEffect(() => {
-  //   if (isMoveMode) {
-  //     cloneComponent();
-  //   }
-  // }, [isMoveMode]);
+    setIsEditing(false);
+  }
 
   return (
     <div className='py-1 mt-4'>
@@ -243,7 +238,7 @@ export default function EditComponent(props: EditComponentProps) {
         ))}
       </ul>
 
-      {selectedComponentIdx !== undefined && (
+      {selectedComponentIdx !== undefined && !isEditing && (
         <div className='mt-4'>
           <p className='text-base font-semibold'>
             Selected: {componentsData[selectedComponentIdx].type}
@@ -263,8 +258,33 @@ export default function EditComponent(props: EditComponentProps) {
             >
               Move Component
             </button>
+            <button
+              className='mt-2 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600'
+              onClick={() => setIsEditing(true)}
+            >
+              Edit Fields
+            </button>
           </div>
         </div>
+      )}
+
+      {selectedComponentIdx !== undefined && isEditing && (
+        <ComponentForm
+          properties={componentsData[selectedComponentIdx].properties.map((property) => ({
+            name: property.name,
+            type: property.type,
+            required: property.required,
+            isStyle: property.isStyle
+          }))}
+          initialValues={Object.fromEntries(
+            componentsData[selectedComponentIdx].properties.map((property) => [
+              property.name,
+              property.value
+            ])
+          )}
+          onSubmit={handleSaveEdits}
+          onCancel={() => setIsEditing(false)}
+        />
       )}
     </div>
   );

@@ -15,6 +15,7 @@ export interface ComponentPropertyValue {
   name: string;
   type: PropertyType;
   value: PropertyValue;
+  required: boolean;
   isStyle: boolean;
 }
 
