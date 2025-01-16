@@ -1,6 +1,8 @@
 import { PaneTitle } from '@/sterling-ui';
 import { Button, FormControl, FormLabel, Textarea } from '@chakra-ui/react';
 import { useState } from 'react';
+import { Icon } from '@chakra-ui/react';
+import { RiHammerFill } from 'react-icons/ri';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum } from '../../../../state/selectors';
 
@@ -29,7 +31,7 @@ const GraphLayoutDrawer = () => {
 
     const alloyDatumInput = document.createElement('input');
     alloyDatumInput.type = 'hidden';
-    alloyDatumInput.name = 'alloyDatum';
+    alloyDatumInput.name = 'alloydatum';
     alloyDatumInput.value = datum.data;
     form.appendChild(alloyDatumInput);
 
@@ -69,4 +71,4 @@ const GraphLayoutDrawerHeader = () => {
   );
 };
 
-export er, GraphLayoutDrawerHeader };
+export { GraphLayoutDrawer, GraphLayoutDrawerHeader };
