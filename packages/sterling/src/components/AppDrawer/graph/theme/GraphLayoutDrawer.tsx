@@ -1,10 +1,10 @@
 import { PaneTitle } from '@/sterling-ui';
-import { Button, FormControl, FormLabel, Textarea } from '@chakra-ui/react';
+import { Button, FormControl, FormLabel, Textarea, Input } from '@chakra-ui/react';
 import { useState } from 'react';
-import { Icon } from '@chakra-ui/react';
-import { RiHammerFill } from 'react-icons/ri';
 import { useSterlingSelector } from '../../../../state/hooks';
 import { selectActiveDatum } from '../../../../state/selectors';
+import { RiHammerFill } from 'react-icons/ri';
+import { Icon } from '@chakra-ui/react';
 
 const GraphLayoutDrawer = () => {
   const datum = useSterlingSelector(selectActiveDatum);
@@ -43,18 +43,34 @@ const GraphLayoutDrawer = () => {
     document.body.removeChild(form);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        setCndSpecText(text);
+      };
+      reader.readAsText(file);
+    }
+  };
+
   return (
     <div className='absolute inset-0 flex flex-col overflow-y-auto p-4'>
+      <FormControl mt={4}>
+        <FormLabel>Upload layout specification file</FormLabel>
+        <Input type="file" accept=".cnd" onChange={handleFileUpload} />
+      </FormControl>
       <FormControl>
-        <FormLabel>CnD Layout Specification</FormLabel>
+        <FormLabel>Layout Specification</FormLabel>
         <Textarea
           minH="20rem"
           value={cndSpecText}
           onChange={e => setCndSpecText(e.target.value)}
         />
       </FormControl>
-      <Button onClick={openInCnd} colorScheme='blue' mt={4}>
-        Load in CnD
+      <Button onClick={openInCnd} mt={4}>
+        Load layout
       </Button>
     </div>
   );
