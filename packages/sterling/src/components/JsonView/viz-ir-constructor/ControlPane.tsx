@@ -7,6 +7,7 @@ import {
 import { ComponentData } from './VizConstructor';
 import AddComponent from './AddComponent';
 import EditComponent from './EditComponent';
+import TextRenamingComponent from './TextRenamingComponent';
 
 export enum ComponentType {
   GRID = 'grid',
@@ -25,7 +26,8 @@ export const componentProperties: Record<string, ComponentProperty[]> = {
 
 enum ControlPaneMode {
   ADD = 'Add component',
-  EDIT = 'Edit component'
+  EDIT = 'Edit component',
+  CONFIGURE_RENAME = 'Configure text renaming'
 }
 
 interface ControlPaneProps {
@@ -33,10 +35,12 @@ interface ControlPaneProps {
   // setGeneratedIR: React.Dispatch<React.SetStateAction<string>>;
   componentsData: ComponentData[];
   setComponentsData: React.Dispatch<React.SetStateAction<ComponentData[]>>;
+  textRenames: [string, string][]; // [original text, replaced text]
+  setTextRenames: React.Dispatch<React.SetStateAction<[string, string][]>>;
 }
 
 export default function ControlPane(props: ControlPaneProps) {
-  const { componentsData, setComponentsData } = props;
+  const { componentsData, setComponentsData, textRenames, setTextRenames } = props;
 
   // stateful variable to store the mode in which the user currently is
   const [currentMode, setCurrentMode] = useState<ControlPaneMode>(
@@ -50,6 +54,14 @@ export default function ControlPane(props: ControlPaneProps) {
         : ControlPaneMode.ADD
     );
   };
+
+  const toggleTextRenameMode = (currValue: ControlPaneMode) => {
+    if (currValue === ControlPaneMode.CONFIGURE_RENAME) {
+      setCurrentMode(ControlPaneMode.ADD);
+    } else {
+      setCurrentMode(ControlPaneMode.CONFIGURE_RENAME);
+    }
+  }
 
   return (
     <div className='p-2'>
@@ -92,15 +104,38 @@ export default function ControlPane(props: ControlPaneProps) {
         </span>
       </div>
 
+      <div>
+        <button className={`px-2 py-1 text-sm rounded ${
+              currentMode === ControlPaneMode.CONFIGURE_RENAME
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+            }`}
+            onClick={() => toggleTextRenameMode(currentMode)}
+        >
+          Configure text renaming
+        </button>
+      </div>
+
       {/* render the appropriate component */}
       <div className='mt-4'>
         {currentMode === ControlPaneMode.ADD ? (
           <AddComponent setComponentsData={setComponentsData} />
         ) : (
-          <EditComponent
-            componentsData={componentsData}
-            setComponentsData={setComponentsData}
-          />
+          // <EditComponent
+          //   componentsData={componentsData}
+          //   setComponentsData={setComponentsData}
+          // />
+          currentMode === ControlPaneMode.EDIT ? (
+            <EditComponent
+              componentsData={componentsData}
+              setComponentsData={setComponentsData}
+            />
+          ) : (
+            <TextRenamingComponent 
+              textRenames={textRenames}
+              setTextRenames={setTextRenames}
+            />
+          )
         )}
       </div>
     </div>

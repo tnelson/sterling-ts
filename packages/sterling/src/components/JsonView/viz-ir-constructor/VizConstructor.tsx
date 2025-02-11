@@ -11,7 +11,7 @@ export type ComponentData = {
   shouldGlow: boolean;
 };
 
-function generateIR(componentsData: ComponentData[]): JsonEntry[] {
+function generateIR(componentsData: ComponentData[], customName?: string): JsonEntry[] {
   // const json = componentsData.map((componentData, idx) => ({
   //   id: `${componentData.type}${idx}`,
   //   type: componentData.type,
@@ -24,8 +24,28 @@ function generateIR(componentsData: ComponentData[]): JsonEntry[] {
   const json = componentsData.map((componentData, idx) => {
     const type = componentData.type;
     const shouldGlow = componentData.shouldGlow;
-    const mainProperties = componentData.properties.filter((property) => !property.isStyle);
-    const styleProperties = componentData.properties.filter((property) => property.isStyle);
+    const mainProperties = JSON.parse(JSON.stringify(componentData.properties.filter(
+      (property) => !property.isStyle
+    ))) as ComponentPropertyValue[];
+    const styleProperties = JSON.parse(JSON.stringify(componentData.properties.filter(
+      (property) => property.isStyle
+    ))) as ComponentPropertyValue[];
+
+    // deal with cellVisualization field for grid properly (via recursion)
+    if (type === 'grid') {
+      const cellVisualizationProperty = mainProperties.find(
+        (property) => property.name === 'cellVisualization'
+      );
+      if (cellVisualizationProperty) {
+        const cellVisualization = [
+          cellVisualizationProperty.value as ComponentData
+        ]; // put into array just because that's what the func expects
+        const cellVisualizationJson = generateIR(cellVisualization, "nested")[0]; // get the value out of the array
+        mainProperties.find(
+          (property) => property.name === 'cellVisualization'
+        )!.value = cellVisualizationJson;
+      }
+    }
 
     const styleJson = styleProperties.reduce((acc, property) => {
       acc[property.name] = property.value;
@@ -34,14 +54,15 @@ function generateIR(componentsData: ComponentData[]): JsonEntry[] {
 
     const mainJson = {
       // id: `${type}${idx}`,
-      id: `component-${idx}`,
+      // id: `component-${idx}`,
+      id: `component-${idx}${customName ? `-${customName}` : ''}`,
       type,
       shouldGlow,
       properties: mainProperties.reduce((acc, property) => {
         acc[property.name] = property.value;
         return acc;
       }, {} as Record<string, any>)
-    }
+    };
     mainJson.properties[`${type}Style`] = styleJson;
     return mainJson;
   });
@@ -59,6 +80,7 @@ export default function VizConstructor(props: VizConstructorProps) {
   // each row corresponds to a component, and each entry in that row corresponds
   // to a single property (field) of that component.
   const [componentsData, setComponentsData] = useState<ComponentData[]>([]);
+  const [textRenames, setTextRenames] = useState<[string, string][]>([]);
   const { datum } = props;
 
   // [TODO] use componentsData to generate the IR and then pass that to the "backend"
@@ -72,13 +94,18 @@ export default function VizConstructor(props: VizConstructorProps) {
     <div className='flex h-screen'>
       <div className='flex-[3_1_0%]'>
         <div className='h-full'>
-          <VisualizationGenerator datum={datum} jsonIR={generatedIR} />
+          <VisualizationGenerator datum={datum} jsonIR={generatedIR} textRenames={textRenames} />
         </div>
       </div>
 
       <div className='flex-[2_1_0%]'>
         <div className='bg-gray-100 h-full'>
-          <ControlPane componentsData={componentsData} setComponentsData={setComponentsData} />
+          <ControlPane
+            componentsData={componentsData}
+            setComponentsData={setComponentsData}
+            textRenames={textRenames}
+            setTextRenames={setTextRenames}
+          />
         </div>
       </div>
     </div>

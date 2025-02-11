@@ -2,8 +2,17 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ComponentData } from './VizConstructor';
 import { PropertyValue } from './ComponentProperties';
 import ComponentForm from './ComponentForm';
+import { isConditional } from '../interp-viz-generator/ir-expander/util';
+import AddComponent from './AddComponent';
 
 function getComponentDescriber(componentData: ComponentData) {
+  const handleConditional = (value: PropertyValue, propertyName?: string) => {
+    if (isConditional(value)) {
+      return `conditional ${propertyName || ''}: ${value.condition}`;
+    }
+    return value;
+  };
+
   switch (componentData.type) {
     case 'text':
       const textProperty = componentData.properties.find(
@@ -12,7 +21,7 @@ function getComponentDescriber(componentData: ComponentData) {
       if (textProperty === undefined) {
         throw new Error('Text component must have a text property');
       }
-      return `Text component: ${textProperty.value}`;
+      return `Text component: ${handleConditional(textProperty.value, 'text')}`;
     case 'grid':
       const rowsProperty = componentData.properties.find(
         (property) => property.name === 'rows'
@@ -27,21 +36,23 @@ function getComponentDescriber(componentData: ComponentData) {
         (property) => property.name === 'width'
       );
       if (rowsProperty === undefined || columnsProperty === undefined) {
-        throw new Error(
-          'Grid component must have rows and columns properties'
-        );
+        throw new Error('Grid component must have rows and columns properties');
       }
       if (heightProperty === undefined || widthProperty === undefined) {
-        throw new Error(
-          'Grid component must have height and width properties'
-        );
+        throw new Error('Grid component must have height and width properties');
       }
-      return `Grid component: ${rowsProperty.value} rows, ${columnsProperty.value} columns, ${heightProperty.value} height, ${widthProperty.value} width`;
+      return `Grid component - rows: ${handleConditional(
+        rowsProperty.value
+      )}, columns: ${handleConditional(
+        columnsProperty.value
+      )}, height: ${handleConditional(
+        heightProperty.value
+      )}, width: ${handleConditional(widthProperty.value)}`;
     default:
       // [TODO] fix this!
       return 'unsupported component data type';
   }
-};
+}
 
 interface EditComponentProps {
   componentsData: ComponentData[];
@@ -55,6 +66,7 @@ export default function EditComponent(props: EditComponentProps) {
   >(undefined);
   const [isMoveMode, setIsMoveMode] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isNestedVizMode, setIsNestedVizMode] = useState<boolean>(false);
 
   const holographicRef = useRef<HTMLDivElement | null>(null);
 
@@ -76,12 +88,19 @@ export default function EditComponent(props: EditComponentProps) {
     if (idx === selectedComponentIdx) {
       setSelectedComponentIdx(undefined);
       setGlow(idx, false);
+      setIsMoveMode(false);
+      setIsEditing(false);
+      setIsNestedVizMode(false);
       return undefined;
     }
     setSelectedComponentIdx((prevIdx) => {
       if (prevIdx !== undefined) {
         setGlow(prevIdx, false);
       }
+      // selecting new component so not already in any special mode
+      setIsMoveMode(false);
+      setIsEditing(false);
+      setIsNestedVizMode(false);
       return idx;
     });
     setGlow(idx, true);
@@ -99,6 +118,7 @@ export default function EditComponent(props: EditComponentProps) {
   const startMoveMode = () => {
     if (selectedComponentIdx !== undefined) {
       setIsEditing(false); // can't be in move mode and edit mode together
+      setIsNestedVizMode(false); // can't be in move mode and nested viz mode together
       setIsMoveMode(true);
 
       // Create holographic clone of the selected component
@@ -164,14 +184,38 @@ export default function EditComponent(props: EditComponentProps) {
           : property
       );
       if (updatedComponents[selectedComponentIdx].type === 'grid') {
-        updatedComponents[selectedComponentIdx].properties = 
-          updatedComponents[selectedComponentIdx].properties.map((property) => 
-            property.name === 'absolutePosition' ? { ...property, value: `${true}` } : property);
-        if (updatedComponents[selectedComponentIdx].properties.find((property) => property.name === 'topY') === undefined) {
-          updatedComponents[selectedComponentIdx].properties.push({ name: 'topY', type: 'number', value: newY, required: false, isStyle: false });
+        updatedComponents[selectedComponentIdx].properties = updatedComponents[
+          selectedComponentIdx
+        ].properties.map((property) =>
+          property.name === 'absolutePosition'
+            ? { ...property, value: `${true}` }
+            : property
+        );
+        if (
+          updatedComponents[selectedComponentIdx].properties.find(
+            (property) => property.name === 'topY'
+          ) === undefined
+        ) {
+          updatedComponents[selectedComponentIdx].properties.push({
+            name: 'topY',
+            type: 'number',
+            value: newY,
+            required: false,
+            isStyle: false
+          });
         }
-        if (updatedComponents[selectedComponentIdx].properties.find((property) => property.name === 'leftX') === undefined) {
-          updatedComponents[selectedComponentIdx].properties.push({ name: 'leftX', type: 'number', value: newX, required: false, isStyle: false });
+        if (
+          updatedComponents[selectedComponentIdx].properties.find(
+            (property) => property.name === 'leftX'
+          ) === undefined
+        ) {
+          updatedComponents[selectedComponentIdx].properties.push({
+            name: 'leftX',
+            type: 'number',
+            value: newX,
+            required: false,
+            isStyle: false
+          });
         }
       }
       return updatedComponents;
@@ -198,29 +242,31 @@ export default function EditComponent(props: EditComponentProps) {
     };
   }, [isMoveMode]);
 
-  const handleSaveEdits = (componentPropertyValues: Record<string, PropertyValue>) => {
+  const handleSaveEdits = (
+    componentPropertyValues: Record<string, PropertyValue>
+  ) => {
     if (selectedComponentIdx === undefined) return;
 
     setComponentsData((prev) =>
-      prev.map((componentData, idx) => 
+      prev.map((componentData, idx) =>
         idx === selectedComponentIdx
           ? {
-            ...componentData,
-            properties: componentData.properties.map((property) => ({
-              ...property,
-              value: componentPropertyValues[property.name] // || property.value
-            })),
-          }
+              ...componentData,
+              properties: componentData.properties.map((property) => ({
+                ...property,
+                value: componentPropertyValues[property.name] // || property.value
+              }))
+            }
           : componentData
       )
     );
 
     setIsEditing(false);
-  }
+  };
 
   return (
     <div className='py-1 mt-4'>
-      <p className='text-lg font-semibold'>Components List</p>
+      {/* <p className='text-lg font-semibold'>Components List</p>
       <ul className='space-y-4'>
         {componentsData.map((componentData, idx) => (
           <li
@@ -236,7 +282,31 @@ export default function EditComponent(props: EditComponentProps) {
             {getComponentDescriber(componentData)}
           </li>
         ))}
-      </ul>
+      </ul> */}
+      {!isNestedVizMode && (
+        <div>
+          <p className='text-lg font-semibold'>Components List</p>
+          <ul className='space-y-4'>
+            {componentsData.map((componentData, idx) => (
+              <li
+                key={idx}
+                className={`text-sm p-2 rounded cursor-pointer ${
+                  selectedComponentIdx === idx
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 hover:bg-gray-300'
+                }`}
+                // onClick={() => setSelectedComponentIdx(idx)}>
+                onClick={() => handleSelect(idx)}
+              >
+                {getComponentDescriber(componentData)}
+              </li>
+            ))}
+            {componentsData.length === 0 && (
+              <p className='text-sm'>No components to display</p>
+            )}
+          </ul>
+        </div>
+      )}
 
       {selectedComponentIdx !== undefined && !isEditing && (
         <div className='mt-4'>
@@ -253,29 +323,48 @@ export default function EditComponent(props: EditComponentProps) {
             <button
               className={`mt-2 px-4 py-2 ${
                 isMoveMode ? 'bg-blue-500' : 'bg-yellow-500'
-              } text-white rounded ${isMoveMode ? "" : "hover:bg-yellow-600"}`}
+              } text-white rounded ${isMoveMode ? '' : 'hover:bg-yellow-600'}`}
               onClick={startMoveMode}
             >
               Move Component
             </button>
             <button
               className='mt-2 px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600'
-              onClick={() => setIsEditing(true)}
+              onClick={() => {
+                setIsMoveMode(false);
+                setIsNestedVizMode(false);
+                setIsEditing(true);
+              }}
             >
               Edit Fields
             </button>
+
+            {componentsData[selectedComponentIdx].type === 'grid' && (
+              <button
+                className='mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600'
+                onClick={() => {
+                  setIsMoveMode(false);
+                  setIsNestedVizMode(false);
+                  setIsNestedVizMode(true);
+                }}
+              >
+                Add nested cell viz.
+              </button>
+            )}
           </div>
         </div>
       )}
 
       {selectedComponentIdx !== undefined && isEditing && (
         <ComponentForm
-          properties={componentsData[selectedComponentIdx].properties.map((property) => ({
-            name: property.name,
-            type: property.type,
-            required: property.required,
-            isStyle: property.isStyle
-          }))}
+          properties={componentsData[selectedComponentIdx].properties.map(
+            (property) => ({
+              name: property.name,
+              type: property.type,
+              required: property.required,
+              isStyle: property.isStyle
+            })
+          )}
           initialValues={Object.fromEntries(
             componentsData[selectedComponentIdx].properties.map((property) => [
               property.name,
@@ -285,6 +374,18 @@ export default function EditComponent(props: EditComponentProps) {
           onSubmit={handleSaveEdits}
           onCancel={() => setIsEditing(false)}
         />
+      )}
+
+      {selectedComponentIdx !== undefined && isNestedVizMode && (
+        <div>
+          <p className='mt-4 text-sm'>Add a nested component</p>
+          <AddComponent
+            setComponentsData={setComponentsData}
+            addToComponentIdxAsNestedComponent={selectedComponentIdx}
+            customHeight={35}
+            additionalCleanup={() => setIsNestedVizMode(false)}
+          />
+        </div>
       )}
     </div>
   );

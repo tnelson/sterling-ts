@@ -5,6 +5,7 @@ import { DatumParsed } from "@/sterling-connection";
 interface VisualizationGeneratorProps {
   datum: DatumParsed<any>;
   jsonIR: JsonEntry[];
+  textRenames: [string, string][];
 }
 
 export default function VisualizationGenerator(props : VisualizationGeneratorProps) {
@@ -12,7 +13,7 @@ export default function VisualizationGenerator(props : VisualizationGeneratorPro
   const [count, setCount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
 
-  const { datum, jsonIR } = props;
+  const { datum, jsonIR, textRenames } = props;
   if (!datum) return null;
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export default function VisualizationGenerator(props : VisualizationGeneratorPro
         // (but not when the components are re-rendered due to changes in the value of the stateful
         // variables themselves). since we're enabling the editing of the components from the editing
         // pane, it is important to enable this.
-        const vizComponent = <VisualizationComponents jsonIR={jsonIR} datum={datum} key={count} />
+        const vizComponent = <VisualizationComponents jsonIR={jsonIR} datum={datum} textRenames={textRenames} key={count} />
         setVisualizationComponent((_) => vizComponent);
         setCount(count + 1);
         setError(null);

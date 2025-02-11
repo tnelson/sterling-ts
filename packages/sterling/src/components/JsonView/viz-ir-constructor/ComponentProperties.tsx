@@ -9,7 +9,14 @@ export interface ComponentProperty {
   isStyle: boolean;
 }
 
-export type PropertyValue = string | number | boolean | any; // `any` here is for the `component` type
+type Conditional = {
+  type: 'conditional';
+  condition: string;
+  then: PropertyValue;
+  else: PropertyValue;
+}
+
+export type PropertyValue = string | number | boolean | Conditional | any; // `any` here is for the `component` type
 
 export interface ComponentPropertyValue {
   name: string;
@@ -74,11 +81,12 @@ function getInputType(propertyType: PropertyType) {
 interface ComponentPropertyInputProps {
   componentProperty: ComponentProperty;
   value: PropertyValue;
+  isConditional: boolean;
   onChange: (value: PropertyValue) => void;
 }
 
 export function ComponentPropertyInput(props: ComponentPropertyInputProps) {
-  const { componentProperty, value, onChange } = props;
+  const { componentProperty, value, isConditional, onChange } = props;
   const inputType = getInputType(componentProperty.type);
 
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +104,8 @@ export function ComponentPropertyInput(props: ComponentPropertyInputProps) {
   //   }
   // };
 
+  const classname = 'w-full px-2 py-1 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm';
+
   return (
     <div>
       <label className='block text-sm font-medium text-gray-700 mb-1'>
@@ -104,14 +114,45 @@ export function ComponentPropertyInput(props: ComponentPropertyInputProps) {
           {componentProperty.required ? '*' : ''}
         </span>
       </label>
-      <input
-        type={inputType}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        // onChange={handleChange}
-        className='w-full px-2 py-1 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm'
-        placeholder={`Enter ${componentProperty.name}`}
-      />
+      {isConditional ? (
+        <div className='space-y-1'>
+          <p className='text-sm text-gray-500'>condition</p>
+          <input
+            type='text'
+            value={value['condition']}
+            onChange={(e) => onChange({ ...value, condition: e.target.value })}
+            className={classname}
+            placeholder='Enter forge expression (beginning with ~)'
+          />
+
+          <p className='text-sm text-gray-500'>then</p>
+          <input
+            type={inputType}
+            value={value['then']}
+            onChange={(e) => onChange({ ...value, then: e.target.value })}
+            className={classname}
+            placeholder='Enter value for then (true) case'
+          />
+
+          <p className='text-sm text-gray-500'>else</p>
+          <input
+            type={inputType}
+            value={value['else']}
+            onChange={(e) => onChange({ ...value, else: e.target.value })}
+            className={classname}
+            placeholder='Enter value for else (false) case'
+          />
+        </div>
+      ) : (
+        <input
+          type={inputType}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          // onChange={handleChange}
+          className={classname}
+          placeholder={`Enter ${componentProperty.name}`}
+        />
+      )}
     </div>
   );
 }
