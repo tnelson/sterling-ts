@@ -6,7 +6,7 @@ import { selectEvaluatorExpressions, selectNextExpressionId } from 'sterling/src
 import { useLocalNextExpressionId } from '../LocalNextExpressionIdProvider';
 import { DatumParsed, evalRequested } from '@/sterling-connection';
 import { Expression } from 'sterling/src/state/evaluator/evaluator';
-import { isConditional, isForgeExpression, usesVar } from '../ir-expander/util';
+import { applyTextRename, isConditional, isForgeExpression, usesVar } from '../ir-expander/util';
 import { SingleComponent } from '../ir-expander/ir-expander';
 import { ConditionalComponent } from '../ir-expander/conditional/conditional';
 import { TextComponent } from '../ir-expander/components/text';
@@ -80,6 +80,7 @@ interface GridStyle {
 
 export interface GridProps {
   datum: DatumParsed<any>;
+  textRenames: [string, string][];
   rows: number;
   columns: number;
   height: number;
@@ -110,9 +111,14 @@ export default function Grid(props: GridProps) {
   const strokeWidth = props.gridStyle && props.gridStyle.strokeWidth ? props.gridStyle.strokeWidth : 2;
   const strokeColor = props.gridStyle && props.gridStyle.strokeColor ? props.gridStyle.strokeColor : 'black';
 
-  const { datum, rows, columns, height, width, absolutePosition, topY, leftX, gridStyle, cellText, cellVisualization, cellDataRelation, parentRef, cellGroup, offsetX, offsetY, minExprId, shouldGlow } = props;
+  const { datum, textRenames, rows, columns, height, width, absolutePosition, topY, leftX, gridStyle, cellText, cellVisualization, cellDataRelation, parentRef, cellGroup, offsetX, offsetY, minExprId, shouldGlow } = props;
   const xOffset = offsetX || 0;
   const yOffset = offsetY || 0;
+
+  console.log('xOffset:', xOffset);
+  console.log('yOffset:', yOffset);
+  console.log('topY:', topY);
+  console.log('leftX:', leftX);
 
   const svgRef = parentRef || useRef<SVGSVGElement | null>(null);
   // [NOTE] we're currently assuming that the cellDataRelation can't be a conditional,
@@ -122,6 +128,7 @@ export default function Grid(props: GridProps) {
   // let consideredEval = false;
   const [consideredEval, setConsideredEval] = useState(false);
   const toEvaluateCellText = cellText !== undefined && (isConditional(cellText) || usesVar(cellText, 'row') || usesVar(cellText, 'col'));
+  console.log('to evaluate cell text:', toEvaluateCellText);
   const [cellTextForgeEvals, setState] = useState<(string | undefined)[]>(() => Array(toEvaluateCellText ? rows * columns : 0).fill(undefined));
   const updateState = (idx: number, value: string) => {
     setState((prev) => prev.map((val, i) => i === idx ? value : val));
@@ -166,6 +173,7 @@ export default function Grid(props: GridProps) {
     setConditionResult: (idx: number, value: string) => void, 
     setResult: React.MutableRefObject<(((expressions: Expression[]) => void) | null)[]>
   ) {
+    console.log('making eval request:', query);
     dispatch(
       evalRequested({
         id: `${expressionId}`,
@@ -211,7 +219,7 @@ export default function Grid(props: GridProps) {
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < columns; col++) {
           // [TODO] need to make this replacement more robust (ex: what if there is ${row + 1})
-          const cellTextQuery = cellText.replace('${row}', `${row}`).replace('${col}', `${col}`);
+          const cellTextQuery = cellText.replaceAll('${row}', `${row}`).replaceAll('${col}', `${col}`);
           console.log('cellTextQuery', cellTextQuery);
           if (isConditional(cellTextQuery)) {
             makeEvaluatorRequest(cellTextQuery.condition.substring(1), datum, nextExpressionId, row * columns + col, updateState, cellTextForgeEvalsResultSetters);
@@ -275,7 +283,7 @@ export default function Grid(props: GridProps) {
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < columns; col++) {
           // [TODO] need to make this replacement more robust (ex: what if there is ${row + 1})
-          const cellTextQuery = cellText.replace('${row}', `${row}`).replace('${col}', `${col}`);
+          const cellTextQuery = cellText.replaceAll('${row}', `${row}`).replaceAll('${col}', `${col}`);
           console.log('cellTextQuery', cellTextQuery);
           console.log('cellTextForgeEvals[row * columns + col]', cellTextForgeEvals[row * columns + col]);
 
@@ -353,7 +361,7 @@ export default function Grid(props: GridProps) {
               .attr('text-anchor', 'middle')
               .attr('dominant-baseline', 'middle')
               .attr('font-size', Math.min(cellWidth, cellHeight) / 3) // [NOTE] we could let the user choose the font size
-              .text(toEvaluateCellText ? cellTextForgeEvals[row * columns + col]! : cellText);
+              .text(toEvaluateCellText ? applyTextRename(cellTextForgeEvals[row * columns + col]!, textRenames) : applyTextRename(cellText, textRenames));
           }
 
 
@@ -386,7 +394,9 @@ export default function Grid(props: GridProps) {
                   
                   // THE HANDLING OF THE minExprId is VERY JANKY. SPEAK TO TIM ABOUT THIS TO SEE
                   // IF WE CAN THINK OF A WAY TO FIX THIS! 
-                  component = <GridComponent json={cellVizJson} datum={datum} dynamics={{}} vizRow={row} vizCol={col} offsetX={xOffset + (col * cellWidth)} offsetY={yOffset + (row * cellHeight)} minExprId={nextExpressionId + ((row * columns + col) * 1000)} />;
+                  const ytop = topY || 0;
+                  const xleft = leftX || 0;
+                  component = <GridComponent json={cellVizJson} datum={datum} textRenames={textRenames} dynamics={{}} vizRow={row} vizCol={col} offsetX={xleft + xOffset + (col * cellWidth)} offsetY={ytop + yOffset + (row * cellHeight)} minExprId={nextExpressionId + ((row * columns + col) * 1000)} />;
                   console.log('nested call done');
                   break;
                 default:

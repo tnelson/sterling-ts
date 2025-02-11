@@ -42,3 +42,9 @@ export function usesVar(str: string, variable: string) {
 
   return usesVar(str.substring(start + end + 1), variable);
 }
+
+// applies a text renaming to a string
+export function applyTextRename(currValue: string, textRenames: [string, string][]): string {
+  const [_, replacedText] = textRenames.find(([originalText]) => originalText === currValue) || ['', currValue];
+  return replacedText;
+}

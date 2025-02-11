@@ -12,6 +12,7 @@ import { parseBoolean } from '../util';
 interface ConditionalComponentProps {
   elementJson: any;
   datum: DatumParsed<any>;
+  textRenames: [string, string][];
   vizRow?: number;
   vizCol?: number;
 }
@@ -19,7 +20,7 @@ interface ConditionalComponentProps {
 // This function is only safe to call if you have a conditional element
 export function ConditionalComponent(props: ConditionalComponentProps) {
   // [TODO] update this to make use of dynamics (when grid components are implemented)
-  const { elementJson, datum, vizRow, vizCol } = props;
+  const { elementJson, datum, textRenames, vizRow, vizCol } = props;
 
   const dispatch = useSterlingDispatch();
   const globalNextExpressionId = useSterlingSelector(selectNextExpressionId);
@@ -80,9 +81,9 @@ export function ConditionalComponent(props: ConditionalComponentProps) {
   try {
     const condition = parseBoolean(conditionResult);
     if (condition)
-      return <SingleComponent elementJson={thenExpr} datum={datum} vizRow={vizRow} vizCol={vizCol} />;
+      return <SingleComponent elementJson={thenExpr} datum={datum} textRenames={textRenames} vizRow={vizRow} vizCol={vizCol} />;
     else
-      return <SingleComponent elementJson={elseExpr} datum={datum} vizRow={vizRow} vizCol={vizCol} />;
+      return <SingleComponent elementJson={elseExpr} datum={datum} textRenames={textRenames} vizRow={vizRow} vizCol={vizCol} />;
   } catch (e) {
     return <div color='red'>Error: condition didn't evaluate to bool -- {conditionExpr}</div>
   }

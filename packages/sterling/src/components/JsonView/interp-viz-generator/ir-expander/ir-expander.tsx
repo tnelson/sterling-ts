@@ -28,15 +28,16 @@ export type JsonEntry = JsonComponent | Conditional;
 interface SingleComponentProps {
   elementJson: JsonEntry;
   datum: DatumParsed<any>;
+  textRenames: [string, string][];
   vizRow?: number;
   vizCol?: number;
 }
 
 export function SingleComponent(props: SingleComponentProps) {
-  const { elementJson, datum, vizRow, vizCol } = props;
+  const { elementJson, datum, textRenames, vizRow, vizCol } = props;
 
   if (elementJson.type === 'conditional') {
-    return <ConditionalComponent elementJson={elementJson} datum={datum} vizRow={vizRow} vizCol={vizCol} />;
+    return <ConditionalComponent elementJson={elementJson} datum={datum} textRenames={textRenames} vizRow={vizRow} vizCol={vizCol} />;
   }
 
   if (elementJson.type === 'text') {
@@ -44,6 +45,7 @@ export function SingleComponent(props: SingleComponentProps) {
       <TextComponent
         json={elementJson}
         datum={datum}
+        textRenames={textRenames}
         dynamics={{}}
         vizRow={vizRow}
         vizCol={vizCol}
@@ -68,6 +70,7 @@ export function SingleComponent(props: SingleComponentProps) {
       <GridComponent
         json={elementJson}
         datum={datum}
+        textRenames={textRenames}
         dynamics={{}}
         vizRow={vizRow}
         vizCol={vizCol}
@@ -81,15 +84,16 @@ export function SingleComponent(props: SingleComponentProps) {
 interface VisualizationComponentsProps {
   jsonIR: JsonEntry[];
   datum: DatumParsed<any>;
+  textRenames: [string, string][];
 }
 
 export function VisualizationComponents(props: VisualizationComponentsProps) {
-  const { jsonIR, datum } = props;
+  const { jsonIR, datum, textRenames } = props;
 
   return (
     <>
       {jsonIR.map((element, i) => {
-        return <SingleComponent elementJson={element} datum={datum} />;
+        return <SingleComponent elementJson={element} datum={datum} textRenames={textRenames} />;
       })}
     </>
   );
