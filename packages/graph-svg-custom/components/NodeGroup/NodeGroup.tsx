@@ -7,7 +7,7 @@ import { NodeLabel } from '../NodeLabel/NodeLabel';
 import { Shape } from '../Shape/Shape';
 
 const NodeGroup = memo((props: NodeDef) => {
-  const { id, position, shape, style, labels } = props;
+  const { id, position, shape, style, labels, superscripts } = props;
   const {
     onClickNode,
     onMouseDownNode,
@@ -33,6 +33,7 @@ const NodeGroup = memo((props: NodeDef) => {
     >
       <Shape shape={shape} style={style} />
       {labels && <NodeLabel label={labels} />}
+      {superscripts && <NodeLabel label={superscripts} />}
     </g>
   );
 });
