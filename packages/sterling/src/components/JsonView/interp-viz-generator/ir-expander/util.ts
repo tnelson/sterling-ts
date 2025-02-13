@@ -1,3 +1,5 @@
+import { ForgeUtil } from "../../forge-evaluator";
+
 // check if a value is a conditional
 export function isConditional(value: any): boolean {
   return value && typeof value === 'object' && value.type === 'conditional';
@@ -47,4 +49,37 @@ export function usesVar(str: string, variable: string) {
 export function applyTextRename(currValue: string, textRenames: [string, string][]): string {
   const [_, replacedText] = textRenames.find(([originalText]) => originalText === currValue) || ['', currValue];
   return replacedText;
+}
+
+// evaluates a forge expression using the given forge evaluator util
+export function evaluateForgeExpr(query: string, forgeUtil: ForgeUtil) {
+  return forgeUtil.evaluateExpression(query);
+}
+
+// handles a conditional value by evaluating the condition and returning
+// the appropriate branch (if the value is not a conditional, it is returned
+// as is)
+export function handleConditional(value: any, forgeUtil: ForgeUtil) {
+  if (isConditional(value)) {
+    const conditionResult = evaluateForgeExpr(value.condition.substring(1), forgeUtil);
+    if (typeof conditionResult === 'string') {
+      if (parseBoolean(conditionResult)) {
+        return value.then;
+      }
+      return value.else;
+    }
+    throw new Error('Condition must evaluate to a boolean value, not tuples!');
+  } else {
+    return value;
+  }
+}
+
+// evaluates a value as a forge expression if specified by the user
+// (i.e. if the value is a string starting with '~')
+// (if the value is not a forge expression, it is returned as is)
+export function evaluateForgeProps(value: any, forgeUtil: ForgeUtil) {
+  if (value !== undefined && isForgeExpression(value)) {
+    return evaluateForgeExpr(value.substring(1), forgeUtil);
+  }
+  return value;
 }
