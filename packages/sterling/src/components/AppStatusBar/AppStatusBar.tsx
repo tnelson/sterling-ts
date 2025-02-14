@@ -4,24 +4,35 @@ import { dumpClicked } from '../../state/data/dataSlice';
 import { useSterlingDispatch } from '../../state/hooks';
 import { ConnectionStatus } from './ConnectionStatus';
 import { ManualXMLModal } from './ManualXMLModal';
+import { HelpModal } from './HelpModal';
 
 export const TEXT_manual_datum_button = 'Manual Datum'
+export const TEXT_help_button = 'Help'
 
 const AppStatusBar = () => {
   const dispatch = useSterlingDispatch();
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const disclosureXML = useDisclosure()
+  const disclosureHelp = useDisclosure()
   
   return (
     <StatusBar data-testid='app-status-bar'>
+      <div
+        className='cursor-pointer hover:text-gray-500'
+        onClick={disclosureHelp.onOpen}
+      >
+        {TEXT_help_button}
+      </div>
+      <HelpModal isOpen={disclosureHelp.isOpen} onClose={disclosureHelp.onClose}/>
+      <Divider orientation='vertical' mx={2} />
       <Spacer />
       <Divider orientation='vertical' mx={2} />
       <div
         className='cursor-pointer hover:text-gray-500'
-        onClick={onOpen}
+        onClick={disclosureXML.onOpen}
       >
         {TEXT_manual_datum_button}
       </div>
-      <ManualXMLModal isOpen={isOpen} onClose={onClose}/>
+      <ManualXMLModal isOpen={disclosureXML.isOpen} onClose={disclosureXML.onClose}/>
       <Divider orientation='vertical' mx={2} />
       <div
         className='cursor-pointer hover:text-gray-500'
