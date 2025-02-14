@@ -60,6 +60,8 @@ function GraphViewHelp() {
           that is appropriate for your model. In a Temporal model, you'll see a minimap and have the option 
           to move back and forth in time. In a model that isn't explicitly temporal, you can still declare 
           a sig as the time index and use it to navigate.</li>
+        <li>The <strong>layout</strong> tab opens the CnD interface, which is an alternative graph-based 
+        visualization that gives more control over your instance diagram.</li>
       </Box></>)
 }
 function ScriptViewHelp() {

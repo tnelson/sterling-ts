@@ -1,5 +1,5 @@
 import { StatusBar } from '@/sterling-ui';
-import { Divider, Spacer, useDisclosure } from '@chakra-ui/react';
+import { Center, Divider, Spacer, useDisclosure } from '@chakra-ui/react';
 import { dumpClicked } from '../../state/data/dataSlice';
 import { useSterlingDispatch } from '../../state/hooks';
 import { ConnectionStatus } from './ConnectionStatus';
@@ -20,7 +20,8 @@ const AppStatusBar = () => {
         className='cursor-pointer hover:text-gray-500'
         onClick={disclosureHelp.onOpen}
       >
-        {TEXT_help_button}
+        <Spacer width='50px'/>
+        <Center><strong>{TEXT_help_button}</strong></Center>
       </div>
       <HelpModal isOpen={disclosureHelp.isOpen} onClose={disclosureHelp.onClose}/>
       <Divider orientation='vertical' mx={2} />
