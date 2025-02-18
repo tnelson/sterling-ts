@@ -80,6 +80,7 @@ export type NodeDef = {
   shape: ShapeDef;
   style: CSSProperties;
   labels?: NodeLabelDef[];
+  superscripts?: NodeLabelDef[];
 };
 
 // Edges
@@ -104,6 +105,7 @@ export type GraphProps = {
   nodeShapes: Record<string, ShapeDef>;
   nodeStyles: Record<string, CSSProperties>;
   nodeLabels?: Record<string, NodeLabelDef[]>;
+  nodeSuperscripts?: Record<string, NodeLabelDef[]>;
   edgeCurves: Record<string, CurveDef>;
   edgeStyles: Record<string, CSSProperties>;
   edgeLabels?: Record<string, EdgeLabelDef[]>;

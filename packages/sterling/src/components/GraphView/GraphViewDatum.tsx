@@ -31,6 +31,7 @@ const GraphViewDatum = (props: GraphViewDatumProps) => {
     nodeShapes,
     nodeStyles,
     nodeLabels,
+    nodeSuperscripts,
     edgeCurves,
     edgeLabels,
     edgeStyles
@@ -84,6 +85,7 @@ const GraphViewDatum = (props: GraphViewDatumProps) => {
         graph={graph}
         nodeShapes={nodeShapes}
         nodeLabels={nodeLabels}
+        nodeSuperscripts={nodeSuperscripts}
         nodeStyles={nodeStyles}
         edgeCurves={edgeCurves}
         edgeLabels={edgeLabels}
