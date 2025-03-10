@@ -93,6 +93,19 @@ function scriptDrawerViewChanged(
   state.scriptViewDrawer = view === state.scriptViewDrawer ? null : view;
 }
 
+/**
+ * The generator selection has changed in the explorer dropdown.
+ */
+function selectedGeneratorChanged(
+  state: UiState,
+  action: PayloadAction<{generatorName: string}>
+) {
+  const view = action.payload;
+  state.selectedGenerator = view.generatorName
+}
+
+
+
 export default {
   mainViewChanged,
   commonDrawerViewChanged,
@@ -100,5 +113,6 @@ export default {
   graphDrawerThemeRelationToggled,
   graphDrawerThemeTypeToggled,
   tableDrawerViewChanged,
-  scriptDrawerViewChanged
+  scriptDrawerViewChanged,
+  selectedGeneratorChanged
 };

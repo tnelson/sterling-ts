@@ -2,14 +2,14 @@ import { DatumParsed } from '@/sterling-connection';
 import { useCallback, MouseEvent } from 'react';
 import { activeDatumSet } from '../../../../../state/data/dataSlice';
 import { useSterlingDispatch } from '../../../../../state/hooks';
-import { ListViewItem } from './ListViewItem';
+import { ListViewDatumItem } from './ListViewDatumItem';
 
-interface ListViewProps {
+interface ListViewDataProps {
   data: DatumParsed<any>[];
   active: DatumParsed<any> | undefined;
 }
 
-const ListView = (props: ListViewProps) => {
+const ListViewData = (props: ListViewDataProps) => {
   const { data, active } = props;
   const dispatch = useSterlingDispatch();
 
@@ -22,10 +22,11 @@ const ListView = (props: ListViewProps) => {
 
   return (
     <div className='w-full grid grid-cols-[minmax(max-content,auto)_repeat(2,min-content)]'>
-      {data.map((datum) => {
+      {data
+      .map((datum) => {
         const { id } = datum;
         return (
-          <ListViewItem
+          <ListViewDatumItem
             key={id}
             datum={datum}
             active={datum === active}
@@ -37,4 +38,4 @@ const ListView = (props: ListViewProps) => {
   );
 };
 
-export { ListView };
+export { ListViewData };

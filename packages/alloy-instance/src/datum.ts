@@ -3,7 +3,8 @@ import { GraphProps } from '@/graph-svg';
 import { SterlingTheme } from '@/sterling-theme';
 
 export interface VisualizerConfig {
-  script?: string
+  script?: string,
+  theme?: string
 }
 
 export interface AlloyDatum {

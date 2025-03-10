@@ -21,6 +21,12 @@ export interface Button {
  */
 export interface Datum {
   /**
+   * The provider's name for the generator that produced this datum. In Alloy or 
+   * Forge, this would be a run name, check name, etc. If undefined, the provider
+   * has not distinguished between different generators. 
+   */
+  generatorName: string | undefined;
+  /**
    * A unique identifier
    */
   id: string;

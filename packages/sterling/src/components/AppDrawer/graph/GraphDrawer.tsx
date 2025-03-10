@@ -17,6 +17,7 @@ import {
   GraphThemeDrawer,
   GraphThemeDrawerHeader
 } from './theme/GraphThemeDrawer';
+import { GraphLayoutDrawer, GraphLayoutDrawerHeader } from './theme/GraphLayoutDrawer';
 
 const GraphDrawer = () => {
   const drawer = useSterlingSelector(selectGraphDrawer);
@@ -27,9 +28,14 @@ const GraphDrawer = () => {
       {drawer === 'theme' && <GraphThemeDrawer />}
       {drawer === 'evaluator' && <EvaluatorDrawer />}
       {drawer === 'log' && <LogDrawer />}
+      {drawer === 'layout' && <GraphLayoutDrawer />}
     </>
   );
 };
+
+// state drawer = time
+// explorer = select instance
+// theme = theme
 
 const GraphDrawerHeader = () => {
   const drawer = useSterlingSelector(selectGraphDrawer);
@@ -40,6 +46,7 @@ const GraphDrawerHeader = () => {
       {drawer === 'theme' && <GraphThemeDrawerHeader />}
       {drawer === 'evaluator' && <EvaluatorDrawerHeader />}
       {drawer === 'log' && <LogDrawerHeader />}
+      {drawer === 'layout' && <GraphLayoutDrawerHeader />}
     </>
   );
 };

@@ -1,8 +1,10 @@
 import {
   AlloyInstance,
+  AlloyType,
   getAtomType,
   getInstanceRelations,
   getInstanceSkolems,
+  getInstanceType,
   getRelationTuples
 } from '@/alloy-instance';
 import { Edge, getEdges, getNodes, PositionedGraph } from '@/graph-lib';
@@ -41,6 +43,7 @@ export function generateGraphProps(
   const nodeShapes: Record<string, ShapeDef> = {};
   const nodeStyles: Record<string, CSSProperties> = {};
   const nodeLabels: Record<string, NodeLabelDef[]> = {};
+  const nodeSuperscripts: Record<string, NodeLabelDef[]> = {};
   const edgeCurves: Record<string, CurveDef> = {};
   const edgeStyles: Record<string, CSSProperties> = {};
   const edgeLabels: Record<string, EdgeLabelDef[]> = {};
@@ -94,6 +97,15 @@ export function generateGraphProps(
         style: {}
       }
     ];
+    // Generate node superscript (which is used as a most-specific-sig label, rather than renaming as in Alloy)
+    const nodeTypes: AlloyType = getInstanceType(instance, node.atom.type)
+    nodeSuperscripts[node.id] = [{text: nodeTypes.types[0], 
+                                  props: {dy:'-1em'}, 
+                                  style: {textAnchor:'middle',
+                                          fontSize:'14px',
+                                          fontStyle:'italic'}}]
+    
+    // Add node labes for all attributes (fields that are themed as attributes)
     if (attributeLabels[node.id]) {
       nodeLabels[node.id].push(
         ...attributeLabels[node.id].map((label) => {
@@ -196,6 +208,7 @@ export function generateGraphProps(
     nodeShapes,
     nodeStyles,
     nodeLabels,
+    nodeSuperscripts,
     edgeCurves,
     edgeLabels,
     edgeStyles

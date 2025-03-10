@@ -4,11 +4,7 @@ import { UiState } from './ui';
 
 function metaReceived(state: UiState, action: PayloadAction<ProviderMeta>) {
   const meta = action.payload;
-  state.availableViews = ['GraphView', 'TableView', 'ScriptView', 'JsonView']
-  state.mainView = state.availableViews[0]
-  // TODO: temporary, to avoid Forge-side change 
-  
-  /*if (meta.views) {
+  if (meta.views) {
     state.availableViews = meta.views.map((view) => {
       switch (view) {
         case 'graph':
@@ -17,15 +13,17 @@ function metaReceived(state: UiState, action: PayloadAction<ProviderMeta>) {
           return 'TableView';
         case 'script':
           return 'ScriptView';
-        case 'json':
-          return 'JsonView';
-        default:
-          console.log(`Requested view type {view} unsupported. Reverting to GraphView`)
-          return 'GraphView'
       }
     });
     state.mainView = state.availableViews[0];
-  }*/
+
+    // If the provider listed its generators, default to whatever it listed first.
+    // This will match the initial loading behavior of the Select drop-down component
+    // in the explorer pane. 
+    if(meta.generators && meta.generators.length > 0) {
+      state.selectedGenerator = meta.generators[0]
+    }
+  }
 }
 
 export default { metaReceived };

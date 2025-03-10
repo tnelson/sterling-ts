@@ -9,8 +9,9 @@ function metaReceived(
   state: ProviderState,
   action: PayloadAction<ProviderMeta>
 ) {
-  const { name } = action.payload;
+  const { name, generators } = action.payload;
   state.providerName = name || 'unknown provider';
+  state.providerGenerators = generators?.slice() 
 }
 
 /**

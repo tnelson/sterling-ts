@@ -7,10 +7,17 @@ export function parseAlloyXML(xml: string): AlloyDatum {
   const instances = Array.from(document.querySelectorAll('instance'));
   if (!instances.length) throw new Error(`No Alloy instance in XML: ${xml}`);
   
+  // The provider may pass various visualizer-configuration information as part 
+  // of the instance XML. (This is not part of the Alloy instance XML spec, but 
+  // is useful.) 
   const maybeVisualizer = document.querySelector('visualizer');
   const maybeVizScriptText = maybeVisualizer === null ? 
                                undefined : 
                                parseStringAttribute(maybeVisualizer, 'script')
+  const maybeVizThemeText = maybeVisualizer === null ? 
+                               undefined  : 
+                               parseStringAttribute(maybeVisualizer, 'theme')
+  
   return {
     instances: instances.map(instanceFromElement),
     bitwidth: parseNumericAttribute(instances[0], 'bitwidth'),
@@ -23,7 +30,8 @@ export function parseAlloyXML(xml: string): AlloyDatum {
     maxTrace: parseNumericAttribute(instances[0], 'maxtrace'),
     minTrace: parseNumericAttribute(instances[0], 'mintrace'),
     traceLength: parseNumericAttribute(instances[0], 'tracelength'),
-    visualizerConfig: {script: deEscape(maybeVizScriptText)}
+    visualizerConfig: {script: deEscape(maybeVizScriptText), 
+                       theme: deEscape(maybeVizThemeText)}
   };
 }
 

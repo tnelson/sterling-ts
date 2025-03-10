@@ -33,6 +33,9 @@ export interface UiState {
       expandedRelations: Record<string, boolean>;
     }
   >;
+
+  // The generator name selected in the explorer dropdown
+  selectedGenerator: string | undefined;
 }
 
 /**
@@ -45,7 +48,8 @@ export const newUiState = (initialView?: MainView): UiState => {
     graphViewDrawer: 'explorer',
     tableViewDrawer: null,
     scriptViewDrawer: 'variables',
-    graphDrawerThemeById: {}
+    graphDrawerThemeById: {},
+    selectedGenerator: undefined
   };
 };
 

@@ -22,6 +22,7 @@ export const {
   graphDrawerThemeRelationToggled,
   graphDrawerThemeTypeToggled,
   tableDrawerViewChanged,
-  scriptDrawerViewChanged
+  scriptDrawerViewChanged,
+  selectedGeneratorChanged
 } = uiSlice.actions;
 export default uiSlice.reducer;

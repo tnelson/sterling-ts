@@ -30,6 +30,7 @@ const GraphGroup = memo(
       nodeShapes,
       nodeStyles,
       nodeLabels,
+      nodeSuperscripts,
       ...rest
     } = props;
 
@@ -42,6 +43,7 @@ const GraphGroup = memo(
           const shape = nodeShapes[node.id];
           const style = nodeStyles[node.id];
           const labels = nodeLabels ? nodeLabels[node.id] : undefined;
+          const superscripts = nodeSuperscripts ? nodeSuperscripts[node.id] : undefined
           // console.log(JSON.stringify(style))
           // console.log(JSON.stringify(labels))
           return {
@@ -49,7 +51,8 @@ const GraphGroup = memo(
             position,
             shape,
             style,
-            labels
+            labels,
+            superscripts
           };
         }),
       [graph, nodeShapes, nodeStyles, nodeLabels]

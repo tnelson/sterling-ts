@@ -9,7 +9,7 @@ interface GraphViewHeaderProps {
 
 const GraphViewHeader = (props: GraphViewHeaderProps) => {
   const { datum } = props;
-  const { id, parsed, buttons } = datum;
+  const { id, parsed, buttons, generatorName } = datum;
   const command = parsed.command;
 
   return (
@@ -20,7 +20,7 @@ const GraphViewHeader = (props: GraphViewHeaderProps) => {
       {buttons &&
         buttons.map((button: Button, index: number) => {
           return (
-            <GraphViewHeaderButton key={index} datumId={id} button={button} />
+            <GraphViewHeaderButton key={index} datumId={id} generatorId={generatorName} button={button} />
           );
         })}
     </div>

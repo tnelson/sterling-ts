@@ -14,7 +14,15 @@ function selectProviderName(state: ProviderState): string {
   return state.providerName;
 }
 
+/** 
+ * Select the generator names this provider uses.
+ */
+function selectProviderGeneratorNames(state: ProviderState): string[] | undefined {
+  return state.providerGenerators
+}
+
 export default {
   selectIsConnected,
-  selectProviderName
+  selectProviderName,
+  selectProviderGeneratorNames
 };

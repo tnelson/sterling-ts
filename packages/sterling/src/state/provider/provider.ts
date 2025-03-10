@@ -1,6 +1,7 @@
 export interface ProviderState {
   connected: boolean;
   providerName: string;
+  providerGenerators: string[] | undefined;
 }
 
 /**
@@ -9,6 +10,7 @@ export interface ProviderState {
 export const newProviderState = (): ProviderState => {
   return {
     connected: false,
-    providerName: 'unknown provider'
+    providerName: 'unknown provider',
+    providerGenerators: undefined
   };
 };

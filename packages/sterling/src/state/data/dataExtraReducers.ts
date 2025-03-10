@@ -20,6 +20,10 @@ function dataReceived(state: DataState, action: PayloadAction<DataJoinParsed>) {
         state.datumIds.push(id);
       }
     });
+    // ** Auto-load the last datum received **
+    // Note well: this logic echoes the event-handler for dataReceive in the script 
+    // slice, and possibly other slices as well. If editing this, check!
+    // These MUST be synched, or the wrong visualizer may load for an instance. 
     const active = last(enter);
     if (active) state.active = active.id;
   }

@@ -3,6 +3,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { WritableDraft } from 'immer/dist/types/types-external';
 import { identity } from 'transformation-matrix';
+import { selectSelectedGenerator } from '../selectors';
 import { GraphsState } from './graphs';
 import { DEFAULT_THEME } from './graphsDefaults';
 import { validateLayouts } from './graphsReducers';
@@ -30,8 +31,10 @@ function dataReceived(
         zoomMatrix: identity()
       };
 
-      // Initialize with the default theme
-      state.themeByDatumId[datumId] = castDraft(DEFAULT_THEME);
+      // If there is no theme yet for this generator, populate it with the default. 
+      const generator = alloyDatum.generatorName ?? ''
+      if(!(generator in state.themeByGeneratorName))
+        state.themeByGeneratorName[generator] = castDraft(DEFAULT_THEME);
 
       // Generate the layout associated with no projection
       state.layoutsByDatumId[datumId] = { datumId, layoutById: {} };
