@@ -4,7 +4,14 @@ import { UiState } from './ui';
 
 function metaReceived(state: UiState, action: PayloadAction<ProviderMeta>) {
   const meta = action.payload;
-  if (meta.views) {
+  state.availableViews = ['GraphView', 'TableView', 'ScriptView', 'JsonView'];
+  state.mainView = state.availableViews[0];
+  if (meta.views && meta.generators && meta.generators.length > 0) {
+    state.selectedGenerator = meta.generators[0]
+  }
+  // TODO: temporary, to avoid Forge-side change
+
+  /*if (meta.views) {
     state.availableViews = meta.views.map((view) => {
       switch (view) {
         case 'graph':
@@ -23,7 +30,7 @@ function metaReceived(state: UiState, action: PayloadAction<ProviderMeta>) {
     if(meta.generators && meta.generators.length > 0) {
       state.selectedGenerator = meta.generators[0]
     }
-  }
+  }*/
 }
 
 export default { metaReceived };
