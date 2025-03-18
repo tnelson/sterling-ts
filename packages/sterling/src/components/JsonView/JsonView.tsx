@@ -6,7 +6,6 @@ import { LocalNextExpressionIdProvider } from './interp-viz-generator/LocalNextE
 import { ForgeUtil } from './forge-evaluator';
 import { extractPredicates } from './predicate-extractor/predicate-extractor';
 import { ForgePredUtil } from './forge-evaluator-pred';
-import { ForgeUtil as SidForgeUtil } from './siddartha-forge-antlr/index';
 
 const JsonView = () => {
   const datum = useSterlingSelector(selectActiveDatum);
