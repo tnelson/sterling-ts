@@ -12,15 +12,6 @@ export type ComponentData = {
 };
 
 function generateIR(componentsData: ComponentData[], customName?: string): JsonEntry[] {
-  // const json = componentsData.map((componentData, idx) => ({
-  //   id: `${componentData.type}${idx}`,
-  //   type: componentData.type,
-  //   properties: componentData.properties.reduce((acc, property) => {
-  //     acc[property.name] = property.value;
-  //     return acc;
-  //   }, {} as Record<string, any>)
-  // }));
-  // return json;
   const json = componentsData.map((componentData, idx) => {
     const type = componentData.type;
     const shouldGlow = componentData.shouldGlow;
@@ -105,6 +96,7 @@ export default function VizConstructor(props: VizConstructorProps) {
             setComponentsData={setComponentsData}
             textRenames={textRenames}
             setTextRenames={setTextRenames}
+            // jsonIR={generatedIR}
           />
         </div>
       </div>
