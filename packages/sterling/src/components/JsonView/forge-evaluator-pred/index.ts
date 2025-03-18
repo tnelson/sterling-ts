@@ -5,17 +5,28 @@ import { ForgeListenerImpl } from './ForgeListenerImpl';
 import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
 import { ForgeExprEvaluator } from './forgeExprEvaluator';
 import { DatumParsed } from '@/sterling-connection';
+import { Predicate } from '../predicate-extractor/predicate-extractor';
 
 export class ForgePredUtil {
 
 	datum: DatumParsed<any>;
 	instanceIndex: number;
+	predicates: Predicate[];
 	forgeListener : ForgeListenerImpl = new ForgeListenerImpl();
 	walker : ParseTreeWalker = new ParseTreeWalker();
 
-	constructor(datum: DatumParsed<any>, instanceIndex: number) {
+	constructor(datum: DatumParsed<any>, instanceIndex: number, predicates: Predicate[]) {
 		this.datum = datum;
 		this.instanceIndex = instanceIndex;
+		this.predicates = predicates;
+	}
+
+	// helper function
+	private getPredicateParseTrees() {
+		for (const predicate of this.predicates) {
+			const tree = this.getPredParseTree(predicate.predicateString);
+			predicate.predTree = tree;
+		}
 	}
 
 	getExpressionParseTree(forgeExpr: string) {
@@ -32,8 +43,12 @@ export class ForgePredUtil {
 	}
 
 	evaluateExpression(forgeExpr: string) {
+		// get the parse trees for all the predicates before we do anything else
+		this.getPredicateParseTrees();
+
+		// now, we can actually evaluate the expression
     const tree = this.getExpressionParseTree(forgeExpr);
-    const evaluator = new ForgeExprEvaluator(this.datum, this.instanceIndex);
+    const evaluator = new ForgeExprEvaluator(this.datum, this.instanceIndex, this.predicates);
 
 		// ensure we're visiting an ExprContext
 		return evaluator.visit(tree instanceof ExprContext ? tree : tree.getChild(0));
@@ -56,7 +71,7 @@ export class ForgePredUtil {
 		console.log('forgePred:', forgePred);
 		const tree = this.getPredParseTree(forgePred);
 		console.log('tree:', tree);
-		const evaluator = new ForgeExprEvaluator(this.datum, this.instanceIndex);
+		const evaluator = new ForgeExprEvaluator(this.datum, this.instanceIndex, this.predicates);
 
 		// ensure we're visiting a PredDeclContext
 		console.log('about to visit!');

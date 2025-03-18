@@ -28,11 +28,15 @@ import {
   BlockContext
 } from './ForgeParser';
 import { DatumParsed } from '@/sterling-connection';
+import { Predicate } from '../predicate-extractor/predicate-extractor';
+import { isArray } from 'lodash';
 
 ///// DEFINING SOME USEFUL TYPES /////
 type SingleValue = string; // maybe this can be a number too?
 export type Tuple = SingleValue[];
 type EvalResult = SingleValue | Tuple[];
+
+type Environment = Record<string, EvalResult>;
 
 ///// HELPER FUNCTIONS /////
 function isSingleValue(value: EvalResult): value is SingleValue {
@@ -83,12 +87,73 @@ export class ForgeExprEvaluator
   private datum: DatumParsed<any>;
   private instanceIndex: number;
   private instanceData: any;
+  private predicates: Predicate[];
+  private environmentStack: Environment[];
 
-  constructor(datum: DatumParsed<any>, instanceIndex: number) {
+  constructor(datum: DatumParsed<any>, instanceIndex: number, predicates: Predicate[]) {
     super();
     this.datum = datum;
     this.instanceIndex = instanceIndex;
     this.instanceData = this.datum.parsed.instances[this.instanceIndex];
+    this.predicates = predicates;
+    this.environmentStack = [];
+  }
+
+  // helper function
+  private isPredicateName(name: string): boolean {
+    return this.predicates.some((pred) => pred.name === name);
+  }
+
+  // helper function
+  private getPredicate(name: string): Predicate {
+    const predicate = this.predicates.find((pred) => pred.name === name);
+    if (predicate === undefined) {
+      throw new Error(`Predicate ${name} not found`);
+    }
+    return predicate;
+  }
+
+  // helper function
+  private callPredicate(predicate: Predicate, evaluatedArgs: EvalResult): EvalResult {
+    console.log('trying to call predicate:', predicate.name);
+    // check if the expected number of args has been provided
+    const expectedArgs = predicate.args ? predicate.args.length : 0;
+    const providedArgs = Array.isArray(evaluatedArgs) ? evaluatedArgs.length : 1;
+
+    if (expectedArgs !== providedArgs) {
+      throw new Error(`Expected ${expectedArgs} arguments, but got ${providedArgs}`);
+    }
+
+    // make bindings for the args
+    const argNames = predicate.args?.map((arg) => arg.split(':')[0]); // remove type info
+    const bindings: Environment = {};
+    if (argNames) {
+      for (let i = 0; i < argNames.length; i++) {
+        let argValue = Array.isArray(evaluatedArgs) ? evaluatedArgs[i] : evaluatedArgs;
+        if (Array.isArray(argValue) && argValue.length === 1) {
+          argValue = argValue[0]; // if it's a single value in an array, just use the value
+        }
+        bindings[argNames[i]] = typeof(argValue) === 'string' ? argValue : [argValue];
+      }
+    }
+    console.log('bindings:', bindings);
+
+    // add the environment for the callee onto the stack
+    this.environmentStack.push(bindings);
+
+    // get the parse tree for the predicate
+    const tree = predicate.predTree;
+    console.log('tree:', tree);
+    if (tree === undefined) {
+      throw new Error(`No parse tree found for predicate ${predicate.name}`);
+    }
+    // evaluate the predicate
+    const result = this.visit(tree);
+    console.log('pred evaluated; result:', result);
+
+    // remove the environment for the callee from the stack
+    this.environmentStack.pop();
+    return result;
   }
 
   // THIS SEEMS KINDA JANKY... IS THIS REALLY WHAT WE WANT??
@@ -127,7 +192,7 @@ export class ForgeExprEvaluator
     console.log('ctx.block():', ctx.block());
     const visitResult = this.visit(ctx.block());
     console.log('visitResult:', visitResult);
-    return [];
+    return visitResult;
   }
 
   // added this in temporarily; not sure this makes sense
@@ -705,14 +770,33 @@ export class ForgeExprEvaluator
       console.log('beforeBracesExpr:', beforeBracesExpr);
       console.log('insideBracesExprs:', insideBracesExprs);
 
+      // check if it is a predicate that is being called
+      if (isSingleValue(beforeBracesExpr) && this.isPredicateName(beforeBracesExpr)) {
+        console.log('this is a predicate!');
+        const predicate = this.getPredicate(beforeBracesExpr);
+        return this.callPredicate(predicate, insideBracesExprs);
+      }
+
       // support for some forge-native functions:
       // add
       if (beforeBracesExpr === 'add') {
         if (isSingleValue(insideBracesExprs)) {
           throw new Error('expected 2 arguments for add');
         } else {
-          const arg1 = getNumberValue(insideBracesExprs[0][0]);
-          const arg2 = getNumberValue(insideBracesExprs[1][0]);
+          // const arg1 = getNumberValue(insideBracesExprs[0][0]);
+          let arg1: number;
+          if (isArray(insideBracesExprs[0])) {
+            arg1 = getNumberValue(insideBracesExprs[0][0]);
+          } else {
+            arg1 = getNumberValue(insideBracesExprs[0]);
+          }
+          // const arg2 = getNumberValue(insideBracesExprs[1][0]);
+          let arg2: number;
+          if (isArray(insideBracesExprs[1])) {
+            arg2 = getNumberValue(insideBracesExprs[1][0]);
+          } else {
+            arg2 = getNumberValue(insideBracesExprs[1]);
+          }
           return `${arg1 + arg2}`;
         }
       }
@@ -722,8 +806,20 @@ export class ForgeExprEvaluator
         if (isSingleValue(insideBracesExprs)) {
           throw new Error('expected 2 arguments for subtract');
         } else {
-          const arg1 = getNumberValue(insideBracesExprs[0][0]);
-          const arg2 = getNumberValue(insideBracesExprs[1][0]);
+          // const arg1 = getNumberValue(insideBracesExprs[0][0]);
+          let arg1: number;
+          if (isArray(insideBracesExprs[0])) {
+            arg1 = getNumberValue(insideBracesExprs[0][0]);
+          } else {
+            arg1 = getNumberValue(insideBracesExprs[0]);
+          }
+          // const arg2 = getNumberValue(insideBracesExprs[1][0]);
+          let arg2: number;
+          if (isArray(insideBracesExprs[1])) {
+            arg2 = getNumberValue(insideBracesExprs[1][0]);
+          } else {
+            arg2 = getNumberValue(insideBracesExprs[1]);
+          }
           return `${arg1 - arg2}`;
         }
       }
@@ -965,11 +1061,23 @@ export class ForgeExprEvaluator
       return '#f';
     }
 
-    console.log('need to find an identifier');
+    console.log('need to find an identifier:', identifier);
     // console.log(this.instanceData);
     // temporary
-    if (identifier === 'b') {
-      return '1';
+    // if (identifier === 'b') {
+    //   return '1';
+    // }
+    // if this is the name of a pred (without args), call the predicate
+    if (this.isPredicateName(identifier)) {
+      const predicate = this.getPredicate(identifier);
+      if (predicate.args === undefined || predicate.args.length === 0) {
+        return this.callPredicate(predicate, []);
+      }
+    }
+    // if this is an arg to the pred being evaluated, return it
+    const latestEnvironment = this.environmentStack.length > 0 ? this.environmentStack[this.environmentStack.length - 1] : undefined;
+    if (latestEnvironment !== undefined && latestEnvironment[identifier] !== undefined) {
+      return latestEnvironment[identifier];
     }
 
     let result: EvalResult | undefined = undefined;
