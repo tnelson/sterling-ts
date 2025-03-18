@@ -131,7 +131,7 @@ export function GridComponent(props: GridComponentProps) {
     traceRelationValue = evaluateForgeProps(traceRelationName, forgeUtil);
   }
 
-  const evaluatedCellDataRelation = cellDataRelation;
+  const evaluatedCellDataRelation = cellDataRelation ? JSON.parse(JSON.stringify(cellDataRelation)) : cellDataRelation; // get a deep copy
   if (traceRelationValue !== undefined) {
     evaluatedCellDataRelation.relation = traceRelationValue;
   }
