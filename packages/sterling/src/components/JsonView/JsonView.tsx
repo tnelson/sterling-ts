@@ -13,11 +13,11 @@ const JsonView = () => {
 
   console.log('datum:', datum);
   // console.log('datum.data', datum.data);
-  const xmlParser = new DOMParser()
+  const xmlParser = new DOMParser();
   const xmlDoc = xmlParser.parseFromString(datum.data, 'application/xml');
 
-  if (xmlDoc.documentElement.nodeName === "parsererror") {
-    console.error("XML parsing error:", xmlDoc.documentElement.textContent);
+  if (xmlDoc.documentElement.nodeName === 'parsererror') {
+    console.error('XML parsing error:', xmlDoc.documentElement.textContent);
     return;
   }
 
@@ -38,7 +38,10 @@ const JsonView = () => {
   console.log('predicates:', predicates);
 
   const forgePredUtil = new ForgePredUtil(datum, 0, predicates);
-  const expr = 'argPred1[2, 3]';
+  // const expr = 'argPred1[2, 3]';
+  // const expr = 'lone Board1.board[1][0]';
+  // const expr = '(X + O) - Player';
+  const expr = '~(Board6.board[0])'
   const result = forgePredUtil.evaluateExpression(expr);
   console.log('FINAL RESULT:', result);
 

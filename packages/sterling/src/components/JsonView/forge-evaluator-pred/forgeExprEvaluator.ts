@@ -76,6 +76,20 @@ function getNumberValue(value: EvalResult): number {
   throw new Error('Expected value to be a number');
 }
 
+function arraysEqual(a: Tuple, b: Tuple): boolean {
+  return a.length === b.length && a.every((val, i) => val === b[i]);
+}
+
+function deduplicateTuples(tuples: Tuple[]): Tuple[] {
+  const result: Tuple[] = [];
+  for (const tuple of tuples) {
+    if (!result.some(existing => arraysEqual(existing, tuple))) {
+      result.push(tuple);
+    }
+  }
+  return result;
+}
+
 /**
  * A recursive evaluator for Forge expressions.
  * This visitor walks the parse tree and prints the type of operation encountered.
@@ -121,7 +135,9 @@ export class ForgeExprEvaluator
     const providedArgs = Array.isArray(evaluatedArgs) ? evaluatedArgs.length : 1;
 
     if (expectedArgs !== providedArgs) {
-      throw new Error(`Expected ${expectedArgs} arguments, but got ${providedArgs}`);
+      throw new Error(
+        `Expected ${expectedArgs} arguments, but got ${providedArgs}`
+      );
     }
 
     // make bindings for the args
@@ -133,7 +149,8 @@ export class ForgeExprEvaluator
         if (Array.isArray(argValue) && argValue.length === 1) {
           argValue = argValue[0]; // if it's a single value in an array, just use the value
         }
-        bindings[argNames[i]] = typeof(argValue) === 'string' ? argValue : [argValue];
+        bindings[argNames[i]] =
+          typeof argValue === 'string' ? argValue : [argValue];
       }
     }
     console.log('bindings:', bindings);
@@ -158,8 +175,6 @@ export class ForgeExprEvaluator
 
   // THIS SEEMS KINDA JANKY... IS THIS REALLY WHAT WE WANT??
   protected aggregateResult(aggregate: EvalResult, nextResult: EvalResult): EvalResult {
-    console.log('aggregate:', aggregate);
-    console.log('nextResult:', nextResult);
     if (aggregate.length === 0) return nextResult; // Prioritize non-default values
     if (nextResult.length === 0) return aggregate;
     // return aggregate.concat(nextResult); // Merge results when possible
@@ -183,27 +198,19 @@ export class ForgeExprEvaluator
     return [];
   }
 
-  // adding this in temporarily; not sure this should be here... maybe we should
-  // make a separate visitor for this?
   visitPredDecl(ctx: PredDeclContext): EvalResult {
     console.log('visiting pred');
-    console.log('ctx.text:', ctx.text);
     console.log('ctx.block().text:', ctx.block().text);
-    console.log('ctx.block():', ctx.block());
     const visitResult = this.visit(ctx.block());
-    console.log('visitResult:', visitResult);
     return visitResult;
   }
 
-  // added this in temporarily; not sure this makes sense
   visitBlock(ctx: BlockContext): EvalResult {
     console.log('visiting block');
     console.log('ctx.text:', ctx.text);
     let result: EvalResult | undefined = undefined;
     for (const expr of ctx.expr()) {
-      console.log('expr:', expr.text);
       const exprResult = this.visit(expr);
-      console.log('exprResult:', exprResult);
       if (result === undefined) {
         result = exprResult;
       } else {
@@ -238,11 +245,9 @@ export class ForgeExprEvaluator
       ]);
     }
 
-    // return results.concat(this.visitChildren(ctx));
     // TODO: fix this!
     const childrenResults = this.visitChildren(ctx);
     console.log('childrenResults in expr:', childrenResults);
-    console.log('results at this point:', results);
     if (results === undefined) {
       console.log('returning childrenResults in expr:', childrenResults);
       return childrenResults;
@@ -263,7 +268,6 @@ export class ForgeExprEvaluator
     console.log('visiting expr1:', ctx.text);
 
     if (ctx.OR_TOK()) {
-      console.log('OR value (OR_TOK)');
       const leftChildValue = this.visit(ctx.expr1()!);
       const rightChildValue = this.visitChildren(ctx);
 
@@ -399,7 +403,6 @@ export class ForgeExprEvaluator
       return results;
     }
 
-    // return results.concat(this.visitChildren(ctx));
     const childrenResults = this.visitChildren(ctx);
     console.log('childrenResults in expr4_5:', childrenResults);
     return childrenResults;
@@ -474,7 +477,6 @@ export class ForgeExprEvaluator
     }
     if (ctx.compareOp()) {
       foundValue = true;
-      console.log('about to get left and right values');
       const leftChildValue = this.visit(ctx.expr6()!);
       const rightChildValue = this.visitChildren(ctx);
       console.log('left child value:', leftChildValue);
@@ -493,7 +495,6 @@ export class ForgeExprEvaluator
                 : '#f';
           }
           break;
-        // return results;
         case '<':
           results =
             getNumberValue(leftChildValue) < getNumberValue(rightChildValue)
@@ -520,13 +521,23 @@ export class ForgeExprEvaluator
               : '#f';
           break;
         case 'in':
-          results.push(['**UNIMPLEMENTED** Set Membership (`in`)']);
-          // TODO: implement this using leftValue and rightValue
-          //       for now, just returning over here. what we need to do instead
-          //       is to implement this, set the value of results to what we get
-          //       from this, and then call break (so that we can negate before
-          //       returning the final value, if required)
-          return results;
+          // this should be true if the left value is equal to the right value,
+          // or a subset of it
+          if (leftChildValue === rightChildValue) {
+            results = '#t';
+          } else if (isTupleArray(rightChildValue)) {
+            if (isSingleValue(leftChildValue)) {
+              results = rightChildValue.some((tuple) => tuple.length === 1 && tuple[0] === leftChildValue) ? '#t' : '#f';
+            } else {
+              results = leftChildValue.every((tuple) =>
+                rightChildValue.includes(tuple)
+              )
+                ? '#t'
+                : '#f';
+            }
+          } else {
+            results = '#f';
+          }
           break; // redundant, but it won't be once we implement the TODO above
         //        since the return above it will be removed
         case 'is':
@@ -550,15 +561,7 @@ export class ForgeExprEvaluator
           break; // redundant, but it won't be once we implement the TODO above
         // since the return above it will be removed
         default:
-          results.push(['**UNIMPLEMENTED** INVALID Comparison Operator']);
-          // TODO: implement this using leftValue and rightValue
-          //       for now, just returning over here. what we need to do instead
-          //       is to implement this, set the value of results to what we get
-          //       from this, and then call break (so that we can negate before
-          //       returning the final value, if required)
-          return results;
-          break; // redundant, but it won't be once we implement the TODO above
-        // since the return above it will be removed
+          throw new Error(`Unexpected compare operator provided: ${ctx.compareOp()?.text}`);
       }
     }
 
@@ -589,11 +592,10 @@ export class ForgeExprEvaluator
       return results;
     }
     if (ctx.ONE_TOK()) {
-      results.push(['**UNIMPLEMENTED** Set Quantifier (`one`)']);
-      // TODO: we need to implement ONE using childrenResults
-      //       and then return the result
-      //       for now, just returning results as is
-      return results;
+      if (isTupleArray(childrenResults) && childrenResults.length === 1) {
+        return "#t";
+      }
+      return "#f";
     }
     if (ctx.TWO_TOK()) {
       results.push(['**UNIMPLEMENTED** Set Quantifier (`two`)']);
@@ -603,25 +605,22 @@ export class ForgeExprEvaluator
       return results;
     }
     if (ctx.NO_TOK()) {
-      results.push(['**UNIMPLEMENTED** Set Quantifier (`no`)']);
-      // TODO: we need to implement NO using childrenResults
-      //       and then return the result
-      //       for now, just returning results as is
-      return results;
+      if (isTupleArray(childrenResults) && childrenResults.length === 0) {
+        return "#t";
+      }
+      return "#f";
     }
     if (ctx.SOME_TOK()) {
-      results.push(['**UNIMPLEMENTED** Set Quantifier (`some`)']);
-      // TODO: we need to implement SOME using childrenResults
-      //       and then return the result
-      //       for now, just returning results as is
-      return results;
+      if (isTupleArray(childrenResults) && childrenResults.length > 0) {
+        return "#t";
+      }
+      return "#f";
     }
     if (ctx.LONE_TOK()) {
-      results.push(['**UNIMPLEMENTED** Set Quantifier (`lone`)']);
-      // TODO: we need to implement LONE using childrenResults
-      //       and then return the result
-      //       for now, just returning results as is
-      return results;
+      if (isTupleArray(childrenResults) && childrenResults.length <= 1) {
+        return "#t";
+      }
+      return "#f";
     }
 
     return childrenResults;
@@ -629,47 +628,96 @@ export class ForgeExprEvaluator
 
   visitExpr8(ctx: Expr8Context): EvalResult {
     console.log('visiting expr8:', ctx.text);
-    let results: EvalResult = [];
-    console.log('ctx in expr8:', ctx.text);
 
     if (ctx.PLUS_TOK()) {
       const leftChildValue = this.visit(ctx.expr8()!);
-      const rightChildValue = this.visitChildren(ctx);
+      const rightChildValue = this.visit(ctx.expr10()!);
 
-      results.push(['**UNIMPLEMENTED** Set Union (`+`)']);
-
-      // TODO: we need to implement + using leftChildValue and rightChildValue
-      //      and then return the result
-      //      just returning results here for now
-      return results;
+      // should only work if arities are the same
+      if (isSingleValue(leftChildValue) && isSingleValue(rightChildValue)) {
+        return [[leftChildValue], [rightChildValue]];
+      } else if (isSingleValue(leftChildValue) && isTupleArray(rightChildValue)) {
+        if (rightChildValue.length === 0) {
+          return leftChildValue;
+        }
+        if (rightChildValue[0].length === 1) {
+          return deduplicateTuples([[leftChildValue], ...rightChildValue]);
+        }
+        throw new Error('arity mismatch in set union!');
+      } else if (isTupleArray(leftChildValue) && isSingleValue(rightChildValue)) {
+        if (leftChildValue.length === 0) {
+          return rightChildValue;
+        }
+        if (leftChildValue[0].length === 1) {
+          return deduplicateTuples([...leftChildValue, [rightChildValue]]);
+        }
+        throw new Error('arity mismatch in set union!');
+      } else if (isTupleArray(leftChildValue) && isTupleArray(rightChildValue)) {
+        if (leftChildValue.length === 0 && rightChildValue.length === 0) {
+          return [];
+        }
+        if (leftChildValue.length === 0) {
+          return rightChildValue;
+        }
+        if (rightChildValue.length === 0) {
+          return leftChildValue;
+        }
+        if (leftChildValue[0].length === rightChildValue[0].length) {
+          return deduplicateTuples([...leftChildValue, ...rightChildValue]);
+        }
+      } else {
+        throw new Error('unexpected error: expressions added are not well defined!');
+      }
     }
     if (ctx.MINUS_TOK()) {
       const leftChildValue = this.visit(ctx.expr8()!);
-      const rightChildValue = this.visitChildren(ctx);
+      const rightChildValue = this.visit(ctx.expr10()!);
 
-      results.push(['**UNIMPLEMENTED** Set Difference (`-`)']);
-
-      // TODO: we need to implement - using leftChildValue and rightChildValue
-      //     and then return the result
-      //      just returning results here for now
-      return results;
+      // should only work if arities are the same
+      if (isSingleValue(leftChildValue) && isSingleValue(rightChildValue)) {
+        if (leftChildValue === rightChildValue) {
+          return [];
+        }
+        console.log('returning leftChildValue:', leftChildValue);
+        return leftChildValue;
+      } else if (isSingleValue(leftChildValue) && isTupleArray(rightChildValue)) {
+        if (rightChildValue.length === 0) {
+          return leftChildValue;
+        }
+        if (rightChildValue[0].length === 1) {
+          return rightChildValue.some((tuple) => tuple[0] === leftChildValue) ? [] : leftChildValue;
+        }
+        throw new Error('arity mismatch in set difference!');
+      } else if (isTupleArray(leftChildValue) && isSingleValue(rightChildValue)) {
+        if (leftChildValue.length === 0) {
+          return [];
+        }
+        if (leftChildValue[0].length === 1) {
+          return leftChildValue.filter((tuple) => tuple[0] !== rightChildValue);
+        }
+        throw new Error('arity mismatch in set difference!');
+      } else if (isTupleArray(leftChildValue) && isTupleArray(rightChildValue)) {
+        if (leftChildValue.length === 0) {
+          return [];
+        }
+        if (rightChildValue.length === 0) {
+          return leftChildValue;
+        }
+        if (leftChildValue[0].length === rightChildValue[0].length) {
+          return leftChildValue.filter((tuple) => !rightChildValue.some((rightTuple) => arraysEqual(tuple, rightTuple)));
+        }
+      } else {
+        throw new Error('unexpected error: expressions subtracted are not well defined!');
+      }
     }
 
     return this.visitChildren(ctx);
-    // const childResults = this.visitChildren(ctx.expr9()!);
-    // console.log('childResults in expr8:', childResults);
-    // return childResults;
   }
 
   visitExpr9(ctx: Expr9Context): EvalResult {
     console.log('visiting expr9:', ctx.text);
-    console.log('ctx:', ctx.text);
-    console.log('ctx.expr9()', ctx.expr9());
-
     const childrenResults = this.visitChildren(ctx);
     console.log('childrenResults in expr9:', childrenResults);
-
-    console.log('has card tok:', ctx.CARD_TOK());
 
     if (ctx.CARD_TOK()) {
       return `${childrenResults.length}`;
@@ -698,17 +746,40 @@ export class ForgeExprEvaluator
 
   visitExpr11(ctx: Expr11Context): EvalResult {
     console.log('visiting expr11:', ctx.text);
-    let results: EvalResult = [];
 
     if (ctx.AMP_TOK()) {
       const leftChildValue = this.visit(ctx.expr11()!);
       const rightChildValue = this.visitChildren(ctx);
-      results.push(['**UNIMPLEMENTED** Intersection (&)']);
 
-      // TODO: we need to implement INTERSECTION (&) using leftChildValue and rightChildValue
-      //       and then return the result
-      //       just returning results here for now
-      return results;
+      // should only work if arities are the same
+      if (isSingleValue(leftChildValue) && isSingleValue(rightChildValue)) {
+        return leftChildValue === rightChildValue ? leftChildValue : [];
+      } else if (isSingleValue(leftChildValue) && isTupleArray(rightChildValue)) {
+        if (rightChildValue.length === 0) {
+          return [];
+        }
+        if (rightChildValue[0].length === 1) {
+          return rightChildValue.some((tuple) => tuple[0] === leftChildValue) ? leftChildValue : [];
+        }
+        throw new Error('arity mismatch in set intersection!');
+      } else if (isTupleArray(leftChildValue) && isSingleValue(rightChildValue)) {
+        if (leftChildValue.length === 0) {
+          return [];
+        }
+        if (leftChildValue[0].length === 1) {
+          return leftChildValue.some((tuple) => tuple[0] === rightChildValue) ? rightChildValue : [];
+        }
+        throw new Error('arity mismatch in set intersection!');
+      } else if (isTupleArray(leftChildValue) && isTupleArray(rightChildValue)) {
+        if (leftChildValue.length === 0 || rightChildValue.length === 0) {
+          return [];
+        }
+        if (leftChildValue[0].length === rightChildValue[0].length) {
+          return leftChildValue.filter((tuple) => rightChildValue.some((rightTuple) => arraysEqual(tuple, rightTuple)));
+        }
+      } else {
+        throw new Error('unexpected error: expressions intersected are not well defined!');
+      }
     }
 
     return this.visitChildren(ctx);
@@ -771,8 +842,8 @@ export class ForgeExprEvaluator
       console.log('insideBracesExprs:', insideBracesExprs);
 
       // check if it is a predicate that is being called
+      console.log('predicates:', this.predicates);
       if (isSingleValue(beforeBracesExpr) && this.isPredicateName(beforeBracesExpr)) {
-        console.log('this is a predicate!');
         const predicate = this.getPredicate(beforeBracesExpr);
         return this.callPredicate(predicate, insideBracesExprs);
       }
@@ -847,7 +918,6 @@ export class ForgeExprEvaluator
 
   visitExpr15(ctx: Expr15Context): EvalResult {
     console.log('visiting expr15:', ctx.text);
-    // console.log('ctx:', ctx.text);
     let results: EvalResult = [];
 
     if (ctx.DOT_TOK()) {
@@ -885,9 +955,6 @@ export class ForgeExprEvaluator
       const insideBracesExprs = this.visit(ctx.exprList()!);
       results.push(['**UNIMPLEMENTED** _[_]']);
 
-      // TODO: this is not complete; just trying to get something temporary
-      // that can work for `add` and `subtract`
-
       // TODO: we need to implement this using beforeBracesName and
       //       insideBracesExprs and then return the result
       //       just returning results here for now
@@ -923,22 +990,23 @@ export class ForgeExprEvaluator
     const childrenResults = this.visitChildren(ctx);
 
     if (ctx.TILDE_TOK()) {
-      results.push(['**UNIMPLEMENTED** ~']);
-      // TODO: we need to implement ~ using childrenResults
-      //       and then return the result
-      //       just returning results here for now
-      return results;
+      // this flips the order of the elements in the tuples of a relation if
+      // the relation has arity 2
+      if (isTupleArray(childrenResults) && childrenResults.length > 0 && childrenResults[0].length === 2) {
+        return childrenResults.map((tuple) => [tuple[1], tuple[0]]);
+      }
+      throw new Error('expected the expression provided to ~ to have arity 2; bad arity received!');
     }
     if (ctx.EXP_TOK()) {
       results.push(['**UNIMPLEMENTED** ^']);
-      // TODO: we need to implement ~ using childrenResults
+      // TODO: we need to implement ^ using childrenResults
       //       and then return the result
       //       just returning results here for now
       return results;
     }
     if (ctx.STAR_TOK()) {
       results.push(['**UNIMPLEMENTED** *']);
-      // TODO: we need to implement ~ using childrenResults
+      // TODO: we need to implement * using childrenResults
       //       and then return the result
       //       just returning results here for now
       return results;
@@ -954,7 +1022,6 @@ export class ForgeExprEvaluator
     let results: EvalResult = [];
 
     if (ctx.const()) {
-      // results.push([`Constant: ${ctx.const()?.text}`]);
       return `${ctx.const()?.text}`;
     }
     if (ctx.qualName()) {
@@ -988,23 +1055,15 @@ export class ForgeExprEvaluator
       return results;
     }
     if (ctx.LEFT_PAREN_TOK()) {
-      // results.push(['**UNIMPLEMENTED** Parenthesized Expression `( ... )`']);
-      console.log('**UNIMPLEMENTED** Parenthesized Expression `( ... )`');
-
-      // for now, just returning the result of visiting the expr (ignoring the
-      // braces)
+      // NOTE: we just return the result of evaluating the expr that is inside
+      // the parentheses; need to do some testing to ensure that this is working
+      // in a wide range of situations (worked fine on some initial tests)
       return this.visit(ctx.expr()!);
-
-      // TODO: need to get the values inside the braces and then
-      //       implement this using them
-      //       for now, just returning results
-      return results;
     }
     if (ctx.block()) {
-      console.log('tried to do something with a block');
-      results.push(['**UNIMPLEMENTED** Code Block']);
-      // TODO: need to implement this
-      return results;
+      // NOTE: not sure if there are any situations in which we actually get here
+      // (couldn't find any yet)
+      return this.visitBlock(ctx.block()!);
     }
     if (ctx.sexpr()) {
       results.push(['**UNIMPLEMENTED** S-Expression']);
@@ -1024,10 +1083,9 @@ export class ForgeExprEvaluator
       const tailValues = this.visitChildren(ctx);
       console.log('headValue:', headValue);
       console.log('tailValues:', tailValues);
-      // results.push(['**UNIMPLEMENTED** comma']);
 
       // this isn't necessarily correct; just trying to get something that would
-      // work for just `add` and `subtract` for now
+      // work for things like add, subtract, predicate calls for now
       if (isSingleValue(headValue)) {
         results.push([headValue]);
       } else {
@@ -1075,8 +1133,14 @@ export class ForgeExprEvaluator
       }
     }
     // if this is an arg to the pred being evaluated, return it
-    const latestEnvironment = this.environmentStack.length > 0 ? this.environmentStack[this.environmentStack.length - 1] : undefined;
-    if (latestEnvironment !== undefined && latestEnvironment[identifier] !== undefined) {
+    const latestEnvironment =
+      this.environmentStack.length > 0
+        ? this.environmentStack[this.environmentStack.length - 1]
+        : undefined;
+    if (
+      latestEnvironment !== undefined &&
+      latestEnvironment[identifier] !== undefined
+    ) {
       return latestEnvironment[identifier];
     }
 

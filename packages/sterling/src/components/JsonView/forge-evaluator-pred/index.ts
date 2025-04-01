@@ -14,11 +14,13 @@ export class ForgePredUtil {
 	predicates: Predicate[];
 	forgeListener : ForgeListenerImpl = new ForgeListenerImpl();
 	walker : ParseTreeWalker = new ParseTreeWalker();
+	gotPredicateParseTrees;
 
 	constructor(datum: DatumParsed<any>, instanceIndex: number, predicates: Predicate[]) {
 		this.datum = datum;
 		this.instanceIndex = instanceIndex;
 		this.predicates = predicates;
+		this.gotPredicateParseTrees = false;
 	}
 
 	// helper function
@@ -27,6 +29,7 @@ export class ForgePredUtil {
 			const tree = this.getPredParseTree(predicate.predicateString);
 			predicate.predTree = tree;
 		}
+		this.gotPredicateParseTrees = true;
 	}
 
 	getExpressionParseTree(forgeExpr: string) {
@@ -44,7 +47,9 @@ export class ForgePredUtil {
 
 	evaluateExpression(forgeExpr: string) {
 		// get the parse trees for all the predicates before we do anything else
-		this.getPredicateParseTrees();
+		if (!this.gotPredicateParseTrees) {
+			this.getPredicateParseTrees();
+		}
 
 		// now, we can actually evaluate the expression
     const tree = this.getExpressionParseTree(forgeExpr);
