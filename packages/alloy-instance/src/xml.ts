@@ -17,7 +17,11 @@ export function parseAlloyXML(xml: string): AlloyDatum {
   const maybeVizThemeText = maybeVisualizer === null ? 
                                undefined  : 
                                parseStringAttribute(maybeVisualizer, 'theme')
+  const maybeVizCnDText = maybeVisualizer === null ? 
+                               undefined  : 
+                               parseStringAttribute(maybeVisualizer, 'cnd')
   
+
   return {
     instances: instances.map(instanceFromElement),
     bitwidth: parseNumericAttribute(instances[0], 'bitwidth'),
@@ -31,7 +35,8 @@ export function parseAlloyXML(xml: string): AlloyDatum {
     minTrace: parseNumericAttribute(instances[0], 'mintrace'),
     traceLength: parseNumericAttribute(instances[0], 'tracelength'),
     visualizerConfig: {script: deEscape(maybeVizScriptText), 
-                       theme: deEscape(maybeVizThemeText)}
+                       theme: deEscape(maybeVizThemeText),
+                       cnd: deEscape(maybeVizCnDText)}
   };
 }
 
