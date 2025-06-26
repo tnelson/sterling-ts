@@ -1,5 +1,5 @@
 import { angle, translate, Vector2 } from '@/vector2';
-import { intersect, line, slope } from '../../graph-svg/math/line';
+import { intersect, line, slope } from '../math/line';
 
 export function edgePointRectangle(
   center: Vector2,

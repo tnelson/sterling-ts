@@ -1,58 +1,40 @@
-import { AlloyNode } from '@/alloy-graph';
-import { Vector2 } from '@/vector2';
-import dagre from 'dagre';
-import { GraphComponents } from './getVisibleGraphComponents';
+import {
+  AlloyEdge,
+  AlloyGraph,
+  AlloyGraphPositioned,
+  AlloyNode,
+  GraphLayout
+} from '@/alloy-graph';
+import {
+  getEdges,
+  getNodes,
+  newGraph,
+  PositionedNode,
+  RoutedEdge
+} from '@/graph-lib';
 
-export function layoutGraph(components: GraphComponents): {
-  nodes: AlloyNode[];
-  edgePaths: Record<string, Vector2[]>;
-} {
-  const g = new dagre.graphlib.Graph({ multigraph: true });
-  g.setGraph({ nodesep: 25, ranksep: 50, rankdir: 'TB' });
-
-  components.nodes.forEach((node) => {
-    g.setNode(node.id, { label: node.id, width: 100, height: 60 });
-  });
-
-  components.edges.forEach((edge) => {
-    g.setEdge(edge.source, edge.target, { id: edge.id });
-  });
-
-  dagre.layout(g);
-  const { dx, dy } = centerOffset(g, 100, 60);
-
-  const nodes: AlloyNode[] = [];
-  const edgePaths: Record<string, Vector2[]> = {};
-  components.nodes.forEach((node) => {
-    nodes.push({
+/**
+ * Apply a layout to a graph to generate a positioned graph.
+ * @param graph The graph to layout.
+ * @param layout The layout to apply to the graph.
+ */
+export function layoutGraph(
+  graph: AlloyGraph,
+  layout: GraphLayout
+): AlloyGraphPositioned {
+  const nodes: (PositionedNode & AlloyNode)[] = getNodes(graph).map((node) => {
+    const position = layout.nodePositions[node.id];
+    return {
       ...node,
-      x: g.node(node.id).x - dx,
-      y: g.node(node.id).y - dy
-    });
+      x: position?.x || 0,
+      y: position?.y || 0
+    };
   });
-  g.edges().forEach((e) => {
-    const edge = g.edge(e);
-    edgePaths[edge.id] = edge.points.slice(1, -1).map((point) => {
-      return { x: point.x - dx, y: point.y - dy };
-    });
+  const edges: (RoutedEdge & AlloyEdge)[] = getEdges(graph).map((edge) => {
+    return {
+      ...edge,
+      waypoints: layout.edgeWaypoints[edge.id] || []
+    };
   });
-
-  return {
-    nodes,
-    edgePaths
-  };
-}
-
-function centerOffset(
-  graph: dagre.graphlib.Graph,
-  nodeWidth: number,
-  nodeHeight: number
-): { dx: number; dy: number } {
-  const minX = Math.min(...graph.nodes().map((n) => graph.node(n).x));
-  const minY = Math.min(...graph.nodes().map((n) => graph.node(n).y));
-  const maxX = Math.max(...graph.nodes().map((n) => graph.node(n).x));
-  const maxY = Math.max(...graph.nodes().map((n) => graph.node(n).y));
-  const dx = (maxX - minX) / 2 + nodeWidth / 2;
-  const dy = (maxY - minY) / 2 + nodeHeight / 2;
-  return { dx, dy };
+  return newGraph(nodes, edges);
 }
