@@ -1,4 +1,4 @@
-import { SterlingTheme } from '@/sterling-theme';
+import { EdgeStyleSpec, SterlingTheme } from '@/sterling-theme';
 import { WritableDraft } from 'immer/dist/types/types-external';
 
 export function getRelationIsAttribute(
@@ -31,7 +31,7 @@ export function getRelationSTIndexes(
   if(!edges) return [0,arity-1];
   
   const firstMatch = edges.find(
-      (spec) =>
+      (spec: EdgeStyleSpec) =>
         // Any index override to account for
         (spec.sourceIndex || spec.targetIndex) &&
         spec.targets?.some(

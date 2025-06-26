@@ -1,3 +1,7 @@
+/** This module is disabled and needs further development. */
+
+export function unused() {}
+
 // import {VisualObject, Coords} from './VisualObject'
 // import {DEFAULT_GRAPH_FIXED_NODES, DEFAULT_NODE_RADIUS, SCREEN_WIDTH} from './Constants'
 // import { Line } from './Line'

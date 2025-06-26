@@ -7,6 +7,7 @@
   "type": "module",
   "homepage": "https://tnelson.github.io/sterling-ts",
   "scripts": {
+    "typecheck": "npx tsc --noEmit",
     "build:alloy": "npx webpack --env provider=alloy",
     "build:forge": "npx webpack --env provider=forge",
     "dev:alloy": "npx webpack serve --open --mode=development --env provider=alloy",

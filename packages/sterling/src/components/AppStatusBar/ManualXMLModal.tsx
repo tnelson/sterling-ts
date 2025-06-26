@@ -93,7 +93,8 @@ export function ManualXMLModal({isOpen, onClose}: ManualXMLModelProps) {
                       format: "alloy", 
                       data: dataEntered,
                       buttons: [],
-                      evaluator: false})], 
+                      evaluator: false,
+                      generatorName: 'ManualXML'})], 
                    update: [], 
                    exit: []}))
                 } catch(e) {
